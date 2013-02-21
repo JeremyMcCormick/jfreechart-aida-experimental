@@ -99,6 +99,7 @@ public class OverlayTest extends TestCase {
         pstyle.dataStyle().errorBarStyle().setColor("blue");
         pstyle.dataStyle().errorBarStyle().setLineType("1");
         pstyle.dataStyle().errorBarStyle().setThickness(1);
+        pstyle.dataStyle().errorBarStyle().setParameter("errorBarDecoration", "0.0");
         pstyle.dataStyle().lineStyle().setLineType("1");
         pstyle.dataStyle().lineStyle().setColor("blue");
         

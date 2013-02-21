@@ -50,7 +50,7 @@ public class Histogram2D implements Histogram<IHistogram2D>
             for (int i = 0, n = ds.getItemCount(0); i < n; i++) {
                 double d = ds.getZValue(0, i);
                 zMin = Math.min(zMin, d);
-                if (d > 0.00000000001)
+                if (d > 0.0000000000001) // was zero???
                     zLogMin = Math.min(zLogMin, d);
                 zMax = Math.max(zMax, d);
             }
@@ -78,12 +78,12 @@ public class Histogram2D implements Histogram<IHistogram2D>
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         yAxis.setLowerMargin(0.0);
         yAxis.setUpperMargin(0.0);
-        
+
         // Set the renderer.
         XYBlockRenderer renderer = new XYBlockRenderer();
         renderer.setBlockHeight(h2d.yAxis().binWidth(0));
         renderer.setBlockWidth(h2d.xAxis().binWidth(0));
-        
+
         // Old JFreeChart class
         // PaintScale scale = new GrayPaintScale(0., h2d.maxBinHeight());
 
@@ -92,7 +92,7 @@ public class Histogram2D implements Histogram<IHistogram2D>
         if (style.zAxisStyle().parameterValue("scale").startsWith("log")) {
             logScale = true;
         }
-        
+
         // Use custom rainbow paint scale.
         RainbowPaintScale scale = new RainbowPaintScale(zlimits[0], zlimits[1], zlimits[2], logScale);
         renderer.setPaintScale(scale);
@@ -100,7 +100,7 @@ public class Histogram2D implements Histogram<IHistogram2D>
         // Create the plot.
         XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
         JFreeChart chart = new JFreeChart(h2d.title(), plot);
-        
+
         // Add paint scale color legend.
         createPaintScaleLegend(chart, scale, logScale);
 
@@ -109,19 +109,19 @@ public class Histogram2D implements Histogram<IHistogram2D>
 
         return chart;
     }
-    
+
     //
     // Inspired by this thread:
     //
     // http://www.jfree.org/phpBB2/viewtopic.php?f=3&t=29588
     //
-    // Post by badera => Thu Dec 17, 2009 12:32 pm 
+    // Post by badera => Thu Dec 17, 2009 12:32 pm
     //
-    private static void createPaintScaleLegend(JFreeChart chart, PaintScale scale, boolean logScale) 
-    {   
+    private static void createPaintScaleLegend(JFreeChart chart, PaintScale scale, boolean logScale)
+    {
         NumberAxis legendAxis = null;
         if (logScale) {
-            legendAxis = new LogarithmicAxis("scale");            
+            legendAxis = new LogarithmicAxis("scale");
         } else {
             legendAxis = new NumberAxis("scale");
         }
@@ -129,7 +129,7 @@ public class Histogram2D implements Histogram<IHistogram2D>
         legendAxis.setTickMarkPaint(Color.white);
         legendAxis.setTickLabelFont(new Font("Dialog", 0, 7));
         legendAxis.setRange(new Range(scale.getLowerBound(), scale.getUpperBound()));
-                
+
         PaintScaleLegend legend = new PaintScaleLegend(scale, legendAxis);
         if (logScale) {
             legend.setSubdivisionCount(50000);
@@ -146,5 +146,5 @@ public class Histogram2D implements Histogram<IHistogram2D>
         legend.setStripWidth(20D);
         legend.setPosition(RectangleEdge.RIGHT);
         chart.addSubtitle(legend);
-    }    
+    }
 }

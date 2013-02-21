@@ -1,16 +1,18 @@
 package hep.aida.jfree.converter;
 
-
 /**
+ * This is a utility class for creating different line types,
+ * including solid, dotted, dashed and dot-dash.
+ * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
 public class LineType
 {
     public static final LineType SOLID = new LineType(null);
-    public static final LineType DOTTED = new LineType(new float[] {1, 4});
-    public static final LineType DASHED = new LineType(new float[] {10, 10});
-    public static final LineType DOTDASH = new LineType(new float[] {10, 5, 2, 5});
+    public static final LineType DOTTED = new LineType(new float[] {1, 3});
+    public static final LineType DASHED = new LineType(new float[] {5, 5});
+    public static final LineType DOTDASH = new LineType(new float[] {8, 4, 2, 4});
 
     private final float[] dashArray;
 

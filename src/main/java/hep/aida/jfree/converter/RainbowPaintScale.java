@@ -95,6 +95,8 @@ public class RainbowPaintScale extends BasicPaintScale
             System.out.println("value = " + value);
         if (value == 0.)
             return Color.white;
+        if (value < 0)
+            throw new IllegalArgumentException("value is less than zero: " + value);
         value = getNormalizedValue(value);
         if (DEBUG)
             System.out.println("normalized value = " + value);        

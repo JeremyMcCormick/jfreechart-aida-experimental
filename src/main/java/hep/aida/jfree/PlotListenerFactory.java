@@ -11,7 +11,8 @@ import org.jfree.chart.JFreeChart;
  */
 public class PlotListenerFactory
 {
-    public static PlotListener createListener(IBaseHistogram hist, JFreeChart chart, int[] datasetIndices) {
+    public static PlotListener createListener(IBaseHistogram hist, JFreeChart chart, int[] datasetIndices)
+    {
         if (hist instanceof IHistogram1D) {
             return new Histogram1DListener(hist, chart, datasetIndices);
         } else {

@@ -5,24 +5,29 @@ import hep.aida.IPlotter;
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-final class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory {
+final class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory
+{
 
     String name;
-    
-    PlotterFactory() {        
+
+    PlotterFactory()
+    {
         super();
     }
-    
-    PlotterFactory(String name) {
+
+    PlotterFactory(String name)
+    {
         super();
         this.name = name;
     }
-              
-    public IPlotter create(String plotterName) {                
+
+    public IPlotter create(String plotterName)
+    {
         return new Plotter();
     }
-    
-    public IPlotter create() {        
-        return create((String)null);
+
+    public IPlotter create()
+    {
+        return create((String) null);
     }
 }

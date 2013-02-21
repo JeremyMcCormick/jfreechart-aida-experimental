@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.JPanel;
+
 import junit.framework.TestCase;
 
 /**
@@ -20,9 +22,10 @@ import junit.framework.TestCase;
  */
 public class Histogram2DTest extends TestCase {
     
-    protected IAnalysisFactory af;
-    protected IPlotterFactory pf;
-    protected IHistogramFactory hf;
+    private IAnalysisFactory af;
+    private IPlotterFactory pf;
+    private IHistogramFactory hf;
+    private JPanel panel = null;
         
     protected void setUp() {
         AnalysisFactory.register();
@@ -92,6 +95,27 @@ public class Histogram2DTest extends TestCase {
         
         // Show time
         plotter.show();
-        Thread.sleep(5000); // Yeah, I know.
+        panel = ((PlotterRegion)plotter.region(0)).getPanel();
+        //Thread.sleep(5000); // Yeah, I know.
     }
+    
+    public void tearDown() {
+        while (true) 
+        { 
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    /*
+    public static void main(String[] args) throws Exception
+    {
+        Histogram2DTest test = new Histogram2DTest();
+        test.setUp();
+        test.testHistogram2D();
+    }
+    */
 }

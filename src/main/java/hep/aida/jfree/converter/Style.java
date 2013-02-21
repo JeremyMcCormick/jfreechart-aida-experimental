@@ -27,6 +27,7 @@ import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYErrorRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.util.ShapeUtilities;
@@ -80,6 +81,12 @@ public final class Style
 
         // Set axis labels on the plot
         setAxisLabels(hist, chart.getXYPlot());
+        
+        // X Axis style such as label fonts.
+        setAxisStyle(plot.getDomainAxis(), style.xAxisStyle());
+
+        // Y Axis style such as label fonts.
+        setAxisStyle(plot.getRangeAxis(), style.yAxisStyle());
 
         // data fill style
         setDataFillStyle(chart, style);
@@ -95,12 +102,6 @@ public final class Style
 
         // background color
         setBackgroundColor(plot, style);
-
-        // X Axis style
-        setAxisStyle(plot.getDomainAxis(), style.xAxisStyle());
-
-        // Y Axis style
-        setAxisStyle(plot.getRangeAxis(), style.yAxisStyle());
 
         // Error bars.
         setErrorBarStyle(chart, style);
@@ -253,7 +254,7 @@ public final class Style
 
         // Assumes errors are drawn by the 2nd renderer in the plot.
         XYItemRenderer renderer = chart.getXYPlot().getRenderer(1);
-        
+
         // It looks like there are no errors defined so we bail!
         if (renderer == null) {
             return;
@@ -276,6 +277,21 @@ public final class Style
 
         // Set the stroke on the renderer.
         renderer.setSeriesStroke(0, stroke);
+        
+        // Error bar decoration.
+        // FIXME: Right now this just handles turning caps on or off.  Proper handling
+        //        of this setting, which is a percentage of the bin width, will require
+        //        code to figure out the width of the bin in Java 2D units.  This will
+        //        also not work for histograms with variable X bin sizes.
+        String decoration = errorStyle.parameterValue("errorBarDecoration");
+        if (decoration != null) {
+            float decVal = Float.parseFloat(decoration);
+            if (decVal <= 0.f) {
+                if (renderer instanceof XYErrorRenderer) {
+                    ((XYErrorRenderer)renderer).setCapLength(0.);
+                }
+            }
+        }
 
         // Set the error bars decoration
         /*        
@@ -410,14 +426,16 @@ public final class Style
 
         }
 
-        /*
+        //
+        // Huge amount of possible styles for 1D histograms below here !!!! 
+        //
         
-        // Huge amount of styling for 1D histograms below here!!!! //
-          
+        /*
+                  
         JASHist1DHistogramStyle hs = (JASHist1DHistogramStyle) histStyle;
-
-        if (customOverlay != null && customOverlay instanceof CanSetStyle)
-            ((CanSetStyle) customOverlay).setStyle(hs);
+        
+        // if (customOverlay != null && customOverlay instanceof CanSetStyle)
+        //    ((CanSetStyle) customOverlay).setStyle(hs);
 
         hs.setShowHistogramBars(dataStyle.lineStyle().isVisible());
 

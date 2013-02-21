@@ -16,19 +16,21 @@ import org.jfree.data.xy.XYDataset;
  * @version $Id: $
  */
 public class Histogram1DListener extends PlotListener
-{            
+{
     IHistogram1D h1d;
-    
-    Histogram1DListener(IBaseHistogram hist, JFreeChart chart, int[] datasetIndices) {
+
+    Histogram1DListener(IBaseHistogram hist, JFreeChart chart, int[] datasetIndices)
+    {
         super(hist, chart, datasetIndices);
         if (!(hist instanceof IHistogram1D)) {
             throw new IllegalArgumentException("hist is not an instance of IHistogram1D.");
         }
-        h1d = (Histogram1D)hist;
+        h1d = (Histogram1D) hist;
     }
-    
-    synchronized void update() {        
-        XYPlot plot = (XYPlot)chart.getPlot();
+
+    synchronized void update()
+    {
+        XYPlot plot = (XYPlot) chart.getPlot();
         XYDataset[] datasets = Dataset.convertForStep(h1d);
         plot.setDataset(datasetIndices[0], datasets[0]);
         plot.setDataset(datasetIndices[1], datasets[1]);

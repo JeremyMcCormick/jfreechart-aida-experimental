@@ -31,6 +31,8 @@ class DefaultChartTheme extends StandardChartTheme
     {
         // White is default background color.
         plot.setBackgroundPaint(Color.white);
+        
+        plot.setOutlineVisible(false);
 
         // Turn off domain grid lines.
         plot.setDomainGridlinesVisible(false);
@@ -65,17 +67,31 @@ class DefaultChartTheme extends StandardChartTheme
         plot.getRangeAxis().setMinorTickMarksVisible(true);
 
         // Configure domain tick marks.
+        /*
         plot.getDomainAxis().setTickMarkInsideLength(8.0f);
         plot.getDomainAxis().setTickMarkOutsideLength(0.0f);
         plot.getDomainAxis().setMinorTickMarkInsideLength(2.0f);
         plot.getDomainAxis().setMinorTickMarkOutsideLength(0.0f);
         plot.getDomainAxis().setTickMarkPaint(Color.black);
+        */
+        plot.getDomainAxis().setTickMarkInsideLength(0.0f);
+        plot.getDomainAxis().setTickMarkOutsideLength(4.0f);
+        plot.getDomainAxis().setMinorTickMarkInsideLength(0.0f);
+        plot.getDomainAxis().setMinorTickMarkOutsideLength(2.0f);
+        plot.getDomainAxis().setTickMarkPaint(Color.black);
 
         // Configure range tick marks.
+        /*
         plot.getRangeAxis().setTickMarkInsideLength(8.0f);
         plot.getRangeAxis().setTickMarkOutsideLength(0.0f);
         plot.getRangeAxis().setMinorTickMarkInsideLength(2.0f);
         plot.getRangeAxis().setMinorTickMarkOutsideLength(0.0f);
+        plot.getRangeAxis().setTickMarkPaint(Color.black);
+        */
+        plot.getRangeAxis().setTickMarkInsideLength(0.0f);
+        plot.getRangeAxis().setTickMarkOutsideLength(4.0f);
+        plot.getRangeAxis().setMinorTickMarkInsideLength(0.0f);
+        plot.getRangeAxis().setMinorTickMarkOutsideLength(2.0f);
         plot.getRangeAxis().setTickMarkPaint(Color.black);
                 
         // double upper = plot.getRangeAxis().getUpperBound();

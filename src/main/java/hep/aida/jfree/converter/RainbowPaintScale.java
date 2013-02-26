@@ -26,7 +26,7 @@ public class RainbowPaintScale extends BasicPaintScale
     double dispZmax;
     double zrange;
     
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
         
     // TODO: Add alpha argument here which should come from AIDA style setting.
     public RainbowPaintScale(double zmin, double zmax, double zlogmin, boolean logScale)

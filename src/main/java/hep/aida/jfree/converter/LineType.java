@@ -10,7 +10,7 @@ package hep.aida.jfree.converter;
 public class LineType
 {
     public static final LineType SOLID = new LineType(null);
-    public static final LineType DOTTED = new LineType(new float[] {1, 3});
+    public static final LineType DOTTED = new LineType(new float[] {2, 6});
     public static final LineType DASHED = new LineType(new float[] {5, 5});
     public static final LineType DOTDASH = new LineType(new float[] {8, 4, 2, 4});
 

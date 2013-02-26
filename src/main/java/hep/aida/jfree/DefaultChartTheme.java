@@ -29,7 +29,6 @@ class DefaultChartTheme extends StandardChartTheme
 
     public void applyToXYPlot(XYPlot plot)
     {
-
         // White is default background color.
         plot.setBackgroundPaint(Color.white);
 

@@ -135,7 +135,7 @@ public class OverlayTest extends TestCase {
             h1d.fill(rand.nextGaussian());            
             overlayHist.fill(rand.nextGaussian());
             overlayHist2.fill(rand.nextGaussian());
-            Thread.sleep(200);
+            //Thread.sleep(200);
         }        
         
         System.out.println("waiting ...");

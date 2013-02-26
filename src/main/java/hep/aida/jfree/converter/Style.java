@@ -15,6 +15,7 @@ import hep.aida.ref.plotter.PlotterFontUtil;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
@@ -38,17 +39,25 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.util.ShapeUtilities;
 
 /**
- * This class applies styles to JFreeChart objects.
+ * This class converts from AIDA styles to JFreeChart.
  * 
- * See this method for how to apply styles from AIDA using the JAS3 plotter:
+ * See this method for how to apply styles from AIDA using the JAS3 plotter, which was used as a reference:
  * 
  * freehep-jaida: 
  * hep.aida.ref.plotter.PlotterRegion.applyStyle(JASHistData jasHistData, IPlotterStyle style);
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
+// FIXME: The private methods applying specific style settings should have their interfaces normalized to
+//        use, for instance, either JFreeChart or XYPlot, depending on what is needed.  In general, the XYPlot
+//        should be good enough.
 public final class Style
 {
+    
+    static private final Paint TRANSPARENT = new Color(0f, 0f, 0f, 0f);     
+    static private final Color DEFAULT_LINE_COLOR = Color.black;
+    static private final Color DEFAULT_SHAPE_COLOR = Color.blue;
+    static private final int ERRORS_INDEX = 1;
     
     private Style()
     {
@@ -65,9 +74,14 @@ public final class Style
         }
     }
 
+    /**
+     * This is the primary method for modifying a JFreeChart plot based on AIDA styles.
+     * @param chart The chart to which styles should be applied.
+     * @param hist The backing histogram for the chart.
+     * @param style The styles to apply.
+     */
     public static void applyStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style)
     {
-
         // System.out.println("applying style to chart: " + chart.getTitle());
         // System.out.println("chart type: " + chart.getXYPlot().getClass().getCanonicalName());
         // for (int i=0; i<chart.getXYPlot().getRendererCount(); i++) {
@@ -84,45 +98,67 @@ public final class Style
         // Set position of axes.
         setAxisLocation(chart, style);
 
-        // Set axis labels on the plot
+        // Set axis labels on the plot.
         setAxisLabels(hist, chart.getXYPlot());
         
-        // X Axis style such as label fonts.
+        // Set X Axis style such as label fonts.
         setAxisStyle(plot.getDomainAxis(), style.xAxisStyle());
 
-        // Y Axis style such as label fonts.
+        // Set Y Axis style such as label fonts.
         setAxisStyle(plot.getRangeAxis(), style.yAxisStyle());
         
-        // title style
+        // Set the title style.
         setTitleStyle(chart, style);
 
-        // background color
+        // Set the plot's background color.
         setBackgroundColor(plot, style);
 
-        // Set data styling or turn off if invisible.
-        if (isDataVisible(style)) {
-        
-            // data fill style
-            setDataFillStyle(chart, style);
+        // Check if the plot is visible before continuing.
+        if (style.isVisible()) {
 
-            // data outline style
-            setDataOutlineStyle(plot, style);
+            // Set the data styling or turn it off if invisible.
+            if (isDataVisible(style)) {
 
-            // data line style (histogram bars)
-            setDataLineStyle(chart, style);
-            
-            // data marker style
-            setDataMarkerStyle(chart, hist, style);
+                // data fill style
+                setDataFillStyle(chart, style);
+
+                // data outline style
+                setDataOutlineStyle(plot, hist, style);
+
+                // data line style (histogram bars)
+                setDataLineStyle(chart, style);
+
+            // Turn off display of histogram data.
+            } else {
+                makeDataInvisible(chart);
+            }
+
+            // Set marker and line styling which may still be visible even if data style is off.
+            if (style.isVisible()) {
+                setDataMarkerStyle(chart, hist, style);
+                setDataOutlineStyle(plot, hist, style);
+            }
+
+            // Set error styling .
+            if (areErrorsVisible(style)) {
+                setErrorBarStyle(chart, style);
+            // Turn off display of error values.
+            } else {
+                makeErrorsInvisible(chart);
+            }
+
+        // Turn off both data and errors as style is set to invisible.
         } else {
             makeDataInvisible(chart);
-        }
-
-        // Set error styling or turn off if invisible.
-        if (areErrorsVisible(style)) {
-            setErrorBarStyle(chart, style);
-        } else {
             makeErrorsInvisible(chart);
         }
+        
+        // THIS NEXT:
+        // grid => style.gridStyle() 
+                
+        //
+        // MORE STUFF TO DO:
+        //
 
         // foreground color => What is this supposed to paint? Which components? Overrides more granular styles?
 
@@ -130,9 +166,9 @@ public final class Style
 
         // data area border type
 
-        // 1D histograms (a lot of stuff!)
+        // 1D histograms (mostly handled already but double check)
 
-        // 2D histograms (ditto)
+        // 2D histograms (see JAIDA code)
 
         // color map
 
@@ -233,6 +269,7 @@ public final class Style
         XYPlot plot = chart.getXYPlot();
         IDataStyle dataStyle = style.dataStyle();
         IFillStyle dataFillStyle = dataStyle.fillStyle();
+        XYItemRenderer renderer = plot.getRenderer();
         if (dataFillStyle.isVisible()) {
             Color color = null;
             try {
@@ -240,17 +277,24 @@ public final class Style
             } catch (ColorConversionException x) {
             } catch (NullPointerException x) {
             }
-            plot.getRenderer().setSeriesPaint(0, color);
+            renderer.setSeriesPaint(0, color);  
         } else {
-            plot.getRenderer().setSeriesPaint(0, chart.getBackgroundPaint());
+            // This will make the bar renderer draw with a transparent fill.
+            if (renderer instanceof XYBarRenderer) {
+                renderer.setSeriesPaint(0, TRANSPARENT);
+            }            
+            // NOTE: Step renderer is left alone as it already does not fill.
         }
     }
-
-    private static void setDataOutlineStyle(XYPlot plot, IPlotterStyle style)
-    {
-        ILineStyle lineStyle = style.dataStyle().outlineStyle();
+    
+    private static void setDataLineStyle(JFreeChart chart, IPlotterStyle style) 
+    { 
+        XYPlot plot = chart.getXYPlot();
+        
+        ILineStyle lineStyle = style.dataStyle().lineStyle();
+        
         if (lineStyle.isVisible()) {
-            Color color = Color.black;
+            Color color = DEFAULT_LINE_COLOR;
             try {
                 color = ColorConverter.get(lineStyle.color());
             } catch (ColorConversionException x) {
@@ -262,16 +306,50 @@ public final class Style
             } else if (plot.getRenderer() instanceof XYStepRenderer) {
                 ((XYStepRenderer) plot.getRenderer()).setSeriesPaint(0, color);
             }
-        } else {
-            plot.getRenderer().setSeriesVisible(0, false);
-        }
+        } 
+       
+        XYItemRenderer renderer = chart.getXYPlot().getRenderer(0);
+                
+        // Color of data lines.
+        Color color = Style.colorFromLineStyle(lineStyle);
+        if (color != null)
+            renderer.setSeriesPaint(0, color);          
+        
+        // Stroke of data lines.
+        Stroke stroke = Style.strokeFromLineStyle(lineStyle);
+        if (stroke != null)
+            renderer.setSeriesStroke(0, stroke);
+    }
+   
+    private static void setDataOutlineStyle(XYPlot plot, IBaseHistogram hist, IPlotterStyle style)
+    {
+        if (hist instanceof IHistogram1D) {
+            ILineStyle outlineStyle = style.dataStyle().outlineStyle();
+            if (outlineStyle.isVisible()) {
+                XYDataset ds = Dataset.convertToPoints((IHistogram1D)hist);
+                XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, false);
+                Color color = DEFAULT_LINE_COLOR;
+                try {
+                    color = ColorConverter.get(outlineStyle.color());
+                } catch (ColorConversionException x) {
+                } catch (NullPointerException x) {
+                }
+                renderer.setSeriesPaint(0, color);
+                Stroke stroke = Style.strokeFromLineStyle(outlineStyle);
+                renderer.setSeriesStroke(0, stroke);
+                
+                int i = plot.getDatasetCount();
+                plot.setDataset(i, ds);
+                plot.setRenderer(i, renderer);
+            }
+        }             
     }
 
     private static void setErrorBarStyle(JFreeChart chart, IPlotterStyle style)
     {
 
         // Assumes errors are drawn by the 2nd renderer in the plot.
-        XYItemRenderer renderer = chart.getXYPlot().getRenderer(1);
+        XYItemRenderer renderer = chart.getXYPlot().getRenderer(ERRORS_INDEX);
 
         // It looks like there are no errors defined so we bail!
         if (renderer == null) {
@@ -315,28 +393,7 @@ public final class Style
             }
         }
     }
-
     
-      private static void setDataLineStyle(JFreeChart chart, IPlotterStyle style) 
-      { 
-          ILineStyle lineStyle = style.dataStyle().lineStyle();
-          XYItemRenderer renderer = chart.getXYPlot().getRenderer(0);
-          if (style.isVisible() == false) {
-              renderer.setSeriesVisible(0, false);
-          } 
-          
-          // Color of data lines.
-          Color color = Style.colorFromLineStyle(lineStyle);
-          if (color != null)
-              renderer.setSeriesPaint(0, color);
-          
-          // Stroke of data lines.
-          Stroke stroke = Style.strokeFromLineStyle(lineStyle);
-          if (stroke != null)
-              renderer.setSeriesStroke(0, stroke);
-      }
-     
-
     private static Color getTransparentColor(Color c, double alpha)
     {
         if (alpha == -1 || alpha < 0 || alpha > 1)
@@ -404,7 +461,7 @@ public final class Style
             }
         }
 
-        // axis line sidth
+        // axis line width
         float axisLineWidth = lineThickness(axisStyle.lineStyle().thickness());
         if (axisLineWidth >= 0) {
             try {
@@ -418,23 +475,32 @@ public final class Style
     
     private static void setDataMarkerStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style)
     {
-        IMarkerStyle markerStyle = style.dataStyle().markerStyle();
+        IMarkerStyle markerStyle = style.dataStyle().markerStyle();               
         if (markerStyle.isVisible()) {
-            // Marker for 1D histogram.
+            // Markers for 1D histograms. 
             if (hist instanceof IHistogram1D) {
                 Shape shape = getMarkerShape(markerStyle.shape(), markerStyle.size());
                 XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(false, true);
-                renderer.setSeriesShape(0, shape);       
+                renderer.setSeriesShape(0, shape); 
+                Color color = DEFAULT_SHAPE_COLOR;
+                try {
+                    color = ColorConverter.get(markerStyle.color());
+                    color = getTransparentColor(color, markerStyle.opacity());
+                } catch (ColorConversionException e) {
+                    e.printStackTrace();
+                }                
+                renderer.setSeriesPaint(0, color);
                 XYDataset ds = Dataset.convertToPoints((IHistogram1D)hist);
-                chart.getXYPlot().setDataset(2, ds);
-                chart.getXYPlot().setRenderer(2, renderer);
+                int i = chart.getXYPlot().getDatasetCount();
+                chart.getXYPlot().setDataset(i, ds);
+                chart.getXYPlot().setRenderer(i, renderer);
             }
         }
     }
     
     private static boolean isDataVisible(IPlotterStyle style) 
     {
-        boolean visible = true;
+        boolean visible = true; 
         if (!style.dataStyle().isVisible()) {
             visible = false;
         }
@@ -459,148 +525,6 @@ public final class Style
     {
         chart.getXYPlot().getRenderer(1).setSeriesVisible(0, false);
     }
-
-    private static void setHistogram1DStyle(XYPlot plot, IPlotterStyle style)
-    {
-
-        IDataStyle dataStyle = style.dataStyle();
-        boolean vis = dataStyle.fillStyle().isVisible();
-        boolean set = ((BaseStyle) dataStyle.fillStyle()).isParameterSet("isVisible");
-
-        if (!set) {
-            plot.setBackgroundPaint(null);
-        } else {
-
-        }
-
-        //
-        // Huge amount of possible styles for 1D histograms below here !!!! 
-        //
-        
-        /*
-                  
-        JASHist1DHistogramStyle hs = (JASHist1DHistogramStyle) histStyle;
-        
-        // if (customOverlay != null && customOverlay instanceof CanSetStyle)
-        //    ((CanSetStyle) customOverlay).setStyle(hs);
-
-        hs.setShowHistogramBars(dataStyle.lineStyle().isVisible());
-
-        hs.setHistogramFill(dataStyle.fillStyle().isVisible());
-
-        hs.setShowDataPoints(dataStyle.markerStyle().isVisible());
-
-        hs.setShowLinesBetweenPoints(dataStyle.outlineStyle().isVisible());
-
-        IFillStyle dataFillStyle = dataStyle.fillStyle();
-        ILineStyle dataLineStyle = dataStyle.lineStyle();
-        IMarkerStyle dataMarkerStyle = dataStyle.markerStyle();
-
-        // By default the histogram's fill color, the contour of the histogram bar and
-        // the line between the points are taken from the line color. If the fill color is set
-        // and the histogram's bars are filled, the different color is used. Same for the
-        // line between the points.
-
-        // Set Colors here, including defaults
-
-        String dataLineColor = dataLineStyle.color();
-        String dataFillColor = dataFillStyle.color();
-        String dataLineBetweenPointsColor = dataStyle.outlineStyle().color();
-        String dataMarkerColor = dataMarkerStyle.color();
-        String errorBarsColor = dataStyle.errorBarStyle().color();
-
-        if (dataFillStyle instanceof BrushStyle) {
-            dataFillColor = ((BrushStyle) dataFillStyle).color(globalIndex, overlayIndex);
-            if (dataMarkerColor == null || !((BrushStyle) dataMarkerStyle).isParameterSet(Style.BRUSH_COLOR, true))
-                dataMarkerColor = dataFillColor;
-            if (dataLineBetweenPointsColor == null || !((BrushStyle) dataStyle.outlineStyle()).isParameterSet(Style.BRUSH_COLOR, true))
-                dataLineBetweenPointsColor = dataFillColor;
-            if (dataLineColor == null || !((BrushStyle) dataLineStyle).isParameterSet(Style.BRUSH_COLOR, true)) {
-                dataLineColor = null;
-            }
-
-            // By default the error bars have the same color as the plot's line.
-            if (errorBarsColor == null || !((BrushStyle) dataStyle.errorBarStyle()).isParameterSet(Style.BRUSH_COLOR, true)) {
-                errorBarsColor = dataLineColor;
-            }
-
-        }
-
-        if (dataFillColor != null && hs.getHistogramFill())
-            if (dataFillColor != null)
-                try {
-                    Color color = ColorConverter.get(dataFillColor);
-                    color = getTransparentColor(color, dataFillStyle.opacity());
-                    hs.setHistogramBarColor(color);
-                } catch (Exception cce) {
-                    throw new RuntimeException(cce);
-                }
-
-        if (dataLineColor != null)
-            try {
-                Color color = ColorConverter.get(dataLineColor);
-                color = getTransparentColor(color, dataLineStyle.opacity());
-                hs.setHistogramBarLineColor(color);
-            } catch (Exception cce) {
-                throw new RuntimeException(cce);
-            }
-
-        if (dataLineBetweenPointsColor != null)
-            try {
-                Color color = ColorConverter.get(dataLineBetweenPointsColor);
-                hs.setLineColor(color);
-            } catch (Exception cce) {
-                throw new RuntimeException(cce);
-            }
-
-        if (dataMarkerColor != null)
-            try {
-                Color color = ColorConverter.get(dataMarkerColor);
-                color = getTransparentColor(color, dataMarkerStyle.opacity());
-                hs.setDataPointColor(color);
-                hs.setErrorBarColor(color);
-            } catch (Exception cce) {
-                throw new RuntimeException(cce);
-            }
-
-        try {
-            if (errorBarsColor != null) {
-                Color color = ColorConverter.get(errorBarsColor);
-                color = getTransparentColor(color, dataStyle.errorBarStyle().opacity());
-                hs.setErrorBarColor(color);
-            }
-        } catch (Exception cce) {
-            throw new RuntimeException(cce);
-        }
-
-        // Set the line types String dataLineType = dataLineStyle.lineType();
-        if (dataLineStyle instanceof LineStyle)
-            dataLineType = ((LineStyle) dataLineStyle).lineType(globalIndex, overlayIndex);
-        hs.setHistogramBarLineStyle(lineType(dataLineType));
-        hs.setHistogramBarLineWidth(lineThickness(dataLineStyle.thickness()));
-
-        String lineType = dataStyle.outlineStyle().lineType();
-        if (dataStyle.outlineStyle() instanceof LineStyle)
-            lineType = ((LineStyle) dataStyle.outlineStyle()).lineType(globalIndex, overlayIndex);
-        hs.setLinesBetweenPointsStyle(lineType(lineType));
-        hs.setLinesBetweenPointsWidth(lineThickness(dataStyle.outlineStyle().thickness()));
-
-        String dataMarkerShape = dataMarkerStyle.shape();
-        if (dataMarkerStyle instanceof MarkerStyle)
-            dataMarkerShape = ((MarkerStyle) dataMarkerStyle).shape(globalIndex, overlayIndex);
-        if (dataMarkerShape != null)
-            hs.setDataPointStyle(markerShape(dataMarkerShape));
-
-        hs.setDataPointSize(dataMarkerStyle.size());
-         */
-    }
-
-    /*
-    private static float lineThickness(String thickness)
-    {
-        return Float.parseFloat(thickness) / (float) 2.;
-    }
-    */
 
     private static float lineThickness(int thickness)
     {
@@ -647,6 +571,7 @@ public final class Style
         return color;
     }
     
+    // Available shape names for data markers.
     public static final String[] availableShapes = new String[] {
             "dot",
             "box",
@@ -674,7 +599,6 @@ public final class Style
             return new Rectangle2D.Double(0-size/2, 0-size/2, size, size);
         else if (markerShape.equals(availableShapes[2]) || markerShape.equals("2"))
             return ShapeUtilities.createDownTriangle(size);
-            //return createUpTriangle(size);
         else if (markerShape.equals(availableShapes[3]) || markerShape.equals("3"))
             return ShapeUtilities.createDiamond(size);
         else if (markerShape.equals(availableShapes[4]) || markerShape.equals("4"))
@@ -693,17 +617,15 @@ public final class Style
             return null;
     }
     
-    // Taken from:
-    // jas.plot.java2.PlotGraphics12
+    // Taken from => jas.plot.java2.PlotGraphics12
     private static Shape createStar(float size)
     {
         GeneralPath path = new GeneralPath();
         
         // half size
         float ss = (float) size/2;
-        
-        // I think these are used for 2D placement within the plot,
-        // so set to (0,0) and hope JFreeChart moves shape to the right place!
+       
+        // Position of shape, which should be at (0,0).
         float xx = 0;
         float yy = 0;
         
@@ -718,17 +640,106 @@ public final class Style
         path.lineTo(xx-ss, yy+ss);
         
         return path;
-    } 
-    
-    /*
-    private static Shape createUpTriangle(float size)
-    {
-        GeneralPath path = new GeneralPath();
-        path.moveTo(0f, -size);
-        path.lineTo(size, size);
-        path.lineTo(-size, size);
-        path.closePath();        
-        return path;
     }
-    */
 }
+
+/*
+
+// /\/\/\ H1D style settings mostly handled now.  Kept here for reference. /\/\/\
+ 
+private static void setHistogram1DStyle(XYPlot plot, IPlotterStyle style)
+{
+
+    IDataStyle dataStyle = style.dataStyle();
+    boolean vis = dataStyle.fillStyle().isVisible();
+    boolean set = ((BaseStyle) dataStyle.fillStyle()).isParameterSet("isVisible");
+
+    if (!set) {
+        plot.setBackgroundPaint(null);
+    } else {
+
+    }
+
+    //
+    // Stuff from JAIDA below here for jas-plotter.  (won't compile) 
+    //        
+              
+    JASHist1DHistogramStyle hs = (JASHist1DHistogramStyle) histStyle;
+    
+    hs.setShowHistogramBars(dataStyle.lineStyle().isVisible());
+    hs.setHistogramFill(dataStyle.fillStyle().isVisible());
+    hs.setShowDataPoints(dataStyle.markerStyle().isVisible());
+    hs.setShowLinesBetweenPoints(dataStyle.outlineStyle().isVisible());
+
+    IFillStyle dataFillStyle = dataStyle.fillStyle();
+    ILineStyle dataLineStyle = dataStyle.lineStyle();
+    IMarkerStyle dataMarkerStyle = dataStyle.markerStyle();
+
+    // By default the histogram's fill color, the contour of the histogram bar and
+    // the line between the points are taken from the line color. If the fill color is set
+    // and the histogram's bars are filled, the different color is used. Same for the
+    // line between the points.
+
+    // Set Colors here, including defaults
+
+    String dataLineColor = dataLineStyle.color();
+    String dataFillColor = dataFillStyle.color();
+    String dataLineBetweenPointsColor = dataStyle.outlineStyle().color();
+    String dataMarkerColor = dataMarkerStyle.color();
+    String errorBarsColor = dataStyle.errorBarStyle().color();
+
+    if (dataFillStyle instanceof BrushStyle) {
+        dataFillColor = ((BrushStyle) dataFillStyle).color(globalIndex, overlayIndex);
+        if (dataMarkerColor == null || !((BrushStyle) dataMarkerStyle).isParameterSet(Style.BRUSH_COLOR, true))
+            dataMarkerColor = dataFillColor;
+        if (dataLineBetweenPointsColor == null || !((BrushStyle) dataStyle.outlineStyle()).isParameterSet(Style.BRUSH_COLOR, true))
+            dataLineBetweenPointsColor = dataFillColor;
+        if (dataLineColor == null || !((BrushStyle) dataLineStyle).isParameterSet(Style.BRUSH_COLOR, true)) {
+            dataLineColor = null;
+        }
+
+        // By default the error bars have the same color as the plot's line.
+        if (errorBarsColor == null || !((BrushStyle) dataStyle.errorBarStyle()).isParameterSet(Style.BRUSH_COLOR, true)) {
+            errorBarsColor = dataLineColor;
+        }
+
+    }
+
+    if (dataFillColor != null && hs.getHistogramFill())
+        if (dataFillColor != null)
+            try {
+                Color color = ColorConverter.get(dataFillColor);
+                color = getTransparentColor(color, dataFillStyle.opacity());
+                hs.setHistogramBarColor(color);
+            } catch (Exception cce) {
+                throw new RuntimeException(cce);
+            }
+
+    if (dataLineColor != null)
+        try {
+            Color color = ColorConverter.get(dataLineColor);
+            color = getTransparentColor(color, dataLineStyle.opacity());
+            hs.setHistogramBarLineColor(color);
+        } catch (Exception cce) {
+            throw new RuntimeException(cce);
+        }
+
+    try {
+        if (errorBarsColor != null) {
+            Color color = ColorConverter.get(errorBarsColor);
+            color = getTransparentColor(color, dataStyle.errorBarStyle().opacity());
+            hs.setErrorBarColor(color);
+        }
+    } catch (Exception cce) {
+        throw new RuntimeException(cce);
+    }
+    
+}
+         */
+
+/*
+private static float lineThickness(String thickness)
+{
+    return Float.parseFloat(thickness) / (float) 2.;
+}
+*/

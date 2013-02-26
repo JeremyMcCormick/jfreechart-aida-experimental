@@ -33,9 +33,13 @@ public class Histogram1D implements Histogram<IHistogram1D>
 
     public JFreeChart convert(IHistogram1D h1d, IPlotterStyle style)
     {
-        if (style != null && !style.dataStyle().lineStyle().isVisible()) {
+        // First case will draw the histogram contour only and no bars.
+        if (style != null && !style.dataStyle().lineStyle().isVisible() && !style.dataStyle().fillStyle().isVisible()) {
+            //System.out.println("converting outline only");
             return convertOutlineOnly(h1d);
+        // This will draw the default histogram with style options for fill and bars.
         } else {
+            //System.out.println("convert default");
             return convertDefault(h1d);
         }
     }

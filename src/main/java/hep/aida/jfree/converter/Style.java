@@ -57,6 +57,7 @@ public final class Style
     static private final Paint TRANSPARENT = new Color(0f, 0f, 0f, 0f);     
     static private final Color DEFAULT_LINE_COLOR = Color.black;
     static private final Color DEFAULT_SHAPE_COLOR = Color.blue;
+    static private final Color DEFAULT_FILL_COLOR = Color.blue;
     static private final int ERRORS_INDEX = 1;
     
     private Style()
@@ -82,12 +83,12 @@ public final class Style
      */
     public static void applyStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style)
     {
-        // System.out.println("applying style to chart: " + chart.getTitle());
-        // System.out.println("chart type: " + chart.getXYPlot().getClass().getCanonicalName());
-        // for (int i=0; i<chart.getXYPlot().getRendererCount(); i++) {
-        // System.out.println("renderer["+i+"]: "+chart.getXYPlot().getRenderer(i).getClass().getCanonicalName());
-        // }
-        // System.out.println();
+        //System.out.println("applying style to chart: " + chart.getTitle().getText());
+        //System.out.println("chart type: " + chart.getXYPlot().getClass().getCanonicalName());
+        //for (int i=0; i<chart.getXYPlot().getRendererCount(); i++) {
+        //    System.out.println("renderer["+i+"]: "+chart.getXYPlot().getRenderer(i).getClass().getCanonicalName());
+        //}
+        //System.out.println();
 
         // get the plot
         XYPlot plot = chart.getXYPlot();
@@ -271,19 +272,23 @@ public final class Style
         IFillStyle dataFillStyle = dataStyle.fillStyle();
         XYItemRenderer renderer = plot.getRenderer();
         if (dataFillStyle.isVisible()) {
-            Color color = null;
+            Color color = DEFAULT_FILL_COLOR;
             try {
-                color = ColorConverter.get(dataFillStyle.color());
-            } catch (ColorConversionException x) {
-            } catch (NullPointerException x) {
+                color = ColorConverter.get(dataFillStyle.color());                
+            } catch (ColorConversionException e) {
+                e.printStackTrace();
+            } catch (NullPointerException e) {
+                //e.printStackTrace();
             }
             renderer.setSeriesPaint(0, color);  
+            renderer.setSeriesOutlinePaint(0, color);
         } else {
             // This will make the bar renderer draw with a transparent fill.
             if (renderer instanceof XYBarRenderer) {
                 renderer.setSeriesPaint(0, TRANSPARENT);
             }            
-            // NOTE: Step renderer is left alone as it already does not fill.
+            // NOTE: Step renderer used to draw histogram contour is left alone, 
+            //       as it already does not fill.
         }
     }
     
@@ -297,12 +302,15 @@ public final class Style
             Color color = DEFAULT_LINE_COLOR;
             try {
                 color = ColorConverter.get(lineStyle.color());
-            } catch (ColorConversionException x) {
-            } catch (NullPointerException x) {
+            } catch (ColorConversionException e) {
+                e.printStackTrace();
+            } catch (NullPointerException e) {
+                //e.printStackTrace();
             }
+            // Turn on the bar outline if using the bar renderer and set the outline color.
             if (plot.getRenderer() instanceof XYBarRenderer) {
-                ((XYBarRenderer) plot.getRenderer()).setDrawBarOutline(true);
                 plot.getRenderer().setSeriesOutlinePaint(0, color);
+            // If the step renderer is used, just set the base color.
             } else if (plot.getRenderer() instanceof XYStepRenderer) {
                 ((XYStepRenderer) plot.getRenderer()).setSeriesPaint(0, color);
             }
@@ -311,11 +319,12 @@ public final class Style
         XYItemRenderer renderer = chart.getXYPlot().getRenderer(0);
                 
         // Color of data lines.
-        Color color = Style.colorFromLineStyle(lineStyle);
-        if (color != null)
-            renderer.setSeriesPaint(0, color);          
+        // FIXME: Duplicates above?  Maybe can be removed or combined.
+        //Color color = Style.colorFromLineStyle(lineStyle);
+        //if (color != null)
+        //    renderer.setSeriesPaint(0, color);
         
-        // Stroke of data lines.
+        // Stroke of the data lines.
         Stroke stroke = Style.strokeFromLineStyle(lineStyle);
         if (stroke != null)
             renderer.setSeriesStroke(0, stroke);
@@ -347,11 +356,11 @@ public final class Style
 
     private static void setErrorBarStyle(JFreeChart chart, IPlotterStyle style)
     {
-
-        // Assumes errors are drawn by the 2nd renderer in the plot.
+        // Assume errors are being drawn by the 2nd renderer in the plot.
+        // TODO: Alternately could base this lookup on a dataset key.
         XYItemRenderer renderer = chart.getXYPlot().getRenderer(ERRORS_INDEX);
 
-        // It looks like there are no errors defined so we bail!
+        // It looks like there are no errors defined.
         if (renderer == null) {
             return;
         }
@@ -364,7 +373,7 @@ public final class Style
             renderer.setSeriesVisible(0, false);
 
         // Set the line color.
-        Color errorColor = Style.colorFromLineStyle(errorStyle);        
+        Color errorColor = Style.toColor(errorStyle);        
         if (errorColor != null)
             renderer.setSeriesPaint(0, errorColor);
         
@@ -377,15 +386,13 @@ public final class Style
         // Error bar decoration.
         // FIXME: Right now this just handles turning caps on or off.  Proper handling
         //        of this setting, which is a percentage of the bin width, will require
-        //        code to figure out the width of the bin in Java 2D units.  This will
-        //        also not work for histograms with variable X bin sizes.
+        //        code to figure out the width of the bins in Java 2D units.
+        // FIXME: This should probably default to showing the lines if this is not set.
         String decoration = errorStyle.parameterValue(ERRORBAR_DECORATION);
-        //System.out.println("decoration = " + decoration);
         if (decoration != null) {
             float decVal = Float.parseFloat(decoration);
             if (decVal <= 0.f) {
                 if (renderer instanceof XYErrorRenderer) {
-                    //System.out.println("setting cap length to zero");
                     ((XYErrorRenderer)renderer).setCapLength(0.);
                 }
             } else {
@@ -475,7 +482,7 @@ public final class Style
     
     private static void setDataMarkerStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style)
     {
-        IMarkerStyle markerStyle = style.dataStyle().markerStyle();               
+        IMarkerStyle markerStyle = style.dataStyle().markerStyle();
         if (markerStyle.isVisible()) {
             // Markers for 1D histograms. 
             if (hist instanceof IHistogram1D) {
@@ -484,11 +491,10 @@ public final class Style
                 renderer.setSeriesShape(0, shape); 
                 Color color = DEFAULT_SHAPE_COLOR;
                 try {
-                    color = ColorConverter.get(markerStyle.color());
-                    color = getTransparentColor(color, markerStyle.opacity());
-                } catch (ColorConversionException e) {
-                    e.printStackTrace();
-                }                
+                    color = toColor(markerStyle);
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                }
                 renderer.setSeriesPaint(0, color);
                 XYDataset ds = Dataset.convertToPoints((IHistogram1D)hist);
                 int i = chart.getXYPlot().getDatasetCount();
@@ -536,7 +542,7 @@ public final class Style
         // Line thickness.
         float lineThickness = Style.lineThickness(style.thickness());
 
-        // Error bar line type.
+        // The line type, e.g. solid, dashed, etc.
         LineType lineType = LineType.getLineType(style.lineType());
 
         // Create the stroke for the line.
@@ -550,7 +556,7 @@ public final class Style
         return stroke;
     }
     
-    private static Color colorFromLineStyle(ILineStyle style)
+    private static Color toColor(ILineStyle style)
     {
         // Color.
         Color color = null;
@@ -571,6 +577,48 @@ public final class Style
         return color;
     }
     
+    private static Color toColor(IMarkerStyle style)
+    {
+        // Color.
+        Color color = null;
+        
+        try {
+            // Get the basic color.
+            color = ColorConverter.get(style.color());
+            
+            // Apply opacity setting.
+            color = getTransparentColor(color, style.opacity());
+            
+        } catch (ColorConversionException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            //e.printStackTrace();
+        }        
+        
+        return color;
+    }
+    
+    private static Color toColor(IFillStyle style)
+    {
+        // Color.
+        Color color = null;
+        
+        try {
+            // Get the basic color.
+            color = ColorConverter.get(style.color());
+            
+            // Apply opacity setting.
+            color = getTransparentColor(color, style.opacity());
+            
+        } catch (ColorConversionException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            //e.printStackTrace();
+        }        
+        
+        return color;
+    }
+        
     // Available shape names for data markers.
     public static final String[] availableShapes = new String[] {
             "dot",
@@ -588,8 +636,8 @@ public final class Style
     /**
      * Create an AWT shape from a name and a size.
      * @param markerShape The name of the shape or AIDA index.
-     * @param size The size of the shape. 
-     * @return The AWT shape.
+     * @param size The size of the shape, the effect of which depends on the type. 
+     * @return The name of the shape.
      */
     private static Shape getMarkerShape(String markerShape, float size)
     {
@@ -645,7 +693,7 @@ public final class Style
 
 /*
 
-// /\/\/\ H1D style settings mostly handled now.  Kept here for reference. /\/\/\
+// /\/\/\ H1D style which is mostly handled now.  Kept here for reference. /\/\/\
  
 private static void setHistogram1DStyle(XYPlot plot, IPlotterStyle style)
 {
@@ -735,7 +783,7 @@ private static void setHistogram1DStyle(XYPlot plot, IPlotterStyle style)
     }
     
 }
-         */
+*/
 
 /*
 private static float lineThickness(String thickness)

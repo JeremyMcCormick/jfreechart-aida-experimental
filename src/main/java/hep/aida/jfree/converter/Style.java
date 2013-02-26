@@ -5,10 +5,12 @@ import hep.aida.IAxisStyle;
 import hep.aida.IBaseHistogram;
 import hep.aida.IDataStyle;
 import hep.aida.IFillStyle;
+import hep.aida.IGridStyle;
 import hep.aida.IHistogram1D;
 import hep.aida.ILineStyle;
 import hep.aida.IMarkerStyle;
 import hep.aida.IPlotterStyle;
+import hep.aida.ITextStyle;
 import hep.aida.ref.plotter.BaseStyle;
 import hep.aida.ref.plotter.PlotterFontUtil;
 
@@ -113,6 +115,9 @@ public final class Style
 
         // Set the plot's background color.
         setBackgroundColor(plot, style);
+        
+        // Set the grid style.
+        setGridStyle(chart, style);
 
         // Check if the plot is visible before continuing.
         if (style.isVisible()) {
@@ -240,7 +245,8 @@ public final class Style
         String backgroundColor = style.regionBoxStyle().backgroundStyle().color();
         if (backgroundColor != null) {
             try {
-                Color color = ColorConverter.get(backgroundColor);
+                //Color color = ColorConverter.get(backgroundColor);
+                Color color = toColor(style.regionBoxStyle().backgroundStyle());
                 plot.setBackgroundPaint(color);
             } catch (Exception cce) {
                 throw new RuntimeException(cce);
@@ -256,8 +262,9 @@ public final class Style
         String colorStr = style.titleStyle().textStyle().color();
         if (colorStr != null) {
             try {
-                Color titleColor = ColorConverter.get(colorStr);
-                titleColor = getTransparentColor(titleColor, style.titleStyle().textStyle().opacity());
+                //Color titleColor = ColorConverter.get(colorStr);
+                //titleColor = getTransparentColor(titleColor, style.titleStyle().textStyle().opacity());
+                Color titleColor = toColor(style.titleStyle().textStyle());
                 chart.getTitle().setPaint(titleColor);
             } catch (Exception x) {
                 throw new RuntimeException(x);
@@ -274,9 +281,10 @@ public final class Style
         if (dataFillStyle.isVisible()) {
             Color color = DEFAULT_FILL_COLOR;
             try {
-                color = ColorConverter.get(dataFillStyle.color());                
-            } catch (ColorConversionException e) {
-                e.printStackTrace();
+                //color = ColorConverter.get(dataFillStyle.color());     
+                color = toColor(dataFillStyle);
+            //} catch (ColorConversionException e) {
+            //    e.printStackTrace();
             } catch (NullPointerException e) {
                 //e.printStackTrace();
             }
@@ -301,9 +309,10 @@ public final class Style
         if (lineStyle.isVisible()) {
             Color color = DEFAULT_LINE_COLOR;
             try {
-                color = ColorConverter.get(lineStyle.color());
-            } catch (ColorConversionException e) {
-                e.printStackTrace();
+                //color = ColorConverter.get(lineStyle.color());
+                color = toColor(lineStyle);
+            //} catch (ColorConversionException e) {
+            //    e.printStackTrace();
             } catch (NullPointerException e) {
                 //e.printStackTrace();
             }
@@ -325,7 +334,7 @@ public final class Style
         //    renderer.setSeriesPaint(0, color);
         
         // Stroke of the data lines.
-        Stroke stroke = Style.strokeFromLineStyle(lineStyle);
+        Stroke stroke = Style.toStroke(lineStyle);
         if (stroke != null)
             renderer.setSeriesStroke(0, stroke);
     }
@@ -339,12 +348,13 @@ public final class Style
                 XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, false);
                 Color color = DEFAULT_LINE_COLOR;
                 try {
-                    color = ColorConverter.get(outlineStyle.color());
-                } catch (ColorConversionException x) {
+                    //color = ColorConverter.get(outlineStyle.color());
+                    color = toColor(outlineStyle);
+                //} catch (ColorConversionException x) {
                 } catch (NullPointerException x) {
                 }
                 renderer.setSeriesPaint(0, color);
-                Stroke stroke = Style.strokeFromLineStyle(outlineStyle);
+                Stroke stroke = Style.toStroke(outlineStyle);
                 renderer.setSeriesStroke(0, stroke);
                 
                 int i = plot.getDatasetCount();
@@ -378,7 +388,7 @@ public final class Style
             renderer.setSeriesPaint(0, errorColor);
         
         // Create the stroke from the error line style.
-        Stroke stroke = Style.strokeFromLineStyle(errorStyle);
+        Stroke stroke = Style.toStroke(errorStyle);
 
         // Set the stroke on the renderer.
         renderer.setSeriesStroke(0, stroke);
@@ -401,14 +411,6 @@ public final class Style
         }
     }
     
-    private static Color getTransparentColor(Color c, double alpha)
-    {
-        if (alpha == -1 || alpha < 0 || alpha > 1)
-            return c;
-        int t = (int) (255 * alpha);
-        return new Color(c.getRed(), c.getGreen(), c.getBlue(), t);
-    }
-
     private static void setAxisStyle(ValueAxis axis, IAxisStyle axisStyle)
     {
 
@@ -428,9 +430,11 @@ public final class Style
         String axisLabelColor = axisStyle.labelStyle().color();
         if (axisLabelColor != null) {
             try {
-                Color color = ColorConverter.get(axisLabelColor);
-                color = getTransparentColor(color, axisStyle.labelStyle().opacity());
-                axis.setLabelPaint(color);
+                //Color color = ColorConverter.get(axisLabelColor);
+                //color = getTransparentColor(color, axisStyle.labelStyle().opacity());
+                Color color = toColor(axisStyle.labelStyle());
+                if (color != null)
+                    axis.setLabelPaint(color);
             } catch (Exception cce) {
                 throw new RuntimeException(cce);
             }
@@ -445,8 +449,9 @@ public final class Style
         String axisTickLabelColor = axisStyle.tickLabelStyle().color();
         if (axisTickLabelColor != null) {
             try {
-                Color color = ColorConverter.get(axisTickLabelColor);
-                color = getTransparentColor(color, axisStyle.tickLabelStyle().opacity());
+                //Color color = ColorConverter.get(axisTickLabelColor);
+                //color = getTransparentColor(color, axisStyle.tickLabelStyle().opacity());
+                Color color = toColor(axisStyle.tickLabelStyle());
                 axis.setTickLabelPaint(color);
             } catch (Exception cce) {
                 throw new RuntimeException(cce);
@@ -460,8 +465,9 @@ public final class Style
         String axisLineColor = axisStyle.lineStyle().color();
         if (axisLineColor != null) {
             try {
-                Color color = ColorConverter.get(axisLineColor);
-                color = getTransparentColor(color, axisStyle.lineStyle().opacity());
+                //Color color = ColorConverter.get(axisLineColor);
+                //color = getTransparentColor(color, axisStyle.lineStyle().opacity());
+                Color color = toColor(axisStyle.lineStyle());
                 axis.setAxisLinePaint(color);
             } catch (Exception cce) {
                 throw new RuntimeException(cce);
@@ -504,6 +510,31 @@ public final class Style
         }
     }
     
+    private static void setGridStyle(JFreeChart chart, IPlotterStyle style)
+    {
+        IGridStyle gridStyle = style.gridStyle();
+        boolean visible = gridStyle.isVisible();
+        
+        if (visible) {
+            chart.getXYPlot().setDomainGridlinesVisible(true);
+            chart.getXYPlot().setRangeGridlinesVisible(true);
+            
+            Color color = toColor(gridStyle);
+            if (color != null) {
+                chart.getXYPlot().setDomainGridlinePaint(color);
+                chart.getXYPlot().setRangeGridlinePaint(color);
+            }
+            
+            Stroke stroke = toStroke(gridStyle);            
+            chart.getXYPlot().setDomainGridlineStroke(stroke);
+            chart.getXYPlot().setRangeGridlineStroke(stroke);
+            
+            // Not sure JFree can do this.
+            //double cellSize = gridStyle.cellSize();
+        }        
+        
+    }
+    
     private static boolean isDataVisible(IPlotterStyle style) 
     {
         boolean visible = true; 
@@ -537,7 +568,7 @@ public final class Style
         return ((float) thickness) / (float) 2.;
     }
     
-    private static Stroke strokeFromLineStyle(ILineStyle style)
+    private static Stroke toStroke(IGridStyle style)
     {        
         // Line thickness.
         float lineThickness = Style.lineThickness(style.thickness());
@@ -554,6 +585,33 @@ public final class Style
                                              0.0f);
         
         return stroke;
+    }
+    
+    private static Stroke toStroke(ILineStyle style)
+    {        
+        // Line thickness.
+        float lineThickness = Style.lineThickness(style.thickness());
+
+        // The line type, e.g. solid, dashed, etc.
+        LineType lineType = LineType.getLineType(style.lineType());
+
+        // Create the stroke for the line.
+        BasicStroke stroke = new BasicStroke(lineThickness, 
+                                             BasicStroke.CAP_SQUARE, 
+                                             BasicStroke.JOIN_MITER, 
+                                             10.0f, 
+                                             lineType.getDashArray(), 
+                                             0.0f);
+        
+        return stroke;
+    }
+    
+    private static Color getTransparentColor(Color c, double alpha)
+    {
+        if (alpha == -1 || alpha < 0 || alpha > 1)
+            return c;
+        int t = (int) (255 * alpha);
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), t);
     }
     
     private static Color toColor(ILineStyle style)
@@ -598,7 +656,49 @@ public final class Style
         return color;
     }
     
+    private static Color toColor(ITextStyle style)
+    {
+        // Color.
+        Color color = null;
+        
+        try {
+            // Get the basic color.
+            color = ColorConverter.get(style.color());
+            
+            // Apply opacity setting.
+            color = getTransparentColor(color, style.opacity());
+            
+        } catch (ColorConversionException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            //e.printStackTrace();
+        }        
+        
+        return color;
+    }
+    
     private static Color toColor(IFillStyle style)
+    {
+        // Color.
+        Color color = null;
+        
+        try {
+            // Get the basic color.
+            color = ColorConverter.get(style.color());
+            
+            // Apply opacity setting.
+            color = getTransparentColor(color, style.opacity());
+            
+        } catch (ColorConversionException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            //e.printStackTrace();
+        }        
+        
+        return color;
+    }
+        
+    private static Color toColor(IGridStyle style)
     {
         // Color.
         Color color = null;

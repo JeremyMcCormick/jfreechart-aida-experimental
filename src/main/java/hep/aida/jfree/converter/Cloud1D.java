@@ -23,9 +23,9 @@ class Cloud1D implements Histogram<ICloud1D>
         if (c1d.histogram() == null)
             throw new RuntimeException("Cloud did not convert to histogram successfully!");
         if (style != null && !style.dataStyle().lineStyle().isVisible()) {
-            return Histogram1D.convertOutlineOnly(c1d.histogram());
+            return Histogram1D.convertToStepChart(c1d.histogram());
         } else {
-            return Histogram1D.convertDefault(c1d.histogram());
+            return Histogram1D.convertToBarChart(c1d.histogram());
         }
     }
 }

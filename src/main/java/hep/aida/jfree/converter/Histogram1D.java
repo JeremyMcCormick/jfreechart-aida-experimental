@@ -36,16 +36,16 @@ public class Histogram1D implements Histogram<IHistogram1D>
         // First case will draw the histogram contour only and no bars.
         if (style != null && !style.dataStyle().lineStyle().isVisible() && !style.dataStyle().fillStyle().isVisible()) {
             //System.out.println("converting outline only");
-            return convertOutlineOnly(h1d);
+            return convertToStepChart(h1d);
         // This will draw the default histogram with style options for fill and bars.
         } else {
             //System.out.println("convert default");
-            return convertDefault(h1d);
+            return convertToBarChart(h1d);
         }
     }
 
     // Convert 1D histogram to chart
-    static JFreeChart convertDefault(IHistogram1D h1d)
+    static JFreeChart convertToBarChart(IHistogram1D h1d)
     {
 
         // Create datasets
@@ -55,16 +55,15 @@ public class Histogram1D implements Histogram<IHistogram1D>
 
         // create the chart
         JFreeChart chart = ChartFactory.createHistogram(h1d.title(), null, null, valuesDataset, PlotOrientation.VERTICAL, true, true, false);
-        // chart.setBackgroundPaint(Color.white);
 
         // Set X axis display range
         IAxis axis = h1d.axis();
         NumberAxis domain = (NumberAxis) chart.getXYPlot().getDomainAxis();
         domain.setRange(axis.lowerEdge(), axis.upperEdge());
 
-        // Set the Renderer for the values dataset, so it displays as blue bars
+        // Set the Renderer for the values dataset, so it displays as bars.
         XYBarRenderer barRenderer = new XYBarRenderer();
-        barRenderer.setDrawBarOutline(false);
+        barRenderer.setDrawBarOutline(true);
         chart.getXYPlot().setRenderer(0, barRenderer);
 
         // Create a new Renderer for the errors
@@ -90,7 +89,7 @@ public class Histogram1D implements Histogram<IHistogram1D>
         return chart;
     }
 
-    static JFreeChart convertOutlineOnly(IHistogram1D h1d)
+    static JFreeChart convertToStepChart(IHistogram1D h1d)
     {
 
         // Create two datasets, one for values, and one for errors.

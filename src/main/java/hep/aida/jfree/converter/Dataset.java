@@ -5,6 +5,7 @@ import hep.aida.ICloud2D;
 import hep.aida.IHistogram1D;
 import hep.aida.IHistogram2D;
 
+import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYIntervalSeries;
@@ -118,5 +119,24 @@ public final class Dataset
 
         return datasets;
     }
-
+    
+    public static XYDataset convertToPoints(IHistogram1D h1d)
+    {
+        DefaultXYDataset ds = new DefaultXYDataset();
+        
+        IAxis axis = h1d.axis();
+        int nbins = axis.bins();
+        
+        double data[][] = new double[2][nbins];
+        
+        for (int i=0; i<nbins; i++) 
+        {
+            data[0][i] = axis.binCenter(i);
+            data[1][i] = h1d.binHeight(i);
+        }
+        
+        ds.addSeries("data", data);
+        
+        return ds;
+    }
 }

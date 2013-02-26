@@ -16,7 +16,8 @@ class DefaultChartTheme extends StandardChartTheme
 
     public DefaultChartTheme()
     {
-        super("Default");
+        //super("Default");
+        super("Legacy");
     }
 
     public void apply(JFreeChart chart)
@@ -77,7 +78,7 @@ class DefaultChartTheme extends StandardChartTheme
         plot.getRangeAxis().setMinorTickMarkInsideLength(2.0f);
         plot.getRangeAxis().setMinorTickMarkOutsideLength(0.0f);
         plot.getRangeAxis().setTickMarkPaint(Color.black);
-
+                
         // double upper = plot.getRangeAxis().getUpperBound();
         // System.out.println("upper="+upper);
 

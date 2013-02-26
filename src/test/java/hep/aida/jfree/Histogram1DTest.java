@@ -8,7 +8,6 @@ import hep.aida.IPlotter;
 import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
 import hep.aida.ITextStyle;
-import hep.aida.ref.event.AIDAObservable;
 
 import java.util.ArrayList;
 import java.util.List;

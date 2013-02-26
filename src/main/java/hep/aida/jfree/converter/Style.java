@@ -1,10 +1,13 @@
 package hep.aida.jfree.converter;
 
+import static hep.aida.ref.plotter.Style.ERRORBAR_DECORATION;
 import hep.aida.IAxisStyle;
 import hep.aida.IBaseHistogram;
 import hep.aida.IDataStyle;
 import hep.aida.IFillStyle;
+import hep.aida.IHistogram1D;
 import hep.aida.ILineStyle;
+import hep.aida.IMarkerStyle;
 import hep.aida.IPlotterStyle;
 import hep.aida.ref.plotter.BaseStyle;
 import hep.aida.ref.plotter.PlotterFontUtil;
@@ -29,7 +32,9 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYErrorRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.util.ShapeUtilities;
 
 /**
@@ -44,7 +49,7 @@ import org.jfree.util.ShapeUtilities;
  */
 public final class Style
 {
-
+    
     private Style()
     {
     }
@@ -72,7 +77,7 @@ public final class Style
 
         // get the plot
         XYPlot plot = chart.getXYPlot();
-
+        
         // Set log scale on axes if selected.
         setLogAxis(chart, style);
 
@@ -87,32 +92,43 @@ public final class Style
 
         // Y Axis style such as label fonts.
         setAxisStyle(plot.getRangeAxis(), style.yAxisStyle());
-
-        // data fill style
-        setDataFillStyle(chart, style);
-
-        // data outline style
-        setDataOutlineStyle(plot, style);
-
-        // data line style (histogram bars)
-        setDataLineStyle(chart, style);
-
+        
         // title style
         setTitleStyle(chart, style);
 
         // background color
         setBackgroundColor(plot, style);
 
-        // Error bars.
-        setErrorBarStyle(chart, style);
+        // Set data styling or turn off if invisible.
+        if (isDataVisible(style)) {
+        
+            // data fill style
+            setDataFillStyle(chart, style);
+
+            // data outline style
+            setDataOutlineStyle(plot, style);
+
+            // data line style (histogram bars)
+            setDataLineStyle(chart, style);
+            
+            // data marker style
+            setDataMarkerStyle(chart, hist, style);
+        } else {
+            makeDataInvisible(chart);
+        }
+
+        // Set error styling or turn off if invisible.
+        if (areErrorsVisible(style)) {
+            setErrorBarStyle(chart, style);
+        } else {
+            makeErrorsInvisible(chart);
+        }
 
         // foreground color => What is this supposed to paint? Which components? Overrides more granular styles?
 
         // data area colors
 
         // data area border type
-
-        // position of X axis
 
         // 1D histograms (a lot of stuff!)
 
@@ -246,6 +262,8 @@ public final class Style
             } else if (plot.getRenderer() instanceof XYStepRenderer) {
                 ((XYStepRenderer) plot.getRenderer()).setSeriesPaint(0, color);
             }
+        } else {
+            plot.getRenderer().setSeriesVisible(0, false);
         }
     }
 
@@ -283,34 +301,19 @@ public final class Style
         //        of this setting, which is a percentage of the bin width, will require
         //        code to figure out the width of the bin in Java 2D units.  This will
         //        also not work for histograms with variable X bin sizes.
-        String decoration = errorStyle.parameterValue("errorBarDecoration");
+        String decoration = errorStyle.parameterValue(ERRORBAR_DECORATION);
+        //System.out.println("decoration = " + decoration);
         if (decoration != null) {
             float decVal = Float.parseFloat(decoration);
             if (decVal <= 0.f) {
                 if (renderer instanceof XYErrorRenderer) {
+                    //System.out.println("setting cap length to zero");
                     ((XYErrorRenderer)renderer).setCapLength(0.);
                 }
+            } else {
+                // TODO: Correctly set error bar width based on style setting.
             }
         }
-
-        // Set the error bars decoration
-        /*        
-         * ILineStyle errorBarSt = dataStyle.errorBarStyle(); 
-         * try { 
-         *     String
-         *     tmp = errorBarSt.parameterValue(Style.ERRORBAR_DECORATION); 
-         *     if (tmp != null && !tmp.trim().equals("") ) 
-         *     { 
-         *         float tmpFl = Float.parseFloat(tmp); 
-         *         hs.setErrorBarDecoration(tmpFl); 
-         *     }
-         *     else { 
-         *         hs.setErrorBarDecoration(-1.0f); 
-         *     } 
-         * } catch ( Exception cce ){ 
-         *     throw new RuntimeException(cce); 
-         * }
-         */
     }
 
     
@@ -411,6 +414,50 @@ public final class Style
                 throw new RuntimeException(cce);
             }
         }
+    }
+    
+    private static void setDataMarkerStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style)
+    {
+        IMarkerStyle markerStyle = style.dataStyle().markerStyle();
+        if (markerStyle.isVisible()) {
+            // Marker for 1D histogram.
+            if (hist instanceof IHistogram1D) {
+                Shape shape = getMarkerShape(markerStyle.shape(), markerStyle.size());
+                XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(false, true);
+                renderer.setSeriesShape(0, shape);       
+                XYDataset ds = Dataset.convertToPoints((IHistogram1D)hist);
+                chart.getXYPlot().setDataset(2, ds);
+                chart.getXYPlot().setRenderer(2, renderer);
+            }
+        }
+    }
+    
+    private static boolean isDataVisible(IPlotterStyle style) 
+    {
+        boolean visible = true;
+        if (!style.dataStyle().isVisible()) {
+            visible = false;
+        }
+        return visible;
+    }
+    
+    private static boolean areErrorsVisible(IPlotterStyle style)
+    {
+        boolean visible = true;
+        if (!style.dataStyle().errorBarStyle().isVisible()) {
+            visible = false;
+        } 
+        return visible;
+    }
+       
+    private static void makeDataInvisible(JFreeChart chart)
+    {
+        chart.getXYPlot().getRenderer(0).setSeriesVisible(0, false);
+    }
+    
+    private static void makeErrorsInvisible(JFreeChart chart)
+    {
+        chart.getXYPlot().getRenderer(1).setSeriesVisible(0, false);
     }
 
     private static void setHistogram1DStyle(XYPlot plot, IPlotterStyle style)
@@ -600,6 +647,19 @@ public final class Style
         return color;
     }
     
+    public static final String[] availableShapes = new String[] {
+            "dot",
+            "box",
+            "triangle",
+            "diamond",
+            "star",
+            "verticalLine",
+            "horizontalLine",
+            "cross",
+            "circle",
+            "square"
+    };
+        
     /**
      * Create an AWT shape from a name and a size.
      * @param markerShape The name of the shape or AIDA index.
@@ -608,26 +668,27 @@ public final class Style
      */
     private static Shape getMarkerShape(String markerShape, float size)
     {
-        if (markerShape.equals("dot") || markerShape.equals("0")) 
-            return new Ellipse2D.Float(1.0f, 1.0f, 1.0f, 1.0f);        
-        else if (markerShape.equals("box") || markerShape.equals("1"))
-            return new Rectangle2D.Double(size, size, size, size);
-        else if (markerShape.equals("triangle") || markerShape.equals("2"))
+        if (markerShape.equals(availableShapes[0]) || markerShape.equals("0")) 
+            return new Ellipse2D.Float(0-size/2, 0-size/2, size, size);
+        else if (markerShape.equals(availableShapes[1]) || markerShape.equals("1"))
+            return new Rectangle2D.Double(0-size/2, 0-size/2, size, size);
+        else if (markerShape.equals(availableShapes[2]) || markerShape.equals("2"))
             return ShapeUtilities.createDownTriangle(size);
-        else if (markerShape.equals("diamond") || markerShape.equals("3"))
+            //return createUpTriangle(size);
+        else if (markerShape.equals(availableShapes[3]) || markerShape.equals("3"))
             return ShapeUtilities.createDiamond(size);
-        else if (markerShape.equals("star") || markerShape.equals("4"))
+        else if (markerShape.equals(availableShapes[4]) || markerShape.equals("4"))
             return createStar(size);                       
-        else if (markerShape.equals("verticalLine") || markerShape.equals("5"))
-            return new Line2D.Float(0, size/2, 0, size/2);
-        else if (markerShape.equals("horizontalLine") || markerShape.equals("6"))
-            return new Line2D.Float(size/2, 0, size/2, 0);
-        else if (markerShape.equals("cross") || markerShape.equals("7"))
-            return ShapeUtilities.createRegularCross(size, size);
-        else if (markerShape.equals("circle") || markerShape.equals("8"))
-            return new Ellipse2D.Float(size, size, size, size);
-        else if (markerShape.equals("square") || markerShape.equals("9"))
-            return new Rectangle2D.Double(size, size, size, size);
+        else if (markerShape.equals(availableShapes[5]) || markerShape.equals("5"))
+            return new Line2D.Float(0, size, 0, -size);
+        else if (markerShape.equals(availableShapes[6]) || markerShape.equals("6"))
+            return new Line2D.Float(-size, 0, size, 0);
+        else if (markerShape.equals(availableShapes[7]) || markerShape.equals("7"))
+            return ShapeUtilities.createRegularCross(size, 1);
+        else if (markerShape.equals(availableShapes[8]) || markerShape.equals("8"))
+            return new Ellipse2D.Float(0-size/2, 0-size/2, size, size);
+        else if (markerShape.equals(availableShapes[9]) || markerShape.equals("9"))
+            return new Rectangle2D.Double(0-size, 0-size, size, size);
         else
             return null;
     }
@@ -658,4 +719,16 @@ public final class Style
         
         return path;
     } 
+    
+    /*
+    private static Shape createUpTriangle(float size)
+    {
+        GeneralPath path = new GeneralPath();
+        path.moveTo(0f, -size);
+        path.lineTo(size, size);
+        path.lineTo(-size, size);
+        path.closePath();        
+        return path;
+    }
+    */
 }

@@ -170,4 +170,9 @@ public final class PlotterRegion extends DummyPlotterRegion
         // Add a listener which will handle updates to the overlayed histogram.
         addListener(hist, datasetIndices);
     }
+    
+    public void setTitle(String title)
+    {
+        chart.setTitle(title);
+    }
 }

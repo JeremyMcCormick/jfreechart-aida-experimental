@@ -8,7 +8,7 @@ import org.jfree.chart.JFreeChart;
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-class Cloud1D implements Histogram<ICloud1D>
+class Cloud1DConverter implements HistogramConverter<ICloud1D>
 {
 
     public Class<ICloud1D> convertsType()
@@ -23,9 +23,9 @@ class Cloud1D implements Histogram<ICloud1D>
         if (c1d.histogram() == null)
             throw new RuntimeException("Cloud did not convert to histogram successfully!");
         if (style != null && !style.dataStyle().lineStyle().isVisible()) {
-            return Histogram1D.convertToStepChart(c1d.histogram());
+            return Histogram1DConverter.convertToStepChart(c1d.histogram());
         } else {
-            return Histogram1D.convertToBarChart(c1d.histogram());
+            return Histogram1DConverter.convertToBarChart(c1d.histogram());
         }
     }
 }

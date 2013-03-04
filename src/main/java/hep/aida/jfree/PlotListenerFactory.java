@@ -1,6 +1,7 @@
 package hep.aida.jfree;
 
 import hep.aida.IBaseHistogram;
+import hep.aida.ICloud2D;
 import hep.aida.IHistogram1D;
 
 import org.jfree.chart.JFreeChart;
@@ -15,6 +16,8 @@ public class PlotListenerFactory
     {
         if (hist instanceof IHistogram1D) {
             return new Histogram1DListener(hist, chart, datasetIndices);
+        } else if (hist instanceof ICloud2D) {
+            return new Cloud2DListener(hist, chart, datasetIndices);
         } else {
             return null;
         }

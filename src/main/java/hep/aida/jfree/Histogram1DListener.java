@@ -2,7 +2,8 @@ package hep.aida.jfree;
 
 import hep.aida.IBaseHistogram;
 import hep.aida.IHistogram1D;
-import hep.aida.jfree.converter.Dataset;
+import hep.aida.jfree.converter.DatasetConverter;
+import hep.aida.jfree.converter.Histogram1DConverter;
 import hep.aida.ref.histogram.Histogram1D;
 
 import org.jfree.chart.JFreeChart;
@@ -30,9 +31,14 @@ public class Histogram1DListener extends PlotListener
 
     synchronized void update()
     {
+        //long startTime = System.nanoTime();
         XYPlot plot = (XYPlot) chart.getPlot();
-        XYDataset[] datasets = Dataset.convertForStep(h1d);
-        plot.setDataset(datasetIndices[0], datasets[0]);
-        plot.setDataset(datasetIndices[1], datasets[1]);
+        XYDataset[] datasets = Histogram1DConverter.createDatasets(h1d);
+        for (int i=0; i<datasetIndices.length; i++) {
+            //System.out.println("updating ds @ " + datasetIndices[i]);
+            plot.setDataset(datasetIndices[i], datasets[i]);
+        }
+        //long endTime = System.nanoTime() - startTime;
+        //System.out.println("updated plot in " + endTime/1e6 + " ms");
     }
 }

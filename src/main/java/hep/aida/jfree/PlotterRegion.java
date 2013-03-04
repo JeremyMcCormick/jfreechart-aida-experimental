@@ -2,9 +2,10 @@ package hep.aida.jfree;
 
 import hep.aida.IBaseHistogram;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.converter.Factory;
-import hep.aida.jfree.converter.Histogram;
-import hep.aida.jfree.converter.Style;
+import hep.aida.jfree.converter.HistogramConverter;
+import hep.aida.jfree.converter.HistogramConverterFactory;
+import hep.aida.jfree.converter.StyleConverter;
+import hep.aida.jfree.converter.StyleConverterFactory;
 import hep.aida.ref.event.IsObservable;
 
 import javax.swing.JPanel;
@@ -84,32 +85,31 @@ public final class PlotterRegion extends DummyPlotterRegion
     }
 
     public void plot(IBaseHistogram hist, IPlotterStyle style)
-    {
-
+    {        
         // Find the appropriate converter for this AIDA data type.
-        Histogram converter = Factory.instance().getConverter(hist);
+        HistogramConverter converter = HistogramConverterFactory.instance().getConverter(hist);
 
         // The plot will only show if there is a converter registered.
         if (converter != null) {
 
             // Create a new chart.
             JFreeChart newChart = createChart(hist, style, converter);
-
-            // This is the first plot onto the region.
+            
             if (chart == null) {
-                setBaseChart(hist, newChart);
-                // Overlay onto an existing chart.
+                // This is the first plot onto the region.
+                setBaseChart(hist, newChart);                
             } else {
+                // Overlay onto an existing chart.
                 overlay(hist, newChart.getXYPlot());
             }
-            // Cannot display this type of plot.
         } else {
-            System.err.println("WARNING: Histgram type " + hist.getClass().getCanonicalName() + " is not supported.");
+            // Cannot display this type of plot.
+            System.err.println("WARNING: Histogram type " + hist.getClass().getCanonicalName() + " is not supported yet.");
         }
     }
 
     private void setBaseChart(IBaseHistogram hist, JFreeChart newChart)
-    {
+    {        
         // The new chart becomes the base chart for this region.
         chart = newChart;
 
@@ -121,21 +121,30 @@ public final class PlotterRegion extends DummyPlotterRegion
         addListener(hist, datasetIndices);
     }
 
-    private JFreeChart createChart(IBaseHistogram hist, IPlotterStyle style, Histogram converter)
+    private JFreeChart createChart(IBaseHistogram hist, IPlotterStyle style, HistogramConverter converter)
     {
         // Create a new chart.
         JFreeChart newChart = converter.convert(hist, style);
 
         // Apply AIDA styles to the chart.
         if (style != null) {
-            Style.applyStyle(newChart, hist, style);
+            StyleConverter styleConverter = StyleConverterFactory.getStyleConverter(hist);
+            if (styleConverter != null)
+                styleConverter.applyStyle(newChart, hist, style);
+            else
+                System.err.println("WARNING: No style converter found for " + hist.title() + " with type " + hist.getClass().getCanonicalName());
         }
         return newChart;
     }
 
     private void addListener(IBaseHistogram hist, int[] datasetIndices)
     {
-        ((IsObservable) hist).addListener(PlotListenerFactory.createListener(hist, chart, datasetIndices));
+        PlotListener listener = PlotListenerFactory.createListener(hist, chart, datasetIndices);
+        if (listener != null) {
+            ((IsObservable) hist).addListener(listener);
+        }
+        else
+            System.out.println("WARNING: No listener defined for plot " + hist.title() + " with type " + hist.getClass().getCanonicalName());
     }
 
     private int[] getDatasetIndices(XYPlot plot, int offset)

@@ -1,4 +1,5 @@
 package hep.aida.example;
+
 import hep.aida.IAnalysisFactory;
 import hep.aida.IFitFactory;
 import hep.aida.IFitResult;
@@ -54,7 +55,7 @@ public class ProfileFitAndPlotTest extends TestCase
       IFitResult resProf1DFix = fitter.fit(prof1DFixedBinWidth,"p1");
 
       IFitResult resProf1DVar = fitter.fit(prof1DVariableBinWidth,"p1");
-
+            
       // Display the results
       IPlotter plotter = af.createPlotterFactory().create("Fit and Plot an IProfile");
       plotter.createRegions(2,1);
@@ -62,7 +63,16 @@ public class ProfileFitAndPlotTest extends TestCase
       plotter.region(0).plot( resProf1DFix.fittedFunction() );
       plotter.region(1).plot( prof1DVariableBinWidth );
       plotter.region(1).plot( resProf1DVar.fittedFunction() );
+      
       plotter.show();
-      Thread.sleep(10000);
+      
+      //resProf1DVar.fittedFunction();
+      
+      //Thread.sleep(10000);
+   }
+   
+   public static void main(String[] args) throws Exception
+   {
+       (new ProfileFitAndPlotTest()).test();
    }
 }

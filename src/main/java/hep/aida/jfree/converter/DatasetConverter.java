@@ -21,14 +21,14 @@ import org.jfree.data.xy.XYZDataset;
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public final class Dataset
+public final class DatasetConverter
 {
 
-    private Dataset()
+    private DatasetConverter()
     {
     }
 
-    public static XYZDataset convert(IHistogram2D h2d)
+    static XYZDataset convert(IHistogram2D h2d)
     {
         DefaultXYZDataset dataset = new DefaultXYZDataset();
         int xbins = h2d.xAxis().bins();
@@ -66,7 +66,7 @@ public final class Dataset
      * @return An array of datasets; index 0 = values; index 1 = errors
      */
 
-    public static XYIntervalSeriesCollection[] convert(IHistogram1D h1d)
+    static XYIntervalSeriesCollection[] forBarChart(IHistogram1D h1d)
     {
 
         XYIntervalSeriesCollection valuesDataset = new XYIntervalSeriesCollection();
@@ -91,9 +91,8 @@ public final class Dataset
         return datasets;
     }
 
-    public static XYDataset[] convertForStep(IHistogram1D h1d)
+    static XYDataset[] forStepChart(IHistogram1D h1d)
     {
-
         XYDataset[] datasets = new XYDataset[2];
 
         // Create two datasets, one for values, and one for errors.
@@ -101,6 +100,7 @@ public final class Dataset
         XYIntervalSeries errors = new XYIntervalSeries("errors");
         IAxis axis = h1d.axis();
         int nbins = axis.bins();
+        values.add(axis.binLowerEdge(0), 0); // left-most line
         for (int i = 0; i < nbins; i++) {
             values.add(axis.binLowerEdge(i), h1d.binHeight(i));
             double error = h1d.binError(i);
@@ -109,6 +109,8 @@ public final class Dataset
                 values.add(axis.binUpperEdge(i), h1d.binHeight(i));
             }
         }
+        values.add(axis.binUpperEdge(nbins-1), 0); // right-most line
+        
         XYSeriesCollection valuesDataset = new XYSeriesCollection();
         valuesDataset.addSeries(values);
         XYIntervalSeriesCollection errorsDataset = new XYIntervalSeriesCollection();
@@ -120,7 +122,7 @@ public final class Dataset
         return datasets;
     }
     
-    public static XYDataset convertToPoints(IHistogram1D h1d)
+    static XYDataset forPoints(IHistogram1D h1d)
     {
         DefaultXYDataset ds = new DefaultXYDataset();
         
@@ -139,4 +141,5 @@ public final class Dataset
         
         return ds;
     }
+       
 }

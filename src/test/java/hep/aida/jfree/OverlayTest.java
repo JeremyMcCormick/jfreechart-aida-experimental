@@ -55,6 +55,7 @@ public class OverlayTest extends TestCase {
         
         IPlotterStyle pstyle = plotter.style();
 
+        /*
         // data fill color
         //pstyle.dataStyle().fillStyle().setColor("white");
         pstyle.dataStyle().fillStyle().setVisible(false);
@@ -64,6 +65,7 @@ public class OverlayTest extends TestCase {
         //pstyle.dataStyle().outlineStyle().setVisible(false);
         
         pstyle.dataStyle().lineStyle().setVisible(false);
+        pstyle.dataStyle().fillStyle().setVisible(false);
                 
         // title style
         ITextStyle titleStyle = pstyle.titleStyle().textStyle();
@@ -102,21 +104,33 @@ public class OverlayTest extends TestCase {
         pstyle.dataStyle().errorBarStyle().setParameter("errorBarDecoration", "0.0");
         pstyle.dataStyle().lineStyle().setLineType("1");
         pstyle.dataStyle().lineStyle().setColor("blue");
+        */
+        
+        //pstyle.dataStyle().errorBarStyle().setVisible(false);
+        pstyle.dataStyle().errorBarStyle().setVisible(true);
+        pstyle.dataStyle().fillStyle().setVisible(false);
+        pstyle.dataStyle().lineStyle().setVisible(true);
+        pstyle.gridStyle().setVisible(false);
         
         // Plot first histogram.
+        pstyle.dataStyle().lineStyle().setColor("blue");
         plotter.region(0).plot(h1d, pstyle);
         
         // Overlay histogram with style settings.
         IHistogram1D overlayHist = histogram1D();
+        /*
         pstyle.dataStyle().outlineStyle().setColor("red");
         pstyle.dataStyle().errorBarStyle().setColor("red");
         pstyle.dataStyle().errorBarStyle().setLineType("2");
         pstyle.dataStyle().errorBarStyle().setThickness(2);
         pstyle.dataStyle().lineStyle().setLineType("2");
         pstyle.dataStyle().lineStyle().setColor("red");
+        */
+        pstyle.dataStyle().lineStyle().setColor("red");
         plotter.region(0).plot(overlayHist, pstyle);
         
         // Another Overlay histogram with style settings.
+        /*
         IHistogram1D overlayHist2 = histogram1D();
         pstyle.dataStyle().outlineStyle().setColor("green");
         pstyle.dataStyle().errorBarStyle().setColor("green");        
@@ -125,17 +139,18 @@ public class OverlayTest extends TestCase {
         pstyle.dataStyle().lineStyle().setLineType("3");
         pstyle.dataStyle().lineStyle().setColor("green");
         plotter.region(0).plot(overlayHist2, pstyle);
+        */
         
         // Show time
         plotter.show();
         
-        // Overlay 3 histograms in real time.  (Yay!)
+        // Overlay histograms in real time.  
         Random rand = new Random();
         for (int i = 0; i < 1000000000; i++) {                        
-            h1d.fill(rand.nextGaussian());            
+            h1d.fill(rand.nextGaussian());
             overlayHist.fill(rand.nextGaussian());
-            overlayHist2.fill(rand.nextGaussian());
-            //Thread.sleep(200);
+            //overlayHist2.fill(rand.nextGaussian());
+            Thread.sleep(200);
         }        
         
         System.out.println("waiting ...");

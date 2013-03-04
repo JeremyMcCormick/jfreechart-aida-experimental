@@ -6,9 +6,8 @@ import hep.aida.IHistogramFactory;
 import hep.aida.IPlotter;
 import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.converter.Style;
+import hep.aida.ref.plotter.Style;
 
-import java.awt.Color;
 import java.util.Random;
 
 import junit.framework.TestCase;
@@ -65,17 +64,20 @@ public class Histogram1DStyleTest extends TestCase
         // Get the plotter style.
         IPlotterStyle pstyle = plotter.style();
         
+        // Axis appearence.
         pstyle.xAxisStyle().labelStyle().setBold(true);
         pstyle.yAxisStyle().labelStyle().setBold(true);
         pstyle.xAxisStyle().tickLabelStyle().setBold(true);
         pstyle.yAxisStyle().tickLabelStyle().setBold(true);
         pstyle.xAxisStyle().lineStyle().setColor("black");
         pstyle.yAxisStyle().lineStyle().setColor("black");
-        /*
-        pstyle.xAxisStyle().lineStyle().setThickness(4);
-        pstyle.yAxisStyle().lineStyle().setThickness(4);
-        */
+        pstyle.xAxisStyle().lineStyle().setThickness(2);
+        pstyle.yAxisStyle().lineStyle().setThickness(2);        
         
+        // Force auto range to zero.
+        pstyle.yAxisStyle().setParameter("allowZeroSuppression", "false");
+        pstyle.xAxisStyle().setParameter("allowZeroSuppression", "false");
+                        
         // Title style.
         pstyle.titleStyle().textStyle().setFontSize(20);
 
@@ -97,11 +99,13 @@ public class Histogram1DStyleTest extends TestCase
 
         // 2) No fill with bars drawn.
         pstyle.dataStyle().lineStyle().setVisible(true);
+        pstyle.dataStyle().lineStyle().setColor("green");
         pstyle.dataStyle().fillStyle().setVisible(false);
         plotter.region(2).plot(h, pstyle);
         plotter.region(2).setTitle("2) bars with no fill");
         
         // 3) No fill with outline only.
+        pstyle.dataStyle().lineStyle().setColor("blue");
         pstyle.dataStyle().lineStyle().setVisible(false);
         plotter.region(3).plot(h, pstyle);
         plotter.region(3).setTitle("3) contour of histogram only");
@@ -141,9 +145,16 @@ public class Histogram1DStyleTest extends TestCase
         pstyle.dataStyle().outlineStyle().setColor("blue");
         pstyle.dataStyle().outlineStyle().setLineType("dotted");
         pstyle.dataStyle().outlineStyle().setThickness(5);
+        
+        //pstyle.xAxisStyle().setParameter(Style.AXIS_LOWER_LIMIT, "15.0");
+        //pstyle.xAxisStyle().setParameter(Style.AXIS_UPPER_LIMIT, "40.0");
+        
+        //pstyle.yAxisStyle().setParameter(Style.AXIS_LOWER_LIMIT, "100.0");
+        //pstyle.yAxisStyle().setParameter(Style.AXIS_UPPER_LIMIT, "300.0");
+                
         plotter.region(8).plot(h, pstyle);
         plotter.region(8).setTitle("8) lines between points");
-          
+                  
         // Show time.
         plotter.show();
     }

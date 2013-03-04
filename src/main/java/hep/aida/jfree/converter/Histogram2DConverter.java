@@ -25,7 +25,7 @@ import org.jfree.ui.RectangleInsets;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class Histogram2D implements Histogram<IHistogram2D>
+public class Histogram2DConverter implements HistogramConverter<IHistogram2D>
 {
 
     public Class<IHistogram2D> convertsType()
@@ -62,7 +62,7 @@ public class Histogram2D implements Histogram<IHistogram2D>
     public JFreeChart convert(IHistogram2D h2d, IPlotterStyle style)
     {
         // Create dataset.
-        XYZDataset dataset = Dataset.convert(h2d);
+        XYZDataset dataset = DatasetConverter.convert(h2d);
 
         // Calculate Z limits from the dataset.
         double[] zlimits = calculateZLimits(dataset);

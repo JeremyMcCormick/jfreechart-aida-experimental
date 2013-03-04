@@ -10,9 +10,8 @@ import org.jfree.chart.JFreeChart;
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public interface Histogram<T extends IBaseHistogram>
-{
+public interface HistogramConverter<T extends IBaseHistogram>
+{   
     Class<T> convertsType();
-
-    JFreeChart convert(T obj, IPlotterStyle style);
+    JFreeChart convert(T obj, IPlotterStyle style);    
 }

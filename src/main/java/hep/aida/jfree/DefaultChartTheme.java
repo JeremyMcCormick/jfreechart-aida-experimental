@@ -4,6 +4,8 @@ import java.awt.Color;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.TickUnits;
 import org.jfree.chart.plot.XYPlot;
 
 /**
@@ -16,19 +18,20 @@ class DefaultChartTheme extends StandardChartTheme
 
     public DefaultChartTheme()
     {
-        //super("Default");
         super("Legacy");
     }
 
     public void apply(JFreeChart chart)
     {
         super.apply(chart);
-        chart.setBackgroundPaint(Color.white);
-        chart.removeLegend();
+        
+        chart.setAntiAlias(false);
+        //chart.setBackgroundPaint(Color.white);
+        //chart.removeLegend();
     }
 
     public void applyToXYPlot(XYPlot plot)
-    {
+    {               
         // White is default background color.
         plot.setBackgroundPaint(Color.white);
         
@@ -53,11 +56,11 @@ class DefaultChartTheme extends StandardChartTheme
         // Tick unit frequency and labels.
         // FIXME: This doesn't work generically! To do it right, would need
         // to look at the upper bounds for both axes and set accordingly.
-        // TickUnits units = new TickUnits();
-        // units.add(new NumberTickUnit(10.));
-        // plot.getRangeAxis().setStandardTickUnits(units);
+        //TickUnits units = new TickUnits();
+        //units.add(new NumberTickUnit(10.));
+        //plot.getRangeAxis().setStandardTickUnits(units);
         // plot.getRangeAxis().setMinorTickMarksVisible(true);
-        // plot.getRangeAxis().setMinorTickCount(10);
+        //plot.getRangeAxis().setMinorTickCount(10);
         // plot.getDomainAxis().setStandardTickUnits(units);
         // plot.getDomainAxis().setMinorTickMarksVisible(true);
         // plot.getDomainAxis().setMinorTickCount(10);
@@ -67,13 +70,6 @@ class DefaultChartTheme extends StandardChartTheme
         plot.getRangeAxis().setMinorTickMarksVisible(true);
 
         // Configure domain tick marks.
-        /*
-        plot.getDomainAxis().setTickMarkInsideLength(8.0f);
-        plot.getDomainAxis().setTickMarkOutsideLength(0.0f);
-        plot.getDomainAxis().setMinorTickMarkInsideLength(2.0f);
-        plot.getDomainAxis().setMinorTickMarkOutsideLength(0.0f);
-        plot.getDomainAxis().setTickMarkPaint(Color.black);
-        */
         plot.getDomainAxis().setTickMarkInsideLength(0.0f);
         plot.getDomainAxis().setTickMarkOutsideLength(4.0f);
         plot.getDomainAxis().setMinorTickMarkInsideLength(0.0f);
@@ -81,13 +77,6 @@ class DefaultChartTheme extends StandardChartTheme
         plot.getDomainAxis().setTickMarkPaint(Color.black);
 
         // Configure range tick marks.
-        /*
-        plot.getRangeAxis().setTickMarkInsideLength(8.0f);
-        plot.getRangeAxis().setTickMarkOutsideLength(0.0f);
-        plot.getRangeAxis().setMinorTickMarkInsideLength(2.0f);
-        plot.getRangeAxis().setMinorTickMarkOutsideLength(0.0f);
-        plot.getRangeAxis().setTickMarkPaint(Color.black);
-        */
         plot.getRangeAxis().setTickMarkInsideLength(0.0f);
         plot.getRangeAxis().setTickMarkOutsideLength(4.0f);
         plot.getRangeAxis().setMinorTickMarkInsideLength(0.0f);

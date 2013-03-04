@@ -6,7 +6,7 @@ import hep.aida.IHistogramFactory;
 import hep.aida.IPlotter;
 import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.converter.Style;
+import hep.aida.jfree.converter.MarkerUtil;
 
 import java.util.Random;
 
@@ -68,10 +68,10 @@ public class MarkerTest extends TestCase
         pstyle.dataStyle().markerStyle().setColor("blue");
 
         // Display plots of all marker types.
-        for (int i = 0; i < Style.availableShapes.length; i++) {
-            pstyle.dataStyle().markerStyle().setShape(Style.availableShapes[i]);
+        for (int i = 0; i < MarkerUtil.availableShapes.length; i++) {
+            pstyle.dataStyle().markerStyle().setShape(MarkerUtil.availableShapes[i]);
             plotter.region(i).plot(h, pstyle);
-            plotter.region(i).setTitle(Style.availableShapes[i]);
+            plotter.region(i).setTitle(MarkerUtil.availableShapes[i]);
         }
 
         // Show time.

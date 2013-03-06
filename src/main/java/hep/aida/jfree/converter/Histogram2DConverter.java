@@ -16,7 +16,6 @@ import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.title.PaintScaleLegend;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYZDataset;
@@ -27,6 +26,8 @@ import org.jfree.ui.RectangleInsets;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
+// FIXME: Grid lines don't work for the chart that is produced.  Could be some kind of bug.
+//        Try switching ordering of renderers so that the XYBlockRenderer is second instead of first.
 public class Histogram2DConverter implements HistogramConverter<IHistogram2D>
 {   
     static public final int COLOR_DATA = 0;
@@ -62,62 +63,66 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D>
         return new double[] {zMin, zMax, zLogMin};
     }
        
-    // Convert 2D histogram to color map chart.
-    public JFreeChart toColorMap(IHistogram2D h2d, IPlotterStyle style)
+    /**
+     * Convert 2D histogram to color map chart.
+     * 
+     * @param h2d
+     * @param style
+     * @return
+     */
+    static JFreeChart toColorMap(IHistogram2D h2d, IPlotterStyle style)
     {
         // Create dataset.
         XYZDataset dataset = DatasetConverter.convert(h2d);
-
-        // Calculate Z limits from the dataset.
-        double[] zlimits = calculateZLimits(dataset);
-
-        // Create plot
+       
+        // Create X axis.
         NumberAxis xAxis = new NumberAxis(null);
         xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         xAxis.setLowerMargin(0.0);
         xAxis.setUpperMargin(0.0);
 
-        // Y axis.
+        // Create Y axis.
         NumberAxis yAxis = new NumberAxis(null);
         yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         yAxis.setLowerMargin(0.0);
         yAxis.setUpperMargin(0.0);
-
-        // Set the renderer.
-        XYBlockRenderer renderer = new XYBlockRenderer();
-        renderer.setBlockHeight(h2d.yAxis().binWidth(0));
-        renderer.setBlockWidth(h2d.xAxis().binWidth(0));
-
-        // Old JFreeChart class
-        // PaintScale scale = new GrayPaintScale(0., h2d.maxBinHeight());
-
+       
         // Check if using a log scale.
         boolean logScale = false;
         if (style.zAxisStyle().parameterValue("scale").startsWith("log")) {
             logScale = true;
         }
 
-        // Use custom rainbow paint scale.
-        RainbowPaintScale scale = new RainbowPaintScale(zlimits[0], zlimits[1], zlimits[2], logScale);
-        renderer.setPaintScale(scale);
-
+        // Setup the renderer.
+        XYBlockRenderer renderer = createColorMapRenderer(dataset, h2d, style);
+        
         // Create the plot.
         XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
         JFreeChart chart = new JFreeChart(h2d.title(), plot);
-
+                
         // Add paint scale color legend.
-        createPaintScaleLegend(chart, scale, logScale);
+        createPaintScaleLegend(chart, renderer.getPaintScale(), logScale);
 
         // Apply default styles.
         ChartFactory.getChartTheme().apply(chart);
+        
+        //chart.getXYPlot().setDomainGridlinesVisible(true);
+        //chart.getXYPlot().setRangeGridlinesVisible(true);
         
         chart.getLegend().setVisible(false);
 
         return chart;
     }
     
-    // FIXME: not used in above method so some code is duplicated 
-    static final XYItemRenderer createColorMapRenderer(JFreeChart chart, IHistogram2D h2d, IPlotterStyle style)
+    /**
+     * Create the renderer for the color map.
+     * 
+     * @param dataset
+     * @param h2d
+     * @param style
+     * @return The renderer for the color map.
+     */
+    static XYBlockRenderer createColorMapRenderer(XYZDataset dataset, IHistogram2D h2d, IPlotterStyle style)
     {
         // Set the renderer.
         XYBlockRenderer renderer = new XYBlockRenderer();
@@ -131,7 +136,7 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D>
         }
         
         // Calculate Z limits from the dataset.
-        double[] zlimits = Histogram2DConverter.calculateZLimits((XYZDataset)chart.getXYPlot().getDataset(Histogram2DConverter.COLOR_DATA));
+        double[] zlimits = Histogram2DConverter.calculateZLimits(dataset);
 
         // Use custom rainbow paint scale.
         RainbowPaintScale scale = new RainbowPaintScale(zlimits[0], zlimits[1], zlimits[2], logScale);
@@ -173,7 +178,13 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D>
         return chart;
     }
 
-    // Convert 2D histogram to color map chart.
+    /**
+     * Convert 2D histogram to chart that includes a color map plus data suitable for
+     * display as scaled boxes.
+     * 
+     * @param h2d
+     * @param style
+     */
     public JFreeChart convert(IHistogram2D h2d, IPlotterStyle style)
     {        
         // Create color map chart as primary.
@@ -185,7 +196,15 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D>
         return chart;
     }
     
-    private void addBoxPlot(IHistogram2D h2d, JFreeChart chart)
+    /**
+     * Add the renderer and dataset on an existing chart for display of 2D histogram data as a box plot.
+     * This information is added to an existing color map chart above so that the styles may turn it
+     * on/off as needed.
+     * 
+     * @param h2d
+     * @param chart
+     */
+    private static void addBoxPlot(IHistogram2D h2d, JFreeChart chart)
     {
         XYZDataset dataset = DatasetConverter.toXYZRangedDataset(h2d);
         XYBoxRenderer renderer = new XYBoxRenderer(h2d.xAxis().binWidth(0), h2d.yAxis().binWidth(0));
@@ -194,13 +213,24 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D>
         renderer.setSeriesVisible(0, false);
     }
 
-    //
-    // Inspired by this thread:
-    //
-    // http://www.jfree.org/phpBB2/viewtopic.php?f=3&t=29588
-    //
-    // Post by badera => Thu Dec 17, 2009 12:32 pm
-    //
+    /**
+     * This method creates a legend for the paint scale used by the block renderer.
+     * 
+     * Inspired by this thread:
+     * 
+     * <a href="http://www.jfree.org/phpBB2/viewtopic.php?f=3&t=29588#p81629">Tooltips not shown in XYZPlot</a>
+     *
+     * Post:
+     * 
+     * by badera > Thu Dec 17, 2009 12:32 pm 
+     * 
+     * FIXME: The display of tic labels still needs some work, and the legend gets a bit weird when
+     *        log scale is used.
+     * 
+     * @param chart
+     * @param scale
+     * @param logScale
+     */
     private static void createPaintScaleLegend(JFreeChart chart, PaintScale scale, boolean logScale)
     {
         NumberAxis legendAxis = null;

@@ -28,32 +28,37 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
         // e.g. title, background colors, etc.
         applyNonDataStyle(chart, hist, style);
         
-        // Apply styles to chart having to do with data visibility and appearance.
-        applyDataStyle(chart, hist, style);
+        if (style.isVisible()) {        
+            // Apply styles to chart having to do with data visibility and appearance.
+            applyDataStyle(chart, hist, style);
         
-        // Apply Histogram 2D styles.
-        applyHistogram2DStyle(chart, (IHistogram2D)hist, style);
+            // Apply Histogram 2D styles.
+            applyHistogram2DStyle(chart, (IHistogram2D)hist, style);       
+       } else {
+           makeDataInvisible(chart);
+       }
     }
+    
+    /*     
+    TODO:
+    
+    Color map styles to implement:
+        
+    -warm
+    -cool
+    -thermal
+    -grayscale
+    -userdefined
+    
+     // Old JFreeChart class
+     PaintScale scale = new GrayPaintScale(0., h2d.maxBinHeight());
+    
+    */
 
     public void applyHistogram2DStyle(JFreeChart chart, IHistogram2D h2d, IPlotterStyle style) 
-    {
-        //System.out.println("applyhistogram2DStyle");
-        //System.out.println("renderers = " + chart.getXYPlot().getRendererCount());
-        //System.out.println("colorMap renderer = " + chart.getXYPlot().getRenderer(COLOR_DATA).getClass().getCanonicalName());
-        //System.out.println("box renderer = " + chart.getXYPlot().getRenderer(BOX_DATA).getClass().getCanonicalName());        
-        //System.out.println("ds 0 = " + chart.getXYPlot().getDataset(0).getClass().getCanonicalName());        
-        //Comparable key = chart.getXYPlot().getDataset(0).getSeriesKey(0);
-        //System.out.println("ds 0 key = " + key.toString());        
-        //System.out.println("ds 1 = " + chart.getXYPlot().getDataset(1).getClass().getCanonicalName());
-        
-        //List subtitles = chart.getSubtitles();
-        //int n = chart.getSubtitles().size();
-        //for (int i=0; i<n; i++) {
-        //    System.out.println("subtitle["+i+"] = " + chart.getSubtitle(i).toString());
-        //}            
-        
+    {             
         String histStyle = style.parameterValue("hist2DStyle");
-        //System.out.println("hist2DStyle = " + histStyle);
+     
         XYPlot plot = chart.getXYPlot();
         if (histStyle != null) {
             if (histStyle.equals("box")) {                                
@@ -65,7 +70,6 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
             } else if (histStyle.equals("ellipse")) {
                 throw new RuntimeException("The ellipse style is not implemented yet.");
             } else if (histStyle.equals("colorMap")) {
-                //System.out.println("colorMap");
                 plot.getRenderer(BOX_DATA).setSeriesVisible(0, false);
                 // Recreate the renderer for the color map if it was set to null.
                 if (plot.getRenderer(COLOR_DATA) == null) {
@@ -91,13 +95,8 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
         XYItemRenderer renderer = plot.getRenderer(Histogram2DConverter.BOX_DATA);
 
         // Color of the data lines.
-        Color color = DEFAULT_LINE_COLOR;
-        try {
-            color = ColorUtil.toColor(lineStyle);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        plot.getRenderer(Histogram2DConverter.BOX_DATA).setSeriesOutlinePaint(0, color);
+        Color color = ColorUtil.toColor(lineStyle, DEFAULT_LINE_COLOR);
+        renderer.setSeriesOutlinePaint(0, color);
 
         // Stroke of the data lines.
         Stroke stroke = StrokeUtil.toStroke(lineStyle);
@@ -105,14 +104,15 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
             renderer.setSeriesStroke(0, stroke);
         }
     }
-    
-    /*     
-    Color map styles:    
-    -warm
-    -cool
-    -thermal
-    -rainbow
-    -grayscale
-    -userdefined
-    */
+           
+    /**
+     * 
+     * @param chart
+     */
+    protected void makeDataInvisible(JFreeChart chart)
+    {
+        chart.getXYPlot().setRenderer(COLOR_DATA, null);
+        chart.getXYPlot().getRenderer(BOX_DATA).setSeriesVisible(0, false);
+        chart.getSubtitle(1).setVisible(false);
+    }
 }

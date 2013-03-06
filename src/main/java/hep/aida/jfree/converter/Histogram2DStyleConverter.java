@@ -9,11 +9,9 @@ import hep.aida.IPlotterStyle;
 
 import java.awt.Color;
 import java.awt.Stroke;
-import java.util.List;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYZDataset;
 
@@ -61,48 +59,28 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
             if (histStyle.equals("box")) {                                
                 plot.getRenderer(BOX_DATA).setSeriesVisible(0, true);
                 // FIXME: Setting renderer to null seems to be the only thing that works!
-                //        Series visibility set to false is not working correctly.                
+                //        Series visibility set to false is not working correctly.
                 plot.setRenderer(COLOR_DATA, null);
-                chart.getSubtitle(1).setVisible(false);
+                chart.getSubtitle(1).setVisible(false); // Turn scale legend off.
             } else if (histStyle.equals("ellipse")) {
-                throw new RuntimeException("ellipse not implemented yet");
+                throw new RuntimeException("The ellipse style is not implemented yet.");
             } else if (histStyle.equals("colorMap")) {
                 //System.out.println("colorMap");
-                plot.getRenderer(BOX_DATA).setSeriesVisible(0, false); 
+                plot.getRenderer(BOX_DATA).setSeriesVisible(0, false);
+                // Recreate the renderer for the color map if it was set to null.
                 if (plot.getRenderer(COLOR_DATA) == null) {
-                    plot.setRenderer(COLOR_DATA, Histogram2DConverter.createColorMapRenderer(chart, h2d, style));
+                    plot.setRenderer(COLOR_DATA, 
+                            Histogram2DConverter.createColorMapRenderer(
+                                    (XYZDataset)chart.getXYPlot().getDataset(COLOR_DATA), h2d, style));
                 }
                 plot.getRenderer(COLOR_DATA).setSeriesVisible(0, true);
-                chart.getSubtitle(1).setVisible(true);
+                chart.getSubtitle(1).setVisible(true); // Turn scale legend back on.
             } else {
                 throw new RuntimeException("Unknown hist2DStyle: " + histStyle);
             }
         }
     }
-    
-    public XYItemRenderer createColorMapRenderer(JFreeChart chart, IHistogram2D h2d, IPlotterStyle style)
-    {
-        // Set the renderer.
-        XYBlockRenderer renderer = new XYBlockRenderer();
-        renderer.setBlockHeight(h2d.yAxis().binWidth(0));
-        renderer.setBlockWidth(h2d.xAxis().binWidth(0));
-
-        // Check if using a log scale.
-        boolean logScale = false;
-        if (style.zAxisStyle().parameterValue("scale").startsWith("log")) {
-            logScale = true;
-        }
-        
-        // Calculate Z limits from the dataset.
-        double[] zlimits = Histogram2DConverter.calculateZLimits((XYZDataset)chart.getXYPlot().getDataset(Histogram2DConverter.COLOR_DATA));
-
-        // Use custom rainbow paint scale.
-        RainbowPaintScale scale = new RainbowPaintScale(zlimits[0], zlimits[1], zlimits[2], logScale);
-        renderer.setPaintScale(scale);
-        
-        return renderer;
-    }
-    
+              
     protected void applyDataLineStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) 
     {
         ILineStyle lineStyle = style.dataStyle().lineStyle();

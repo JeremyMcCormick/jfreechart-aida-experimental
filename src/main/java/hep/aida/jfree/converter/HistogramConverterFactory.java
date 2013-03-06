@@ -8,6 +8,23 @@ import java.util.List;
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
+/*
+TODO: 
+
+Still need converters for...
+
+-IProfile2D
+-IDataPointSet (w/ dimension <= 2)
+-IFunction
+
+Probably these will be handled with a separate package...
+
+-ICloud3D
+-IHistogram3D
+-IDatapointSet (w/ dim > 2)
+-IHistogram2D (as 3D lego plot)
+ 
+*/
 public class HistogramConverterFactory
 {
     List<HistogramConverter> converters = new ArrayList<HistogramConverter>();
@@ -27,6 +44,7 @@ public class HistogramConverterFactory
         converters.add(new Histogram2DConverter());
         converters.add(new Cloud1DConverter());
         converters.add(new Cloud2DConverter());
+        converters.add(new Profile1DConverter());
     }
 
     public HistogramConverter getConverter(IBaseHistogram hist)

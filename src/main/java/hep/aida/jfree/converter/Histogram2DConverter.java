@@ -2,6 +2,7 @@ package hep.aida.jfree.converter;
 
 import hep.aida.IHistogram2D;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.XYBoxRenderer;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -15,6 +16,7 @@ import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.title.PaintScaleLegend;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYZDataset;
@@ -26,14 +28,16 @@ import org.jfree.ui.RectangleInsets;
  * @version $Id: $
  */
 public class Histogram2DConverter implements HistogramConverter<IHistogram2D>
-{
+{   
+    static public final int COLOR_DATA = 0;
+    static public final int BOX_DATA = 1;
 
     public Class<IHistogram2D> convertsType()
     {
         return IHistogram2D.class;
     }
 
-    private static double[] calculateZLimits(XYZDataset ds)
+    static double[] calculateZLimits(XYZDataset ds)
     {
         double zLogMin;
         double zMin;
@@ -57,9 +61,9 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D>
         }
         return new double[] {zMin, zMax, zLogMin};
     }
-
+       
     // Convert 2D histogram to color map chart.
-    public JFreeChart convert(IHistogram2D h2d, IPlotterStyle style)
+    public JFreeChart toColorMap(IHistogram2D h2d, IPlotterStyle style)
     {
         // Create dataset.
         XYZDataset dataset = DatasetConverter.convert(h2d);
@@ -106,8 +110,88 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D>
 
         // Apply default styles.
         ChartFactory.getChartTheme().apply(chart);
+        
+        chart.getLegend().setVisible(false);
 
         return chart;
+    }
+    
+    // FIXME: not used in above method so some code is duplicated 
+    static final XYItemRenderer createColorMapRenderer(JFreeChart chart, IHistogram2D h2d, IPlotterStyle style)
+    {
+        // Set the renderer.
+        XYBlockRenderer renderer = new XYBlockRenderer();
+        renderer.setBlockHeight(h2d.yAxis().binWidth(0));
+        renderer.setBlockWidth(h2d.xAxis().binWidth(0));
+
+        // Check if using a log scale.
+        boolean logScale = false;
+        if (style.zAxisStyle().parameterValue("scale").startsWith("log")) {
+            logScale = true;
+        }
+        
+        // Calculate Z limits from the dataset.
+        double[] zlimits = Histogram2DConverter.calculateZLimits((XYZDataset)chart.getXYPlot().getDataset(Histogram2DConverter.COLOR_DATA));
+
+        // Use custom rainbow paint scale.
+        RainbowPaintScale scale = new RainbowPaintScale(zlimits[0], zlimits[1], zlimits[2], logScale);
+        renderer.setPaintScale(scale);
+        
+        return renderer;
+    }
+    
+    // FIXME: Only used in test right now.       
+    public JFreeChart toBoxPlot(IHistogram2D h2d, IPlotterStyle style)
+    {
+        // Create dataset.
+        XYZDataset dataset = DatasetConverter.toXYZRangedDataset(h2d);
+
+        // Create plot
+        NumberAxis xAxis = new NumberAxis(null);
+        xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        xAxis.setLowerMargin(0.0);
+        xAxis.setUpperMargin(0.0);
+
+        // Y axis.
+        NumberAxis yAxis = new NumberAxis(null);
+        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        yAxis.setLowerMargin(0.0);
+        yAxis.setUpperMargin(0.0);
+
+        // Set the renderer.
+        XYBoxRenderer renderer = new XYBoxRenderer(h2d.xAxis().binWidth(0), h2d.yAxis().binWidth(0));
+
+        // Create the plot.
+        XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
+        JFreeChart chart = new JFreeChart(h2d.title(), plot);
+
+        // Apply default styles.
+        ChartFactory.getChartTheme().apply(chart);
+        
+        chart.getLegend().setVisible(false);
+
+        return chart;
+    }
+
+    // Convert 2D histogram to color map chart.
+    public JFreeChart convert(IHistogram2D h2d, IPlotterStyle style)
+    {        
+        // Create color map chart as primary.
+        JFreeChart chart = toColorMap(h2d, style);
+        
+        // Add box plot with separate renderer and dataset, which is off by default.
+        addBoxPlot(h2d, chart);
+        
+        return chart;
+    }
+    
+    private void addBoxPlot(IHistogram2D h2d, JFreeChart chart)
+    {
+        XYZDataset dataset = DatasetConverter.toXYZRangedDataset(h2d);
+        XYBoxRenderer renderer = new XYBoxRenderer(h2d.xAxis().binWidth(0), h2d.yAxis().binWidth(0));
+        chart.getXYPlot().setRenderer(BOX_DATA, renderer);
+        chart.getXYPlot().setDataset(BOX_DATA, dataset);
+        renderer.setSeriesVisible(0, false);
     }
 
     //
@@ -133,7 +217,7 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D>
         PaintScaleLegend legend = new PaintScaleLegend(scale, legendAxis);
         if (logScale) {
             legend.setSubdivisionCount(50000);
-            // TODO: Tick unit source set here to force display of label for max value of axis.
+            // TODO: Set tick unit source here to force display of label for the max value of the axis.
             // http://www.jfree.org/phpBB2/viewtopic.php?f=3&t=28597&p=79591&hilit=NumberAxis+tick#p79591
         } else {
             legend.setSubdivisionCount(50);

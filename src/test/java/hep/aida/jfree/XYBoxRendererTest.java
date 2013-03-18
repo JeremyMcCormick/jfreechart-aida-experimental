@@ -21,10 +21,9 @@ import org.jfree.chart.JFreeChart;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class XYBoxRendererTest extends TestCase
-{
-    public void test()
-    {
+public class XYBoxRendererTest extends TestCase {
+
+    public void test() {
         AnalysisFactory.register();
         IAnalysisFactory af = IAnalysisFactory.create();
         IPlotterFactory pf = af.createPlotterFactory();
@@ -44,15 +43,15 @@ public class XYBoxRendererTest extends TestCase
         chart.getXYPlot().setDomainGridlinesVisible(true);
         chart.getXYPlot().setRangeGridlinesVisible(true);
         chart.getXYPlot().getRenderer(0).setSeriesOutlinePaint(0, Color.red);
-                
+
         chart.fireChartChanged();
-        
+
         JFrame frame = new JFrame();
         frame.setContentPane(new ChartPanel(chart));
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        
+
         while (true) {
             try {
                 Thread.sleep(1000);

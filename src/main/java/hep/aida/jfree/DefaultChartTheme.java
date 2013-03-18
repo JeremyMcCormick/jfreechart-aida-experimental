@@ -1,11 +1,10 @@
 package hep.aida.jfree;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
-import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.axis.TickUnits;
 import org.jfree.chart.plot.XYPlot;
 
 /**
@@ -13,57 +12,42 @@ import org.jfree.chart.plot.XYPlot;
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-class DefaultChartTheme extends StandardChartTheme
-{
+class DefaultChartTheme extends StandardChartTheme {
 
-    public DefaultChartTheme()
-    {
+    public DefaultChartTheme() {
         super("Legacy");
     }
 
-    public void apply(JFreeChart chart)
-    {
+    public void apply(JFreeChart chart) {
         super.apply(chart);
-        
+
         chart.setAntiAlias(false);
-        //chart.setBackgroundPaint(Color.white);
-        //chart.removeLegend();
+        // chart.setBackgroundPaint(Color.white);
+        // chart.removeLegend();
     }
 
-    public void applyToXYPlot(XYPlot plot)
-    {               
+    public void applyToXYPlot(XYPlot plot) {
         // White is default background color.
         plot.setBackgroundPaint(Color.white);
-        
+
+        // By default do not show outline around chart.
         plot.setOutlineVisible(false);
 
-        // Turn off domain grid lines.
+        // Turn off grid lines.
         plot.setDomainGridlinesVisible(false);
         plot.setDomainMinorGridlinesVisible(false);
-        plot.setDomainCrosshairVisible(false);
-        plot.setDomainZeroBaselineVisible(false);
-
-        // Turn off range grid lines.
         plot.setRangeGridlinesVisible(false);
         plot.setRangeMinorGridlinesVisible(false);
+
+        // Turn off crosshair.
+        plot.setDomainCrosshairVisible(false);
+        plot.setDomainZeroBaselineVisible(false);
         plot.setRangeCrosshairVisible(false);
         plot.setRangeZeroBaselineVisible(false);
 
         // Turn on auto range.
         plot.getDomainAxis().setAutoRange(true);
         plot.getRangeAxis().setAutoRange(true);
-
-        // Tick unit frequency and labels.
-        // FIXME: This doesn't work generically! To do it right, would need
-        // to look at the upper bounds for both axes and set accordingly.
-        //TickUnits units = new TickUnits();
-        //units.add(new NumberTickUnit(10.));
-        //plot.getRangeAxis().setStandardTickUnits(units);
-        // plot.getRangeAxis().setMinorTickMarksVisible(true);
-        //plot.getRangeAxis().setMinorTickCount(10);
-        // plot.getDomainAxis().setStandardTickUnits(units);
-        // plot.getDomainAxis().setMinorTickMarksVisible(true);
-        // plot.getDomainAxis().setMinorTickCount(10);
 
         // Turn on minor tick marks.
         plot.getDomainAxis().setMinorTickMarksVisible(true);
@@ -75,6 +59,8 @@ class DefaultChartTheme extends StandardChartTheme
         plot.getDomainAxis().setMinorTickMarkInsideLength(0.0f);
         plot.getDomainAxis().setMinorTickMarkOutsideLength(2.0f);
         plot.getDomainAxis().setTickMarkPaint(Color.black);
+        plot.getDomainAxis().setAxisLinePaint(Color.black);
+        plot.getDomainAxis().setAxisLineStroke(new BasicStroke(1.0f));
 
         // Configure range tick marks.
         plot.getRangeAxis().setTickMarkInsideLength(0.0f);
@@ -82,12 +68,7 @@ class DefaultChartTheme extends StandardChartTheme
         plot.getRangeAxis().setMinorTickMarkInsideLength(0.0f);
         plot.getRangeAxis().setMinorTickMarkOutsideLength(2.0f);
         plot.getRangeAxis().setTickMarkPaint(Color.black);
-                
-        // double upper = plot.getRangeAxis().getUpperBound();
-        // System.out.println("upper="+upper);
-
-        // Set margins.
-        // plot.getDomainAxis().setUpperMargin(0.10);
-        // plot.getRangeAxis().setUpperMargin(0.05);
+        plot.getRangeAxis().setAxisLinePaint(Color.black);
+        plot.getRangeAxis().setAxisLineStroke(new BasicStroke(1.0f));
     }
 }

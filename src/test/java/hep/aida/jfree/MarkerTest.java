@@ -16,8 +16,8 @@ import junit.framework.TestCase;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class MarkerTest extends TestCase
-{
+public class MarkerTest extends TestCase {
+
     IAnalysisFactory af;
     IPlotterFactory pf;
     IHistogramFactory hf;
@@ -25,8 +25,7 @@ public class MarkerTest extends TestCase
     int nfills = 100;
     int range = 10;
 
-    protected void setUp()
-    {
+    protected void setUp() {
         AnalysisFactory.register();
         af = IAnalysisFactory.create();
         pf = af.createPlotterFactory();
@@ -34,8 +33,7 @@ public class MarkerTest extends TestCase
     }
 
     // Create a 1D histogram with random Gaussian distribution
-    private final IHistogram1D histogram1D()
-    {
+    private final IHistogram1D histogram1D() {
         IHistogram1D h1d = hf.createHistogram1D("h1d", 10, 0, 10.0);
         Random rand = new Random();
         for (int i = 0; i < nfills; i++) {
@@ -44,12 +42,12 @@ public class MarkerTest extends TestCase
         return h1d;
     }
 
-    public void test() throws Exception
-    {
+    public void test() throws Exception {
         // Create plotter
         IPlotter plotter = pf.create();
 
-        // Create a test histogram which will be used to show various style options.
+        // Create a test histogram which will be used to show various style
+        // options.
         IHistogram1D h = histogram1D();
 
         // Create regions for showing plots
@@ -78,8 +76,7 @@ public class MarkerTest extends TestCase
         plotter.show();
     }
 
-    public void tearDown()
-    {
+    public void tearDown() {
         System.out.println("Hit Ctrl + C to exit.");
         while (true) {
             try {

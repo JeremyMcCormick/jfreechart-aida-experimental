@@ -10,18 +10,16 @@ import java.awt.Stroke;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-final class StrokeUtil
-{
-    private StrokeUtil()
-    {}
+final class StrokeUtil {
 
-    static float lineThickness(int thickness)
-    {
+    private StrokeUtil() {
+    }
+
+    static float lineThickness(int thickness) {
         return ((float) thickness) / (float) 2.;
     }
-    
-    static Stroke toStroke(IGridStyle style)
-    {        
+
+    static Stroke toStroke(IGridStyle style) {
         // Line thickness.
         float lineThickness = lineThickness(style.thickness());
 
@@ -29,18 +27,12 @@ final class StrokeUtil
         LineType lineType = LineType.getLineType(style.lineType());
 
         // Create the stroke for the line.
-        BasicStroke stroke = new BasicStroke(lineThickness, 
-                                             BasicStroke.CAP_SQUARE, 
-                                             BasicStroke.JOIN_MITER, 
-                                             10.0f, 
-                                             lineType.getDashArray(), 
-                                             0.0f);
-        
+        BasicStroke stroke = new BasicStroke(lineThickness, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, lineType.getDashArray(), 0.0f);
+
         return stroke;
     }
-    
-    static Stroke toStroke(ILineStyle style)
-    {        
+
+    static Stroke toStroke(ILineStyle style) {
         // Line thickness.
         float lineThickness = lineThickness(style.thickness());
 
@@ -48,13 +40,8 @@ final class StrokeUtil
         LineType lineType = LineType.getLineType(style.lineType());
 
         // Create the stroke for the line.
-        BasicStroke stroke = new BasicStroke(lineThickness, 
-                                             BasicStroke.CAP_SQUARE, 
-                                             BasicStroke.JOIN_MITER, 
-                                             10.0f, 
-                                             lineType.getDashArray(), 
-                                             0.0f);
-        
+        BasicStroke stroke = new BasicStroke(lineThickness, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, lineType.getDashArray(), 0.0f);
+
         return stroke;
-    }    
+    }
 }

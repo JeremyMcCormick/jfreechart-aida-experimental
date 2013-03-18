@@ -6,12 +6,13 @@ import hep.aida.IPlotterStyle;
 import org.jfree.chart.JFreeChart;
 
 /**
- * Interface for converting AIDA data objects to JFreeChart.
+ * The interface for converting AIDA plots to JFreeChart.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public interface HistogramConverter<T extends IBaseHistogram>
-{   
+public interface HistogramConverter<T extends IBaseHistogram> {
+
     Class<T> convertsType();
-    JFreeChart convert(T obj, IPlotterStyle style);    
+
+    JFreeChart convert(T obj, IPlotterStyle style);
 }

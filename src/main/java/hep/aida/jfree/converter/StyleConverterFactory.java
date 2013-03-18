@@ -9,14 +9,13 @@ import hep.aida.IHistogram2D;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class StyleConverterFactory
-{
+public class StyleConverterFactory {
+
     private static final Histogram1DStyleConverter histogram1DConverter = new Histogram1DStyleConverter();
     private static final Histogram2DStyleConverter histogram2DConverter = new Histogram2DStyleConverter();
-    private static final Cloud2DStyleConverter cloud2DConverter = new Cloud2DStyleConverter();    
-    
-    public static StyleConverter getStyleConverter(IBaseHistogram hist) 
-    {
+    private static final Cloud2DStyleConverter cloud2DConverter = new Cloud2DStyleConverter();
+
+    public static StyleConverter getStyleConverter(IBaseHistogram hist) {
         if (hist instanceof IHistogram1D) {
             return histogram1DConverter;
         } else if (hist instanceof ICloud2D) {

@@ -1,19 +1,13 @@
 package hep.aida.jfree;
 
 import hep.aida.IAnalysisFactory;
-import hep.aida.IAxisStyle;
 import hep.aida.IHistogram2D;
 import hep.aida.IHistogramFactory;
 import hep.aida.IPlotter;
 import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
-import hep.aida.ITextStyle;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-
-import javax.swing.JPanel;
 
 import junit.framework.TestCase;
 
@@ -21,101 +15,74 @@ import junit.framework.TestCase;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
 public class Histogram2DTest extends TestCase {
-    
-    private IAnalysisFactory af;
-    private IPlotterFactory pf;
-    private IHistogramFactory hf;
-    private JPanel panel = null;
-        
-    protected void setUp() {
+
+    public void batchTest() throws Exception {
+        h2d(true);
+    }
+
+    public void display() throws Exception {
+        h2d(false);
+    }
+
+    private void h2d(boolean batchMode) throws Exception {
         AnalysisFactory.register();
-        af = IAnalysisFactory.create();
-        pf = af.createPlotterFactory();
-        hf = af.createHistogramFactory(null);
-    }
-    
-    private final IHistogram2D histogram2D() {
-        IHistogram2D h2d = hf.createHistogram2D("h2d", 50, -5.0, 5.0, 50, -5.0, 5.0);
-        Random rand = new Random();
-        for (int i = 0; i< 10000000; i++) {
-            h2d.fill(rand.nextGaussian(), rand.nextGaussian());
-        }        
-        return h2d;
-    }
-        
-    public void testHistogram2D() throws Exception {
-                
+        IAnalysisFactory af = IAnalysisFactory.create();
+        IPlotterFactory pf = af.createPlotterFactory();
+        IHistogramFactory hf = af.createHistogramFactory(null);
+
         // Create plotter
         IPlotter plotter = pf.create();
-                       
+
         // Create a 1D histo
-        IHistogram2D h2d = histogram2D();
-        
-        // Set labels for axes automatically based on title
+        IHistogram2D h2d = hf.createHistogram2D("h2d", 100, 0., 100., 100, 0., 100.);
+
+        // Set labels for axes.
         h2d.annotation().addItem("xAxisLabel", h2d.title() + " X");
         h2d.annotation().addItem("yAxisLabel", h2d.title() + " Y");
-        
-        // Create region for showing plot
-        plotter.createRegion();
-        
+
         IPlotterStyle pstyle = plotter.style();
-                
-        // title style
-        ITextStyle titleStyle = pstyle.titleStyle().textStyle();
-        titleStyle.setBold(true);
-        titleStyle.setFontSize(30.);
-        titleStyle.setFont("Arial");
-        titleStyle.setColor("black");
-        
-        // axis style
-        List<IAxisStyle> axes = new ArrayList<IAxisStyle>();
-        axes.add(pstyle.xAxisStyle());
-        axes.add(pstyle.yAxisStyle());        
-        for (IAxisStyle axisStyle : axes) {        
-            axisStyle.labelStyle().setBold(true);
-            axisStyle.labelStyle().setFont("Helvetica");
-            axisStyle.labelStyle().setFontSize(15);
-            axisStyle.labelStyle().setColor("black");    
-            axisStyle.lineStyle().setColor("black");
-            axisStyle.lineStyle().setThickness(2);        
-            axisStyle.tickLabelStyle().setColor("black");
-            axisStyle.tickLabelStyle().setFont("Helvetica");
-            axisStyle.tickLabelStyle().setBold(true);
-            axisStyle.tickLabelStyle().setFontSize(10);
-        }
-        
+
+        pstyle.xAxisStyle().setParameter("allowZeroSuppression", "false");
+        pstyle.yAxisStyle().setParameter("allowZeroSuppression", "false");
+
         // background color
         pstyle.regionBoxStyle().backgroundStyle().setColor("white");
-        
+
         // Log scale.
-        pstyle.zAxisStyle().setParameter("scale", "log");
-        
+        // pstyle.zAxisStyle().setParameter("scale", "log");
+
         // Plot histogram into region.
-        plotter.region(0).plot(h2d);
-        
-        // Show time
-        plotter.show();
-        panel = ((PlotterRegion)plotter.region(0)).getPanel();
-        //Thread.sleep(5000); // Yeah, I know.
-    }
-    
-    public void tearDown() {
-        while (true) 
-        { 
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        plotter.createRegions(1, 2, 0);
+
+        // Display as color map.
+        plotter.region(0).plot(h2d, pstyle);
+
+        // Display as box plot.
+        pstyle.setParameter("hist2DStyle", "box");
+        pstyle.dataStyle().lineStyle().setVisible(true);
+        pstyle.dataStyle().lineStyle().setColor("blue");
+        pstyle.dataStyle().fillStyle().setVisible(true);
+        pstyle.dataStyle().fillStyle().setColor("blue");
+        plotter.region(1).plot(h2d, pstyle);
+
+        if (!batchMode)
+            plotter.show();
+        Random rand = new Random();
+        for (int i = 0; i < 100000000; i++) {
+            h2d.fill(rand.nextInt(100), rand.nextInt(100));
+            // Thread.sleep(1000);
+        }
+
+        if (batchMode) {
+            plotter.writeToFile(this.getClass().getSimpleName(), "png");
+        } else {
+            while (true) {
+                Thread.sleep(1000);
             }
         }
     }
-    
-    /*
-    public static void main(String[] args) throws Exception
-    {
-        Histogram2DTest test = new Histogram2DTest();
-        test.setUp();
-        test.testHistogram2D();
+
+    public static void main(String[] args) throws Exception {
+        new Histogram2DTest().display();
     }
-    */
 }

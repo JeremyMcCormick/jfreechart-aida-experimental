@@ -18,15 +18,13 @@ import junit.framework.TestCase;
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public class Histogram1DTest extends TestCase
-{
+public class Histogram1DTest extends TestCase {
 
     IAnalysisFactory af;
     IPlotterFactory pf;
     IHistogramFactory hf;
 
-    protected void setUp()
-    {
+    protected void setUp() {
         // AIDA setup
         AnalysisFactory.register();
         af = IAnalysisFactory.create();
@@ -35,8 +33,7 @@ public class Histogram1DTest extends TestCase
     }
 
     // Create a 1D histogram with random Gaussian distribution
-    private final IHistogram1D histogram1D()
-    {
+    private final IHistogram1D histogram1D() {
         IHistogram1D h1d = hf.createHistogram1D("h1d", 50, -5.0, 5.0);
         // Random rand = new Random();
         // for (int i = 0; i < 1000; i++) {
@@ -45,8 +42,7 @@ public class Histogram1DTest extends TestCase
         return h1d;
     }
 
-    public void testHistogram1D() throws Exception
-    {
+    public void testHistogram1D() throws Exception {
 
         // Create plotter
         IPlotter plotter = pf.create();
@@ -58,8 +54,8 @@ public class Histogram1DTest extends TestCase
         h1d.annotation().addItem("yAxisLabel", h1d.title() + " Y");
 
         // Create 3x3 regions for showing plots
-        // plotter.createRegions(3, 3, 0);
-        plotter.createRegion();
+        // plotter.createRegions(2, 2, 0);
+        // plotter.createRegion();
 
         IPlotterStyle pstyle = plotter.style();
 
@@ -102,21 +98,25 @@ public class Histogram1DTest extends TestCase
         // background color
         pstyle.regionBoxStyle().backgroundStyle().setColor("white");
 
+        pstyle.gridStyle().setVisible(true);
+
+        plotter.createRegions(1, 2, 0);
+
         plotter.region(0).plot(h1d, pstyle);
+
+        plotter.region(1).plot(h1d, pstyle);
+
+        // Test IsObservable behavior to redraw histogram data.
+        for (int i = 0; i < 1000; i++) {
+            double rand = new Random().nextGaussian();
+            h1d.fill(rand);
+        }
 
         // Show time
         plotter.show();
-
-        // Test IsObservable behavior to redraw histogram data.
-        for (int i = 0; i < 100000000; i++) {
-            double rand = new Random().nextGaussian();
-            h1d.fill(rand);
-            Thread.sleep(1000);
-        }
     }
 
-    public void tearDown()
-    {
+    public void tearDown() {
         System.out.println("Hit Ctrl + C to exit.");
         while (true) {
             try {

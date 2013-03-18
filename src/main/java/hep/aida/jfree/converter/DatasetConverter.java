@@ -16,21 +16,18 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.data.xy.XYZDataset;
 
 /**
- * This class converts data from AIDA objects into JFreeChart datasets.  
- * It is used by the individual histogram converters to setup the backing 
- * data for JFreeChart plots.
+ * This class converts data from AIDA objects into JFreeChart datasets. It is
+ * used by the individual histogram converters to setup the backing data for
+ * JFreeChart plots.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public final class DatasetConverter
-{
+public final class DatasetConverter {
 
-    private DatasetConverter()
-    {
+    private DatasetConverter() {
     }
-    
-    static XYZRangedDataset toXYZRangedDataset(IHistogram2D h2d)
-    {
+
+    public static XYZRangedDataset toXYZRangedDataset(IHistogram2D h2d) {
         XYZRangedDataset dataset = new XYZRangedDataset();
         int xbins = h2d.xAxis().bins();
         int ybins = h2d.yAxis().bins();
@@ -49,8 +46,7 @@ public final class DatasetConverter
         return dataset;
     }
 
-    static XYZDataset convert(IHistogram2D h2d)
-    {
+    public static XYZDataset convert(IHistogram2D h2d) {
         DefaultXYZDataset dataset = new DefaultXYZDataset();
         int xbins = h2d.xAxis().bins();
         int ybins = h2d.yAxis().bins();
@@ -62,7 +58,8 @@ public final class DatasetConverter
                 data[0][curr] = h2d.xAxis().binCenter(i);
                 data[1][curr] = h2d.yAxis().binCenter(j);
                 data[2][curr] = h2d.binHeight(i, j);
-                // System.out.println("binHeight[" + i + "][" + j + "]  = " + h2d.binHeight(i, j));
+                // System.out.println("binHeight[" + i + "][" + j + "]  = " +
+                // h2d.binHeight(i, j));
                 ++curr;
             }
         }
@@ -70,8 +67,7 @@ public final class DatasetConverter
         return dataset;
     }
 
-    public static XYSeriesCollection convert(ICloud2D c2d)
-    {
+    public static XYSeriesCollection convert(ICloud2D c2d) {
         XYSeriesCollection dataset = new XYSeriesCollection();
         XYSeries series = new XYSeries(c2d.title());
         for (int i = 0; i < c2d.entries(); i++) {
@@ -87,8 +83,7 @@ public final class DatasetConverter
      * @return An array of datasets; index 0 = values; index 1 = errors
      */
 
-    static XYIntervalSeriesCollection[] forBarChart(IHistogram1D h1d)
-    {
+    static XYIntervalSeriesCollection[] forBarChart(IHistogram1D h1d) {
         XYIntervalSeriesCollection valuesDataset = new XYIntervalSeriesCollection();
         XYIntervalSeries values = new XYIntervalSeries("values");
 
@@ -111,8 +106,7 @@ public final class DatasetConverter
         return datasets;
     }
 
-    static XYDataset[] forStepChart(IHistogram1D h1d)
-    {
+    static XYDataset[] forStepChart(IHistogram1D h1d) {
         XYDataset[] datasets = new XYDataset[2];
 
         // Create two datasets, one for values, and one for errors.
@@ -129,8 +123,8 @@ public final class DatasetConverter
                 values.add(axis.binUpperEdge(i), h1d.binHeight(i));
             }
         }
-        values.add(axis.binUpperEdge(nbins-1), 0); // right-most line
-        
+        values.add(axis.binUpperEdge(nbins - 1), 0); // right-most line
+
         XYSeriesCollection valuesDataset = new XYSeriesCollection();
         valuesDataset.addSeries(values);
         XYIntervalSeriesCollection errorsDataset = new XYIntervalSeriesCollection();
@@ -141,103 +135,83 @@ public final class DatasetConverter
 
         return datasets;
     }
-    
-    static XYDataset forPoints(IHistogram1D h1d)
-    {
+
+    static XYDataset forPoints(IHistogram1D h1d) {
         DefaultXYDataset ds = new DefaultXYDataset();
-        
+
         IAxis axis = h1d.axis();
         int nbins = axis.bins();
-        
+
         double data[][] = new double[2][nbins];
-        
-        for (int i=0; i<nbins; i++) 
-        {
+
+        for (int i = 0; i < nbins; i++) {
             data[0][i] = axis.binCenter(i);
             data[1][i] = h1d.binHeight(i);
         }
-        
+
         ds.addSeries("data", data);
-        
+
         return ds;
     }
-    
+
     /*
-    
-    static XYIntervalSeriesCollection[] forBarChart(IProfile1D p1d)
-    {
-        XYIntervalSeriesCollection valuesDataset = new XYIntervalSeriesCollection();
-        XYIntervalSeries values = new XYIntervalSeries("values");
+     * 
+     * static XYIntervalSeriesCollection[] forBarChart(IProfile1D p1d) {
+     * XYIntervalSeriesCollection valuesDataset = new
+     * XYIntervalSeriesCollection(); XYIntervalSeries values = new
+     * XYIntervalSeries("values");
+     * 
+     * XYIntervalSeriesCollection errorsDataset = new
+     * XYIntervalSeriesCollection(); XYIntervalSeries errors = new
+     * XYIntervalSeries("errors");
+     * 
+     * IAxis axis = p1d.axis(); int nbins = axis.bins(); for (int i = 0; i <
+     * nbins; i++) { values.add(axis.binCenter(i), axis.binLowerEdge(i),
+     * axis.binUpperEdge(i), p1d.binHeight(i), 0.0, p1d.binHeight(i)); double
+     * error = p1d.binError(i); errors.add(axis.binCenter(i), axis.binCenter(i),
+     * axis.binCenter(i), p1d.binHeight(i), p1d.binHeight(i) - error,
+     * p1d.binHeight(i) + error); } valuesDataset.addSeries(values);
+     * errorsDataset.addSeries(errors);
+     * 
+     * XYIntervalSeriesCollection[] datasets = new
+     * XYIntervalSeriesCollection[2]; datasets[0] = valuesDataset; datasets[1] =
+     * errorsDataset; return datasets; }
+     * 
+     * static XYDataset[] forStepChart(IProfile1D p1d) { XYDataset[] datasets =
+     * new XYDataset[2];
+     * 
+     * // Create two datasets, one for values, and one for errors. XYSeries
+     * values = new XYSeries("values"); XYIntervalSeries errors = new
+     * XYIntervalSeries("errors"); IAxis axis = p1d.axis(); int nbins =
+     * axis.bins(); values.add(axis.binLowerEdge(0), 0); // left-most line for
+     * (int i = 0; i < nbins; i++) { values.add(axis.binLowerEdge(i),
+     * p1d.binHeight(i)); double error = p1d.binError(i);
+     * errors.add(axis.binCenter(i), axis.binCenter(i), axis.binCenter(i),
+     * p1d.binHeight(i), p1d.binHeight(i) - error, p1d.binHeight(i) + error); if
+     * (i == (nbins - 1)) { values.add(axis.binUpperEdge(i), p1d.binHeight(i));
+     * } } values.add(axis.binUpperEdge(nbins-1), 0); // right-most line
+     * 
+     * XYSeriesCollection valuesDataset = new XYSeriesCollection();
+     * valuesDataset.addSeries(values); XYIntervalSeriesCollection errorsDataset
+     * = new XYIntervalSeriesCollection(); errorsDataset.addSeries(errors);
+     * 
+     * datasets[0] = valuesDataset; datasets[1] = errorsDataset;
+     * 
+     * return datasets; }
+     * 
+     * static XYDataset forPoints(IProfile1D h1d) { DefaultXYDataset ds = new
+     * DefaultXYDataset();
+     * 
+     * IAxis axis = h1d.axis(); int nbins = axis.bins();
+     * 
+     * double data[][] = new double[2][nbins];
+     * 
+     * for (int i=0; i<nbins; i++) { data[0][i] = axis.binCenter(i); data[1][i]
+     * = h1d.binHeight(i); }
+     * 
+     * ds.addSeries("data", data);
+     * 
+     * return ds; }
+     */
 
-        XYIntervalSeriesCollection errorsDataset = new XYIntervalSeriesCollection();
-        XYIntervalSeries errors = new XYIntervalSeries("errors");
-
-        IAxis axis = p1d.axis();
-        int nbins = axis.bins();
-        for (int i = 0; i < nbins; i++) {
-            values.add(axis.binCenter(i), axis.binLowerEdge(i), axis.binUpperEdge(i), p1d.binHeight(i), 0.0, p1d.binHeight(i));
-            double error = p1d.binError(i);
-            errors.add(axis.binCenter(i), axis.binCenter(i), axis.binCenter(i), p1d.binHeight(i), p1d.binHeight(i) - error, p1d.binHeight(i) + error);
-        }
-        valuesDataset.addSeries(values);
-        errorsDataset.addSeries(errors);
-
-        XYIntervalSeriesCollection[] datasets = new XYIntervalSeriesCollection[2];
-        datasets[0] = valuesDataset;
-        datasets[1] = errorsDataset;
-        return datasets;
-    }
-
-    static XYDataset[] forStepChart(IProfile1D p1d)
-    {
-        XYDataset[] datasets = new XYDataset[2];
-
-        // Create two datasets, one for values, and one for errors.
-        XYSeries values = new XYSeries("values");
-        XYIntervalSeries errors = new XYIntervalSeries("errors");
-        IAxis axis = p1d.axis();
-        int nbins = axis.bins();
-        values.add(axis.binLowerEdge(0), 0); // left-most line
-        for (int i = 0; i < nbins; i++) {
-            values.add(axis.binLowerEdge(i), p1d.binHeight(i));
-            double error = p1d.binError(i);
-            errors.add(axis.binCenter(i), axis.binCenter(i), axis.binCenter(i), p1d.binHeight(i), p1d.binHeight(i) - error, p1d.binHeight(i) + error);
-            if (i == (nbins - 1)) {
-                values.add(axis.binUpperEdge(i), p1d.binHeight(i));
-            }
-        }
-        values.add(axis.binUpperEdge(nbins-1), 0); // right-most line
-        
-        XYSeriesCollection valuesDataset = new XYSeriesCollection();
-        valuesDataset.addSeries(values);
-        XYIntervalSeriesCollection errorsDataset = new XYIntervalSeriesCollection();
-        errorsDataset.addSeries(errors);
-
-        datasets[0] = valuesDataset;
-        datasets[1] = errorsDataset;
-
-        return datasets;
-    }
-    
-    static XYDataset forPoints(IProfile1D h1d)
-    {
-        DefaultXYDataset ds = new DefaultXYDataset();
-        
-        IAxis axis = h1d.axis();
-        int nbins = axis.bins();
-        
-        double data[][] = new double[2][nbins];
-        
-        for (int i=0; i<nbins; i++) 
-        {
-            data[0][i] = axis.binCenter(i);
-            data[1][i] = h1d.binHeight(i);
-        }
-        
-        ds.addSeries("data", data);
-        
-        return ds;
-    }
-    */
-       
 }

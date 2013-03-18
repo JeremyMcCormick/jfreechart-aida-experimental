@@ -16,17 +16,16 @@ import junit.framework.TestCase;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class Histogram1DStyleTest extends TestCase
-{
+public class Histogram1DStyleTest extends TestCase {
+
     IAnalysisFactory af;
     IPlotterFactory pf;
     IHistogramFactory hf;
-    
+
     int nfills = 10000;
     int range = 50;
 
-    protected void setUp()
-    {
+    protected void setUp() {
         AnalysisFactory.register();
         af = IAnalysisFactory.create();
         pf = af.createPlotterFactory();
@@ -34,8 +33,7 @@ public class Histogram1DStyleTest extends TestCase
     }
 
     // Create a 1D histogram with random Gaussian distribution
-    private final IHistogram1D histogram1D()
-    {
+    private final IHistogram1D histogram1D() {
         IHistogram1D h1d = hf.createHistogram1D("h1d", 50, 0, 50.0);
         Random rand = new Random();
         for (int i = 0; i < nfills; i++) {
@@ -44,8 +42,7 @@ public class Histogram1DStyleTest extends TestCase
         return h1d;
     }
 
-    public void test() throws Exception
-    {
+    public void test() throws Exception {
 
         // Create plotter
         IPlotter plotter = pf.create();
@@ -63,7 +60,7 @@ public class Histogram1DStyleTest extends TestCase
 
         // Get the plotter style.
         IPlotterStyle pstyle = plotter.style();
-        
+
         // Axis appearence.
         pstyle.xAxisStyle().labelStyle().setBold(true);
         pstyle.yAxisStyle().labelStyle().setBold(true);
@@ -72,12 +69,12 @@ public class Histogram1DStyleTest extends TestCase
         pstyle.xAxisStyle().lineStyle().setColor("black");
         pstyle.yAxisStyle().lineStyle().setColor("black");
         pstyle.xAxisStyle().lineStyle().setThickness(2);
-        pstyle.yAxisStyle().lineStyle().setThickness(2);        
-        
+        pstyle.yAxisStyle().lineStyle().setThickness(2);
+
         // Force auto range to zero.
         pstyle.yAxisStyle().setParameter("allowZeroSuppression", "false");
         pstyle.xAxisStyle().setParameter("allowZeroSuppression", "false");
-                        
+
         // Title style.
         pstyle.titleStyle().textStyle().setFontSize(20);
 
@@ -86,8 +83,8 @@ public class Histogram1DStyleTest extends TestCase
 
         // Turn off grid lines until explicitly enabled.
         pstyle.gridStyle().setVisible(false);
-        
-        // 0) Default style.        
+
+        // 0) Default style.
         plotter.region(0).plot(h, pstyle);
         plotter.region(0).setTitle("0) filled and bars");
 
@@ -103,7 +100,7 @@ public class Histogram1DStyleTest extends TestCase
         pstyle.dataStyle().fillStyle().setVisible(false);
         plotter.region(2).plot(h, pstyle);
         plotter.region(2).setTitle("2) bars with no fill");
-        
+
         // 3) No fill with outline only.
         pstyle.dataStyle().lineStyle().setColor("blue");
         pstyle.dataStyle().lineStyle().setVisible(false);
@@ -127,8 +124,8 @@ public class Histogram1DStyleTest extends TestCase
         pstyle.gridStyle().setLineType("dashed");
         pstyle.gridStyle().setColor("red");
         plotter.region(6).plot(h, pstyle);
-        plotter.region(6).setTitle("6) grid");        
-        
+        plotter.region(6).setTitle("6) grid");
+
         // 7) Show data marker.
         pstyle.gridStyle().setVisible(false);
         pstyle.setVisible(true);
@@ -138,29 +135,28 @@ public class Histogram1DStyleTest extends TestCase
         pstyle.dataStyle().markerStyle().setSize(5);
         plotter.region(7).plot(h, pstyle);
         plotter.region(7).setTitle("7) data marker");
-        
+
         // 8) Show lines between points.
         pstyle.dataStyle().markerStyle().setVisible(false);
         pstyle.dataStyle().outlineStyle().setVisible(true);
         pstyle.dataStyle().outlineStyle().setColor("blue");
         pstyle.dataStyle().outlineStyle().setLineType("dotted");
         pstyle.dataStyle().outlineStyle().setThickness(5);
-        
-        //pstyle.xAxisStyle().setParameter(Style.AXIS_LOWER_LIMIT, "15.0");
-        //pstyle.xAxisStyle().setParameter(Style.AXIS_UPPER_LIMIT, "40.0");
-        
-        //pstyle.yAxisStyle().setParameter(Style.AXIS_LOWER_LIMIT, "100.0");
-        //pstyle.yAxisStyle().setParameter(Style.AXIS_UPPER_LIMIT, "300.0");
-                
+
+        // pstyle.xAxisStyle().setParameter(Style.AXIS_LOWER_LIMIT, "15.0");
+        // pstyle.xAxisStyle().setParameter(Style.AXIS_UPPER_LIMIT, "40.0");
+
+        // pstyle.yAxisStyle().setParameter(Style.AXIS_LOWER_LIMIT, "100.0");
+        // pstyle.yAxisStyle().setParameter(Style.AXIS_UPPER_LIMIT, "300.0");
+
         plotter.region(8).plot(h, pstyle);
         plotter.region(8).setTitle("8) lines between points");
-                  
+
         // Show time.
         plotter.show();
     }
 
-    public void tearDown()
-    {
+    public void tearDown() {
         System.out.println("Hit Ctrl + C to exit.");
         while (true) {
             try {

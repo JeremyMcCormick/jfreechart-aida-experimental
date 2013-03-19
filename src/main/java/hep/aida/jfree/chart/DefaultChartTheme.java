@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.chart;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -12,7 +12,7 @@ import org.jfree.chart.plot.XYPlot;
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-class DefaultChartTheme extends StandardChartTheme {
+public class DefaultChartTheme extends StandardChartTheme {
 
     public DefaultChartTheme() {
         super("Legacy");

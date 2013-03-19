@@ -1,5 +1,6 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.plot.style.util;
 
+import hep.aida.IBorderStyle;
 import hep.aida.IFillStyle;
 import hep.aida.IGridStyle;
 import hep.aida.ILineStyle;
@@ -15,7 +16,7 @@ import org.freehep.swing.ColorConverter.ColorConversionException;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-final class ColorUtil {
+public final class ColorUtil {
 
     private ColorUtil() {
     }
@@ -27,7 +28,7 @@ final class ColorUtil {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), t);
     }
 
-    static Color toColor(Object object, Color defaultColor) {
+    public static Color toColor(Object object, Color defaultColor) {
         Color color = null;
 
         if (object instanceof ILineStyle)
@@ -40,6 +41,8 @@ final class ColorUtil {
             color = toColor((IFillStyle) object);
         else if (object instanceof IGridStyle)
             color = toColor((IGridStyle) object);
+        else if (object instanceof IBorderStyle)
+            color = toColor((IBorderStyle) object);
         else
             throw new IllegalArgumentException("Object is wrong type: " + object.getClass().getCanonicalName());
 
@@ -49,7 +52,7 @@ final class ColorUtil {
         return color;
     }
 
-    static Color toColor(ILineStyle style) {
+    public static Color toColor(ILineStyle style) {
         // Color.
         Color color = null;
 
@@ -69,7 +72,7 @@ final class ColorUtil {
         return color;
     }
 
-    static Color toColor(IMarkerStyle style) {
+    public static Color toColor(IMarkerStyle style) {
         // Color.
         Color color = null;
 
@@ -89,7 +92,7 @@ final class ColorUtil {
         return color;
     }
 
-    static Color toColor(ITextStyle style) {
+    public static Color toColor(ITextStyle style) {
         // Color.
         Color color = null;
 
@@ -109,7 +112,7 @@ final class ColorUtil {
         return color;
     }
 
-    static Color toColor(IFillStyle style) {
+    public static Color toColor(IFillStyle style) {
         // Color.
         Color color = null;
 
@@ -129,7 +132,28 @@ final class ColorUtil {
         return color;
     }
 
-    static Color toColor(IGridStyle style) {
+    public static Color toColor(IGridStyle style) {
+        // Color.
+        Color color = null;
+
+        try {
+            // Get the basic color.
+            color = ColorConverter.get(style.color());
+
+            // Apply opacity setting.
+            color = getTransparentColor(color, style.opacity());
+
+        } catch (ColorConversionException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            // e.printStackTrace();
+        }
+
+        return color;
+    }
+    
+    public static Color toColor(IBorderStyle style) {
+
         // Color.
         Color color = null;
 

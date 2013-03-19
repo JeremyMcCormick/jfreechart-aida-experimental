@@ -1,10 +1,13 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.plot.style.converter;
 
 import hep.aida.IBaseHistogram;
 import hep.aida.IHistogram2D;
 import hep.aida.ILineStyle;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.XYBoxRenderer;
+import hep.aida.jfree.converter.Histogram2DConverter;
+import hep.aida.jfree.plot.style.util.ColorUtil;
+import hep.aida.jfree.plot.style.util.StrokeUtil;
+import hep.aida.jfree.renderer.XYBoxRenderer;
 
 import java.awt.Color;
 import java.awt.Stroke;
@@ -78,7 +81,7 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
         }
     }
 
-    void applyDataFillStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    protected void applyDataFillStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
         XYItemRenderer renderer = chart.getXYPlot().getRenderer();
 
         // Set fill style for box plot.

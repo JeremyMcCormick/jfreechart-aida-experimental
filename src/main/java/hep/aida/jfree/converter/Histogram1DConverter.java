@@ -3,6 +3,7 @@ package hep.aida.jfree.converter;
 import hep.aida.IAxis;
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.dataset.DatasetConverter;
 
 import java.awt.Color;
 

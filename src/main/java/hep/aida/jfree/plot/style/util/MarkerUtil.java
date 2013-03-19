@@ -1,4 +1,4 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.plot.style.util;
 
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;

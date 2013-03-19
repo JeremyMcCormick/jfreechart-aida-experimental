@@ -13,12 +13,16 @@ import java.util.List;
  * 
  * Still need converters for...
  * 
- * -IProfile2D -IDataPointSet (w/ dimension <= 2) -IFunction
+ * -IProfile2D 
+ * -IDataPointSet (w/ dimension <= 2) 
+ * -IFunction
  * 
  * Probably these will be handled with a separate package like JZY3D:
  * 
- * -ICloud3D -IHistogram3D -IDatapointSet (w/ dim > 2) -IHistogram2D (as 3D lego
- * plot)
+ * -ICloud3D 
+ * -IHistogram3D 
+ * -IDatapointSet (w/ dim > 2) 
+ * -IHistogram2D (as 3D lego plot)
  */
 public class HistogramConverterFactory {
 

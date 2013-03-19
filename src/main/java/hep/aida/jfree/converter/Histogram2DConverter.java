@@ -2,7 +2,9 @@ package hep.aida.jfree.converter;
 
 import hep.aida.IHistogram2D;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.XYBoxRenderer;
+import hep.aida.jfree.dataset.DatasetConverter;
+import hep.aida.jfree.renderer.RainbowPaintScale;
+import hep.aida.jfree.renderer.XYBoxRenderer;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -239,7 +241,7 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D> {
         ChartFactory.getChartTheme().apply(chart);
     }
 
-    static void replaceWithColorMap(IHistogram2D h2d, JFreeChart chart, IPlotterStyle style) {
+    public static void replaceWithColorMap(IHistogram2D h2d, JFreeChart chart, IPlotterStyle style) {
         // Create the dataset.
         XYZDataset dataset = DatasetConverter.convert(h2d);
 

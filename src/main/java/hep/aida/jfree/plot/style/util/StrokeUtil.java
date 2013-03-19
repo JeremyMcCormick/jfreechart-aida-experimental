@@ -1,4 +1,4 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.plot.style.util;
 
 import hep.aida.IGridStyle;
 import hep.aida.ILineStyle;
@@ -10,16 +10,16 @@ import java.awt.Stroke;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-final class StrokeUtil {
+public final class StrokeUtil {
 
     private StrokeUtil() {
     }
 
-    static float lineThickness(int thickness) {
+    public static float lineThickness(int thickness) {
         return ((float) thickness) / (float) 2.;
     }
 
-    static Stroke toStroke(IGridStyle style) {
+    public static Stroke toStroke(IGridStyle style) {
         // Line thickness.
         float lineThickness = lineThickness(style.thickness());
 
@@ -32,7 +32,7 @@ final class StrokeUtil {
         return stroke;
     }
 
-    static Stroke toStroke(ILineStyle style) {
+    public static Stroke toStroke(ILineStyle style) {
         // Line thickness.
         float lineThickness = lineThickness(style.thickness());
 

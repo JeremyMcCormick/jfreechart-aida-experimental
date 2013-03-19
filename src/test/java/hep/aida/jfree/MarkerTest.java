@@ -6,7 +6,7 @@ import hep.aida.IHistogramFactory;
 import hep.aida.IPlotter;
 import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.converter.MarkerUtil;
+import hep.aida.jfree.plot.style.util.MarkerUtil;
 
 import java.util.Random;
 

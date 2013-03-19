@@ -1,6 +1,7 @@
-package hep.aida.jfree;
+package hep.aida.jfree.renderer;
 
-import hep.aida.jfree.XYZRangedDataset.ZRange;
+import hep.aida.jfree.dataset.XYZRangedDataset;
+import hep.aida.jfree.dataset.XYZRangedDataset.ZRange;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
@@ -50,11 +51,11 @@ public class XYBoxRenderer extends AbstractXYItemRenderer {
     }
 
     private double getHeightScaled(double z, ZRange range) {
-        return (z / range.zmax) * boxHeight;
+        return (z / range.getZMax()) * boxHeight;
     }
 
     private double getWidthScaled(double z, ZRange range) {
-        return (z / range.zmax) * boxWidth;
+        return (z / range.getZMax()) * boxWidth;
     }
 
     /*

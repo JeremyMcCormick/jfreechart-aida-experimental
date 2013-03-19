@@ -1,4 +1,5 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.renderer;
+
 
 import java.awt.Color;
 import java.awt.Paint;

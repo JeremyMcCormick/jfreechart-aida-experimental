@@ -1,4 +1,4 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.plot.style.converter;
 
 import hep.aida.IBaseHistogram;
 import hep.aida.ICloud2D;

@@ -1,4 +1,4 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.plot.style.converter;
 
 import static hep.aida.ref.plotter.Style.ERRORBAR_DECORATION;
 import hep.aida.IBaseHistogram;
@@ -8,6 +8,10 @@ import hep.aida.IHistogram1D;
 import hep.aida.ILineStyle;
 import hep.aida.IMarkerStyle;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.converter.Histogram1DConverter;
+import hep.aida.jfree.plot.style.util.ColorUtil;
+import hep.aida.jfree.plot.style.util.MarkerUtil;
+import hep.aida.jfree.plot.style.util.StrokeUtil;
 
 import java.awt.Color;
 import java.awt.Shape;
@@ -92,12 +96,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
 
         ILineStyle lineStyle = style.dataStyle().lineStyle();
 
-        Color color = DEFAULT_LINE_COLOR;
-        try {
-            color = ColorUtil.toColor(lineStyle);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+        Color color = ColorUtil.toColor(lineStyle, DEFAULT_LINE_COLOR);
 
         if (hist instanceof IHistogram1D) {
             if (lineStyle.isVisible()) {
@@ -131,7 +130,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param hist
      * @param style
      */
-    void applyDataFillStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    protected void applyDataFillStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
         XYPlot plot = chart.getXYPlot();
         IDataStyle dataStyle = style.dataStyle();
         IFillStyle dataFillStyle = dataStyle.fillStyle();
@@ -139,12 +138,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
         XYItemRenderer renderer = plot.getRenderer(Histogram1DConverter.BAR_DATA);
 
         if (dataFillStyle.isVisible()) {
-            Color color = DEFAULT_FILL_COLOR;
-            try {
-                color = ColorUtil.toColor(dataFillStyle);
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
+            Color color = ColorUtil.toColor(dataFillStyle, DEFAULT_FILL_COLOR);
             renderer.setSeriesPaint(0, color);
             renderer.setSeriesOutlinePaint(0, color);
         } else {
@@ -173,7 +167,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
         if (errorStyle.isVisible()) {
 
             // Set the line color.
-            Color errorColor = ColorUtil.toColor(errorStyle);
+            Color errorColor = ColorUtil.toColor(errorStyle, DEFAULT_LINE_COLOR);
             if (errorColor != null)
                 renderer.setSeriesPaint(0, errorColor);
 

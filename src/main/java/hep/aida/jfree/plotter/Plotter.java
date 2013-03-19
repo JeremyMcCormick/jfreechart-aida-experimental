@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.plotter;
 
 import hep.aida.IPlotterRegion;
 import hep.aida.ref.plotter.DummyPlotter;
@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-final class Plotter extends DummyPlotter {
+class Plotter extends DummyPlotter {
 
     List<PlotterRegion> regions = new ArrayList<PlotterRegion>();
     JPanel rootPanel;
@@ -31,20 +31,17 @@ final class Plotter extends DummyPlotter {
     }
 
     private void setupRegions() {
-        frame = new JFrame();
-        plotRegions();
-        frame.setContentPane(rootPanel);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.pack();
+    	if (frame == null) {
+    	    frame = new JFrame();
+    	    plotRegions();
+    	    frame.setContentPane(rootPanel);
+    	    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    	    frame.pack();
+    	}
     }
 
     public void show() {
         setupRegions();
-        // frame = new JFrame();
-        // plotRegions();
-        // frame.setContentPane(rootPanel);
-        // frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        // frame.pack();
         frame.setVisible(true);
     }
 
@@ -58,7 +55,18 @@ final class Plotter extends DummyPlotter {
     public JPanel panel() {
         return this.rootPanel;
     }
-
+    
+    public void writeToFile(String file) throws IOException {
+        String extension = "";
+        int i = file.lastIndexOf('.');
+        if (i > 0) {
+            extension = file.substring(i+1);
+        } else {
+            throw new IllegalArgumentException("File name has no extension: " + file);
+        }
+        writeToFile(file, extension);
+    }
+   
     public void writeToFile(String file, String type) throws IOException {
         if (frame == null) {
             setupRegions();
@@ -95,8 +103,8 @@ final class Plotter extends DummyPlotter {
         // System.out.println(this.getClass().getSimpleName() +
         // ".justCreateRegion => x = " + x + ", y = " + y + ", w = " + width +
         // ", " + ", h = " + height);
-        PlotterRegion region = new PlotterRegion(x, y, width, height);
-        region.setStyle(this.style());
+        PlotterRegion region = new PlotterRegion(this.style(), x, y, width, height);
+        //region.setStyle(this.style());
         regions.add(region);
         return region;
     }

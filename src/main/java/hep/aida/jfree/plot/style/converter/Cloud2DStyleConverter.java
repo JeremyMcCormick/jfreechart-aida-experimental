@@ -1,10 +1,12 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.plot.style.converter;
 
 import hep.aida.IBaseHistogram;
 import hep.aida.IDataStyle;
 import hep.aida.IFillStyle;
 import hep.aida.IMarkerStyle;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.plot.style.util.ColorUtil;
+import hep.aida.jfree.plot.style.util.MarkerUtil;
 
 import java.awt.Color;
 import java.awt.Shape;

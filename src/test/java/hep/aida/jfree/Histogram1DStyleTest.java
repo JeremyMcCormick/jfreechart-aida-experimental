@@ -133,10 +133,12 @@ public class Histogram1DStyleTest extends TestCase {
         pstyle.dataStyle().markerStyle().setVisible(true);
         pstyle.dataStyle().markerStyle().setShape("dot");
         pstyle.dataStyle().markerStyle().setSize(5);
+        pstyle.dataStyle().errorBarStyle().setVisible(true);
         plotter.region(7).plot(h, pstyle);
-        plotter.region(7).setTitle("7) data marker");
+        plotter.region(7).setTitle("7) data marker and errors");
 
         // 8) Show lines between points.
+        pstyle.dataStyle().errorBarStyle().setVisible(false);
         pstyle.dataStyle().markerStyle().setVisible(false);
         pstyle.dataStyle().outlineStyle().setVisible(true);
         pstyle.dataStyle().outlineStyle().setColor("blue");

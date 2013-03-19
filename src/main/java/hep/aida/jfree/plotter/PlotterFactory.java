@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.plotter;
 
 import hep.aida.IPlotter;
 import hep.aida.IPlotterStyle;
@@ -6,15 +6,15 @@ import hep.aida.IPlotterStyle;
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-final class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory {
+public class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory {
 
     String name;
 
-    PlotterFactory() {
+    public PlotterFactory() {
         super();
     }
 
-    PlotterFactory(String name) {
+    public PlotterFactory(String name) {
         super();
         this.name = name;
     }

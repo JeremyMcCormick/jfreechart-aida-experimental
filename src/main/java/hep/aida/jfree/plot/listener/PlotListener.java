@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.plot.listener;
 
 import hep.aida.IBaseHistogram;
 import hep.aida.ref.event.AIDAListener;
@@ -17,7 +17,7 @@ import org.jfree.chart.JFreeChart;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-abstract class PlotListener implements AIDAListener {
+public abstract class PlotListener implements AIDAListener {
 
     JFreeChart chart;
     IBaseHistogram hist;
@@ -28,13 +28,9 @@ abstract class PlotListener implements AIDAListener {
 
     /**
      * 
-     * @param hist
-     *            The backing histogram.
-     * @param chart
-     *            The corresponding chart for the histogram.
-     * @param datasetIndices
-     *            The indices of the datasets corresponding to the histogram in
-     *            the chart.
+     * @param hist The backing histogram.
+     * @param chart The corresponding chart for the histogram.
+     * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
     PlotListener(IBaseHistogram hist, JFreeChart chart, int[] datasetIndices) {
         this.chart = chart;
@@ -44,13 +40,9 @@ abstract class PlotListener implements AIDAListener {
 
     /**
      * 
-     * @param hist
-     *            The backing histogram.
-     * @param chart
-     *            The corresponding chart for the histogram.
-     * @param datasetIndices
-     *            The indices of the datasets corresponding to the histogram in
-     *            the chart.
+     * @param hist The backing histogram.
+     * @param chart The corresponding chart for the histogram.
+     * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
     PlotListener(IBaseHistogram hist, JFreeChart chart, int[] datasetIndices, int updateInterval) {
         this.chart = chart;
@@ -82,6 +74,9 @@ abstract class PlotListener implements AIDAListener {
         }
     }
 
-    // This method should update the JFreeChart plot from the AIDA object.
+    /**
+     * This method updates the JFreeChart plot based on changes to the AIDA object.
+     * Sub-classes should override this method with specific implementations.
+     */
     abstract void update();
 }

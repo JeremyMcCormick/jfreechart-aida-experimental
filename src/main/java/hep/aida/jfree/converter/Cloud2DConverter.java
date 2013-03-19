@@ -2,6 +2,7 @@ package hep.aida.jfree.converter;
 
 import hep.aida.ICloud2D;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.dataset.DatasetConverter;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;

@@ -1,8 +1,8 @@
-package hep.aida.jfree;
+package hep.aida.jfree.plot.listener;
 
 import hep.aida.IBaseHistogram;
 import hep.aida.ICloud2D;
-import hep.aida.jfree.converter.DatasetConverter;
+import hep.aida.jfree.dataset.DatasetConverter;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;

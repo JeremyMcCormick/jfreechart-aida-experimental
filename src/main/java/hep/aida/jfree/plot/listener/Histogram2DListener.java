@@ -1,10 +1,11 @@
-package hep.aida.jfree;
+package hep.aida.jfree.plot.listener;
 
 import hep.aida.IBaseHistogram;
 import hep.aida.IHistogram2D;
-import hep.aida.jfree.converter.DatasetConverter;
 import hep.aida.jfree.converter.Histogram2DConverter;
-import hep.aida.jfree.converter.RainbowPaintScale;
+import hep.aida.jfree.dataset.DatasetConverter;
+import hep.aida.jfree.renderer.RainbowPaintScale;
+import hep.aida.jfree.renderer.XYBoxRenderer;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;

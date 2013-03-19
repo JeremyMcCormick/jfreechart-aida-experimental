@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.plot.listener;
 
 import hep.aida.IBaseHistogram;
 import hep.aida.IHistogram1D;

@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.dataset;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +32,9 @@ public class XYZRangedDataset extends DefaultXYZDataset {
 
     Map<Comparable, ZRange> ranges = new HashMap<Comparable, ZRange>();
 
+    public XYZRangedDataset() {
+    }
+    
     private ZRange computeZRange(double[][] data) {
         ZRange range = new ZRange();
         int n = data[2].length;
@@ -44,9 +47,6 @@ public class XYZRangedDataset extends DefaultXYZDataset {
         }
         range.range = range.zmax - range.zmin;
         return range;
-    }
-
-    public XYZRangedDataset() {
     }
 
     public void addSeries(Comparable seriesKey, double[][] data) {

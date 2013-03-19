@@ -1,10 +1,9 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.dataset;
 
 import hep.aida.IAxis;
 import hep.aida.ICloud2D;
 import hep.aida.IHistogram1D;
 import hep.aida.IHistogram2D;
-import hep.aida.jfree.XYZRangedDataset;
 
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.DefaultXYZDataset;
@@ -22,10 +21,7 @@ import org.jfree.data.xy.XYZDataset;
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public final class DatasetConverter {
-
-    private DatasetConverter() {
-    }
+public class DatasetConverter {
 
     public static XYZRangedDataset toXYZRangedDataset(IHistogram2D h2d) {
         XYZRangedDataset dataset = new XYZRangedDataset();
@@ -83,7 +79,7 @@ public final class DatasetConverter {
      * @return An array of datasets; index 0 = values; index 1 = errors
      */
 
-    static XYIntervalSeriesCollection[] forBarChart(IHistogram1D h1d) {
+    public static XYIntervalSeriesCollection[] forBarChart(IHistogram1D h1d) {
         XYIntervalSeriesCollection valuesDataset = new XYIntervalSeriesCollection();
         XYIntervalSeries values = new XYIntervalSeries("values");
 
@@ -106,7 +102,7 @@ public final class DatasetConverter {
         return datasets;
     }
 
-    static XYDataset[] forStepChart(IHistogram1D h1d) {
+    public static XYDataset[] forStepChart(IHistogram1D h1d) {
         XYDataset[] datasets = new XYDataset[2];
 
         // Create two datasets, one for values, and one for errors.
@@ -136,7 +132,7 @@ public final class DatasetConverter {
         return datasets;
     }
 
-    static XYDataset forPoints(IHistogram1D h1d) {
+    public static XYDataset forPoints(IHistogram1D h1d) {
         DefaultXYDataset ds = new DefaultXYDataset();
 
         IAxis axis = h1d.axis();

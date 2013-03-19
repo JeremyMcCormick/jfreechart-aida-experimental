@@ -4,15 +4,17 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 
 import hep.aida.IPlotterFactory;
+import hep.aida.jfree.chart.DefaultChartTheme;
+import hep.aida.jfree.plotter.PlotterFactory;
 
 /**
  * JFreeChart AnalysisFactory
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public final class AnalysisFactory extends hep.aida.ref.AnalysisFactory {
+public class AnalysisFactory extends hep.aida.ref.AnalysisFactory {
 
-    static void configure() {
+    public static void configure() {
         ChartFactory.setChartTheme(new DefaultChartTheme());
         XYBarRenderer.setDefaultShadowsVisible(false);
     }
@@ -21,7 +23,7 @@ public final class AnalysisFactory extends hep.aida.ref.AnalysisFactory {
      * Register this class as the AIDA AnalysisFactory by setting the magic
      * system property
      */
-    final static void register() {
+    public final static void register() {
         // Set the system property that will cause this class to be the default
         // AIDA factory implementation.
         System.setProperty("hep.aida.IAnalysisFactory", AnalysisFactory.class.getName());
@@ -32,6 +34,7 @@ public final class AnalysisFactory extends hep.aida.ref.AnalysisFactory {
 
     /**
      * Create a named plotter factory.
+     * @return The JFreeChart implementation of IPlotterFactory.
      */
     public IPlotterFactory createPlotterFactory(String name) {
         return new PlotterFactory(name);

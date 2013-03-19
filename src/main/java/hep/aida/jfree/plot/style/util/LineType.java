@@ -1,4 +1,4 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.plot.style.util;
 
 /**
  * This is a utility class for creating different line types, including solid,

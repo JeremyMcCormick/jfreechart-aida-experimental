@@ -79,7 +79,6 @@
 				<configuration>
 					<excludes>
 						<exclude>hep/aida/example/**.java</exclude>
-						<exclude>hep/aida/jfree/Cloud2DListenerTest.java</exclude>
                         <exclude>hep/aida/jfree/Interactive**Test.java</exclude>
 					</excludes>
 				</configuration>

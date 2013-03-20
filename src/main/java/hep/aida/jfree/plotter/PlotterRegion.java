@@ -11,6 +11,9 @@ import hep.aida.jfree.plot.style.converter.StyleConverterFactory;
 import hep.aida.ref.event.IsObservable;
 import hep.aida.ref.plotter.DummyPlotterRegion;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartPanel;
@@ -36,6 +39,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     double x, y, w, h;
     IPlotterStyle style;
     AbstractStyleConverter styleConverter;
+    List<PlotListener> listeners = new ArrayList<PlotListener>();
 
     /**
      * Create a new plotter region.
@@ -162,6 +166,7 @@ public class PlotterRegion extends DummyPlotterRegion {
         PlotListener listener = PlotListenerFactory.createListener(hist, chart, datasetIndices);
         if (listener != null) {
             ((IsObservable) hist).addListener(listener);
+            this.listeners.add(listener);
         } else
             System.out.println("WARNING: No listener defined for plot " + hist.title() + " with type " + hist.getClass().getCanonicalName());
     }
@@ -200,5 +205,11 @@ public class PlotterRegion extends DummyPlotterRegion {
 
     public void setTitle(String title) {
         chart.setTitle(title);
+    }
+    
+    public synchronized void update() {
+        for (PlotListener listener : listeners) {
+            listener.update();
+        }
     }
 }

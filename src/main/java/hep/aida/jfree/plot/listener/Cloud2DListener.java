@@ -24,16 +24,12 @@ public class Cloud2DListener extends PlotListener {
         this.cloud = (ICloud2D) cloud;
     }
 
-    synchronized void update() {
-        // long startTime = System.nanoTime();
+    public synchronized void update() {
+        chart.setNotify(false);
         XYPlot plot = (XYPlot) chart.getPlot();
         XYSeriesCollection dataset = DatasetConverter.convert(cloud);
-        // for (int i=0; i<datasetIndices.length; i++) {
-        // System.out.println("updating ds @ " + datasetIndices[i]);
         plot.setDataset(datasetIndices[0], dataset);
-        // }
-        // long endTime = System.nanoTime() - startTime;
-        // System.out.println("updated plot " + cloud.title() + " in " +
-        // endTime/1e6 + " ms");
-    }
+        chart.setNotify(true);
+        chart.fireChartChanged();
+     }
 }

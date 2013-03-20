@@ -78,5 +78,5 @@ public abstract class PlotListener implements AIDAListener {
      * This method updates the JFreeChart plot based on changes to the AIDA object.
      * Sub-classes should override this method with specific implementations.
      */
-    abstract void update();
+    public abstract void update();
 }

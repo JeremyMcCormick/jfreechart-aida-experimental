@@ -34,7 +34,7 @@ public class Histogram2DListener extends PlotListener {
         h2d = (IHistogram2D) hist;
     }
 
-    synchronized void update() {
+    public synchronized void update() {
         XYPlot plot = (XYPlot) chart.getPlot();
         if (plot.getRenderer() instanceof XYBoxRenderer) {
             plot.setDataset(0, DatasetConverter.toXYZRangedDataset(h2d));

@@ -27,15 +27,11 @@ public class Histogram1DListener extends PlotListener {
         h1d = (Histogram1D) hist;
     }
 
-    synchronized void update() {
-        // long startTime = System.nanoTime();
+    public synchronized void update() {
         XYPlot plot = (XYPlot) chart.getPlot();
         XYDataset[] datasets = Histogram1DConverter.createDatasets(h1d);
         for (int i = 0; i < datasetIndices.length; i++) {
-            // System.out.println("updating ds @ " + datasetIndices[i]);
-            plot.setDataset(datasetIndices[i], datasets[i]);
+             plot.setDataset(datasetIndices[i], datasets[i]);
         }
-        // long endTime = System.nanoTime() - startTime;
-        // System.out.println("updated plot in " + endTime/1e6 + " ms");
     }
 }

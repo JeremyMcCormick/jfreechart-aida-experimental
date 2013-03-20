@@ -10,18 +10,13 @@ import java.util.Random;
 
 public class ChartStyleTest extends AbstractPlotTest {
         
-    // Create a 1D histogram with random Gaussian distribution.
-    private final IHistogram1D histogram1D() {
-        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, 0, 50.0);
+    protected void plot() {
+         
+        IHistogram1D hist = histogramFactory.createHistogram1D("h1d", 50, 0, 50.0);
         Random rand = new Random();
         for (int i = 0; i < 10000; i++) {
-            h1d.fill(rand.nextInt(50));
+            hist.fill(rand.nextInt(50));
         }
-        return h1d;
-    }
-
-    private void styleExamples() {
-        IHistogram1D hist = histogram1D();
         
         IPlotterStyle style = plotter.style();
         
@@ -70,9 +65,4 @@ public class ChartStyleTest extends AbstractPlotTest {
         //dataBoxStyle.setVisible(arg0);
         
     }
-    
-    public void testBatch() {
-        styleExamples();
-        mode();
-    }    
 }

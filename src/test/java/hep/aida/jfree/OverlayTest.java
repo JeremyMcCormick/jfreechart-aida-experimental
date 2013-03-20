@@ -1,10 +1,6 @@
 package hep.aida.jfree;
 
-import hep.aida.IAnalysisFactory;
 import hep.aida.IHistogram1D;
-import hep.aida.IHistogramFactory;
-import hep.aida.IPlotter;
-import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.test.AbstractPlotTest;
 
@@ -15,17 +11,13 @@ import java.util.Random;
  */
 public class OverlayTest extends AbstractPlotTest {
 
-    // Create a 1D histogram with random Gaussian distribution
-    private final IHistogram1D histogram1D() {
-        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, -5.0, 5.0);
-        return h1d;
-    }
-
-    private void overlay() {
+    protected void plot() {
 
         // Create a list with various types of histograms
-        IHistogram1D h1d = histogram1D();
-
+        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, -5.0, 5.0);
+        
+        IHistogram1D h1dOverlay = histogramFactory.createHistogram1D("h1d", 50, -5.0, 5.0);
+        
         h1d.annotation().addItem("xAxisLabel", h1d.title() + " X");
         h1d.annotation().addItem("yAxisLabel", h1d.title() + " Y");
 
@@ -89,8 +81,6 @@ public class OverlayTest extends AbstractPlotTest {
         pstyle.dataStyle().lineStyle().setColor("blue");
         plotter.region(0).plot(h1d, pstyle);
 
-        // Overlay histogram with style settings.
-        IHistogram1D overlayHist = histogram1D();
         /*
          * pstyle.dataStyle().outlineStyle().setColor("red");
          * pstyle.dataStyle().errorBarStyle().setColor("red");
@@ -100,7 +90,7 @@ public class OverlayTest extends AbstractPlotTest {
          * pstyle.dataStyle().lineStyle().setColor("red");
          */
         pstyle.dataStyle().lineStyle().setColor("red");
-        plotter.region(0).plot(overlayHist, pstyle);
+        plotter.region(0).plot(h1dOverlay, pstyle);
 
         // Another Overlay histogram with style settings.
         /*
@@ -114,21 +104,11 @@ public class OverlayTest extends AbstractPlotTest {
          * plotter.region(0).plot(overlayHist2, pstyle);
          */
 
-        // Show time
-        //plotter.show();
-
         // Overlay histograms in real time.
         Random rand = new Random();
         for (int i = 0; i < 10000; i++) {
-            h1d.fill(rand.nextGaussian());
-            overlayHist.fill(rand.nextGaussian());
-            // overlayHist2.fill(rand.nextGaussian());
-            //Thread.sleep(200);
+            h1d.fill(rand.nextGaussian());      
+            h1dOverlay.fill(rand.nextGaussian());
         }
-    }
-    
-    public void testOverlay() {
-        overlay();
-        mode();
     }
 }

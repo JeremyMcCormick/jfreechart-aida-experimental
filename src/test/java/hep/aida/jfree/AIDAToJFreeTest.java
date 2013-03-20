@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * This is basically an integration test. It converts AIDA objects to JFreeChart
- * representations and plots them.
+ * This test converts some common types of AIDA objects to JFreeChart representations 
+ * and plots them.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
@@ -62,7 +62,7 @@ public class AIDAToJFreeTest extends AbstractPlotTest {
         return h2d;
     }
 
-    private void examples() {
+    protected void plot() {
 
         // Create a list with various types of histograms
         List<IBaseHistogram> histos = new ArrayList<IBaseHistogram>();
@@ -126,10 +126,5 @@ public class AIDAToJFreeTest extends AbstractPlotTest {
         for (int i = 0; i < histos.size(); i++) {
             plotter.region(i).plot(histos.get(i), pstyle);
         }
-    }
-    
-    public void test() {
-        examples();
-        mode();
     }
 }

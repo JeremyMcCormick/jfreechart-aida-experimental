@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class Histogram2DTest extends AbstractPlotTest {
 
-    private void histogramExample() {
+    protected void plot() {
 
         // Create a 1D histo
         IHistogram2D h2d = histogramFactory.createHistogram2D("h2d", 100, 0., 100., 100, 0., 100.);
@@ -49,10 +49,5 @@ public class Histogram2DTest extends AbstractPlotTest {
         for (int i = 0; i < 100000000; i++) {
             h2d.fill(rand.nextInt(100), rand.nextInt(100));
         }
-    }
-    
-    public void testHistogram() {
-        histogramExample();
-        mode();
     }
 }

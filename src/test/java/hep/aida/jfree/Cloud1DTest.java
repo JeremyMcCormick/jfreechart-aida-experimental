@@ -15,20 +15,14 @@ import java.util.Random;
  */
 public class Cloud1DTest extends AbstractPlotTest {
 
-    // Create a 1D cloud with random data
-    private final ICloud1D cloud1D() {
+    protected void plot() {
+
         Random rand = new Random();
         ICloud1D c1d = histogramFactory.createCloud1D("c1d");
         for (int i = 0; i < 100000; i++) {
             c1d.fill(rand.nextDouble() * 100.);
         }
-        return c1d;
-    }
-
-    private void cloudExample() {
-
-        ICloud1D c1d = cloud1D();
-
+        
         // Set labels for axes automatically based on title
         c1d.annotation().addItem("xAxisLabel", c1d.title() + " X");
         c1d.annotation().addItem("yAxisLabel", c1d.title() + " Y");
@@ -79,12 +73,5 @@ public class Cloud1DTest extends AbstractPlotTest {
 
         // Plot histograms into regions
         plotter.region(0).plot(c1d);
-
-        // Show time
-    }
-    
-    public void testBatch() {
-        cloudExample();
-        mode();
     }
 }

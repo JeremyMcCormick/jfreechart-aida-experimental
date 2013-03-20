@@ -14,24 +14,15 @@ import java.util.Random;
  */
 public class MarkerTest extends AbstractPlotTest {
 
-    int nfills = 100;
-    int range = 10;
-
-    // Create a 1D histogram with random Gaussian distribution
-    private final IHistogram1D histogram1D() {
-        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 10, 0, 10.0);
-        Random rand = new Random();
-        for (int i = 0; i < nfills; i++) {
-            h1d.fill(rand.nextInt(range));
-        }
-        return h1d;
-    }
-
-    public void markerExample() {
+    protected void plot() {
 
         // Create a test histogram which will be used to show various style
         // options.
-        IHistogram1D h = histogram1D();
+        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 10, 0, 10.0);
+        Random rand = new Random();
+        for (int i = 0; i < 100; i++) {
+            h1d.fill(rand.nextInt(10));
+        }
 
         // Create regions for showing plots
         plotter.createRegions(5, 2, 0);
@@ -51,13 +42,8 @@ public class MarkerTest extends AbstractPlotTest {
         // Display plots of all marker types.
         for (int i = 0; i < MarkerUtil.availableShapes.length; i++) {
             pstyle.dataStyle().markerStyle().setShape(MarkerUtil.availableShapes[i]);
-            plotter.region(i).plot(h, pstyle);
+            plotter.region(i).plot(h1d, pstyle);
             plotter.region(i).setTitle(MarkerUtil.availableShapes[i]);
         }
-    }
-
-    public void testMarkers() {
-        markerExample();
-        mode();
     }
 }

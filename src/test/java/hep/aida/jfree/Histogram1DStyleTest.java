@@ -11,25 +11,14 @@ import java.util.Random;
  */
 public class Histogram1DStyleTest extends AbstractPlotTest {
 
-    private static final int nfills = 10000;
-    private static final int range = 50;
+    protected void plot() {
 
-    // Create a 1D histogram with random Gaussian distribution
-    private IHistogram1D histogram1D() {
-        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, 0, 50.0);
+        IHistogram1D h = histogramFactory.createHistogram1D("h1d", 50, 0, 50.0);
         Random rand = new Random();
-        for (int i = 0; i < nfills; i++) {
-            h1d.fill(rand.nextInt(range));
+        for (int i = 0; i < 10000; i++) {
+            h.fill(rand.nextInt(50));
         }
-        return h1d;
-    }
-
-    private void styleExamples() {
-
-        // Create a test histogram which will be used to show
-        // various style options.
-        IHistogram1D h = histogram1D();
-
+        
         // Set labels for axes automatically based on title
         h.annotation().addItem("xAxisLabel", h.title() + " X");
         h.annotation().addItem("yAxisLabel", h.title() + " Y");
@@ -132,10 +121,5 @@ public class Histogram1DStyleTest extends AbstractPlotTest {
 
         plotter.region(8).plot(h, pstyle);
         plotter.region(8).setTitle("8) lines between points");
-    }
-    
-    public void testBatch() {
-        styleExamples();
-        mode();
     }
 }

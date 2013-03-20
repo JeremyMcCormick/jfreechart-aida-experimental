@@ -1,6 +1,5 @@
 package hep.aida.jfree;
 
-import hep.aida.IPlotter;
 import hep.aida.IProfile1D;
 import hep.aida.jfree.test.AbstractPlotTest;
 
@@ -8,7 +7,7 @@ import java.util.Random;
 
 public class Profile1DTest extends AbstractPlotTest {
 
-    private void profile() {
+    protected void plot() {
 
         // Create 1D and 2D IProfile with fixed bin width
         IProfile1D prof1DFixedBinWidth = histogramFactory.createProfile1D("prof1DFixedBinWidth", "Fixed bin width 1D", 10, 0, 1);
@@ -34,10 +33,4 @@ public class Profile1DTest extends AbstractPlotTest {
         plotter.region(0).plot(prof1DFixedBinWidth);
         plotter.region(1).plot(prof1DVariableBinWidth);
     }
-    
-    public void testProfile() {
-        profile();
-        mode();
-    }
-    
 }

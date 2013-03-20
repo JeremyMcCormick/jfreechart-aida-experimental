@@ -54,6 +54,11 @@ public abstract class AbstractPlotTest extends TestCase {
         this.batchMode = batchMode;
     }
     
+    public void test() {
+        plot();
+        mode();
+    }
+    
     public void tearDown() {
         if (!batchMode) {
             System.out.println("Test is running in interactive mode.");
@@ -67,4 +72,6 @@ public abstract class AbstractPlotTest extends TestCase {
             }
         }
     }    
+    
+    protected abstract void plot();
 }

@@ -51,7 +51,7 @@ public class DataPointSetCreateAndFillTest extends TestCase {
         plotter.createRegions(2, 1);
         plotter.region(0).plot(dps1D);
         plotter.region(1).plot(dps2D);
-        plotter.writeToFile(this.getClass().getSimpleName() + ".png");
+        plotter.writeToFile("target/" + this.getClass().getSimpleName() + ".png");
         //plotter.show();
 
         //Thread.sleep(10000);

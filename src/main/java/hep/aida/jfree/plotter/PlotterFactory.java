@@ -1,7 +1,6 @@
 package hep.aida.jfree.plotter;
 
 import hep.aida.IPlotter;
-import hep.aida.IPlotterStyle;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>

@@ -1,46 +1,28 @@
 package hep.aida.jfree;
 
-import java.io.IOException;
-import java.util.Random;
-
-import hep.aida.IAnalysisFactory;
 import hep.aida.IBoxStyle;
 import hep.aida.IFillStyle;
 import hep.aida.IHistogram1D;
-import hep.aida.IHistogramFactory;
-import hep.aida.IPlotter;
-import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
-import junit.framework.TestCase;
+import hep.aida.jfree.test.AbstractPlotTest;
 
-public class ChartStyleTest extends TestCase {
-    
-    IAnalysisFactory af;
-    IPlotterFactory pf;
-    IHistogramFactory hf;
-    
+import java.util.Random;
 
-    protected void setUp() {
-        AnalysisFactory.register();
-        af = IAnalysisFactory.create();
-        pf = af.createPlotterFactory();
-        hf = af.createHistogramFactory(null);
-    }
-    
-    // Create a 1D histogram with random Gaussian distribution
+public class ChartStyleTest extends AbstractPlotTest {
+        
+    // Create a 1D histogram with random Gaussian distribution.
     private final IHistogram1D histogram1D() {
-        IHistogram1D h1d = hf.createHistogram1D("h1d", 50, 0, 50.0);
+        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, 0, 50.0);
         Random rand = new Random();
         for (int i = 0; i < 10000; i++) {
             h1d.fill(rand.nextInt(50));
         }
         return h1d;
     }
-    
-    public void test() {
+
+    private void styleExamples() {
         IHistogram1D hist = histogram1D();
         
-        IPlotter plotter = pf.create();
         IPlotterStyle style = plotter.style();
         
         style.gridStyle().setVisible(false);
@@ -78,33 +60,19 @@ public class ChartStyleTest extends TestCase {
         regionBoxStyle.borderStyle().setBorderType(null);
         plotter.region(5).plot(hist);
         
-        //try {
-        //    plotter.writeToFile(this.getClass().getSimpleName() + ".png");
-        //} catch (IOException e) {
-        //    throw new RuntimeException(e);
-        //}
-        
-        plotter.show();
-        
         //dataBoxStyle.setBackgroundStyle(arg0);
         //dataBoxStyle.setBorderStyle(arg0);
         //dataBoxStyle.setForegroundStyle(arg0);
         //dataBoxStyle.setHeight(arg0);
         //dataBoxStyle.setWidth(arg0);
-        //dataBoxStyle.setVisible(arg0);
         //dataBoxStyle.setX(arg0);
         //dataBoxStyle.setY(arg0);
-    }
-
-    public void tearDown() {
-        System.out.println("Hit Ctrl + C to exit.");
-        while (true) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        //dataBoxStyle.setVisible(arg0);
+        
     }
     
+    public void testBatch() {
+        styleExamples();
+        mode();
+    }    
 }

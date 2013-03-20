@@ -1,50 +1,31 @@
 package hep.aida.jfree;
 
-import hep.aida.IAnalysisFactory;
 import hep.aida.IAxisStyle;
 import hep.aida.ICloud1D;
-import hep.aida.IHistogramFactory;
-import hep.aida.IPlotter;
-import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
 import hep.aida.ITextStyle;
+import hep.aida.jfree.test.AbstractPlotTest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import junit.framework.TestCase;
-
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public class Cloud1DTest extends TestCase {
-
-    IAnalysisFactory af;
-    IPlotterFactory pf;
-    IHistogramFactory hf;
-
-    protected void setUp() {
-        AnalysisFactory.register();
-        af = IAnalysisFactory.create();
-        pf = af.createPlotterFactory();
-        hf = af.createHistogramFactory(null);
-    }
+public class Cloud1DTest extends AbstractPlotTest {
 
     // Create a 1D cloud with random data
     private final ICloud1D cloud1D() {
         Random rand = new Random();
-        ICloud1D c1d = hf.createCloud1D("c1d");
+        ICloud1D c1d = histogramFactory.createCloud1D("c1d");
         for (int i = 0; i < 100000; i++) {
             c1d.fill(rand.nextDouble() * 100.);
         }
         return c1d;
     }
 
-    public void testCloud1D() throws Exception {
-
-        // Create plotter
-        IPlotter plotter = pf.create();
+    private void cloudExample() {
 
         ICloud1D c1d = cloud1D();
 
@@ -100,7 +81,10 @@ public class Cloud1DTest extends TestCase {
         plotter.region(0).plot(c1d);
 
         // Show time
-        plotter.show();
-        Thread.sleep(1000000); // Yeah, I know.
+    }
+    
+    public void testBatch() {
+        cloudExample();
+        mode();
     }
 }

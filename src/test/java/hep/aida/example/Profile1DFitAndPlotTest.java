@@ -72,14 +72,15 @@ public class Profile1DFitAndPlotTest extends TestCase {
 	plotter.region(1).plot(prof1DVariableBinWidth);
 	plotter.region(1).plot(resProf1DVar.fittedFunction());
 
-	plotter.show();
+	plotter.writeToFile(this.getClass().getSimpleName() + ".png");
+	//plotter.show();
 
 	// resProf1DVar.fittedFunction();
 
 	// Thread.sleep(10000);
     }
 
-    public static void main(String[] args) throws Exception {
-	(new Profile1DFitAndPlotTest()).test();
-    }
+    //public static void main(String[] args) throws Exception {
+    //(new Profile1DFitAndPlotTest()).test();
+    //}
 }

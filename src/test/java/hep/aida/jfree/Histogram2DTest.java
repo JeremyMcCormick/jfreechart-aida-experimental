@@ -1,40 +1,20 @@
 package hep.aida.jfree;
 
-import hep.aida.IAnalysisFactory;
 import hep.aida.IHistogram2D;
-import hep.aida.IHistogramFactory;
-import hep.aida.IPlotter;
-import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.test.AbstractPlotTest;
 
 import java.util.Random;
-
-import junit.framework.TestCase;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public class Histogram2DTest extends TestCase {
+public class Histogram2DTest extends AbstractPlotTest {
 
-    public void batchTest() throws Exception {
-        h2d(true);
-    }
-
-    public void display() throws Exception {
-        h2d(false);
-    }
-
-    private void h2d(boolean batchMode) throws Exception {
-        AnalysisFactory.register();
-        IAnalysisFactory af = IAnalysisFactory.create();
-        IPlotterFactory pf = af.createPlotterFactory();
-        IHistogramFactory hf = af.createHistogramFactory(null);
-
-        // Create plotter
-        IPlotter plotter = pf.create();
+    private void histogramExample() {
 
         // Create a 1D histo
-        IHistogram2D h2d = hf.createHistogram2D("h2d", 100, 0., 100., 100, 0., 100.);
+        IHistogram2D h2d = histogramFactory.createHistogram2D("h2d", 100, 0., 100., 100, 0., 100.);
 
         // Set labels for axes.
         h2d.annotation().addItem("xAxisLabel", h2d.title() + " X");
@@ -65,24 +45,14 @@ public class Histogram2DTest extends TestCase {
         pstyle.dataStyle().fillStyle().setColor("blue");
         plotter.region(1).plot(h2d, pstyle);
 
-        if (!batchMode)
-            plotter.show();
         Random rand = new Random();
         for (int i = 0; i < 100000000; i++) {
             h2d.fill(rand.nextInt(100), rand.nextInt(100));
-            // Thread.sleep(1000);
-        }
-
-        if (batchMode) {
-            plotter.writeToFile(this.getClass().getSimpleName(), "png");
-        } else {
-            while (true) {
-                Thread.sleep(1000);
-            }
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        new Histogram2DTest().display();
+    
+    public void testHistogram() {
+        histogramExample();
+        mode();
     }
 }

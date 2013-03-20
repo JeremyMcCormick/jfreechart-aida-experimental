@@ -125,8 +125,10 @@ public class PlotterRegion extends DummyPlotterRegion {
         panel = new ChartPanel(chart);
         
         // Apply region styles to the new panel.  Only the base chart has its own JPanel.
-        styleConverter.getChartState().setPanel(panel);
-        styleConverter.applyPanelStyle();
+        if (styleConverter != null) {
+            styleConverter.getChartState().setPanel(panel);
+            styleConverter.applyPanelStyle();
+        }
 
         // Add a listener for receiving callbacks when the underlying histogram is updated,
         // so that it can be redrawn.

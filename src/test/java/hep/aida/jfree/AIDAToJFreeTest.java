@@ -1,23 +1,18 @@
 package hep.aida.jfree;
 
-import hep.aida.IAnalysisFactory;
 import hep.aida.IAxisStyle;
 import hep.aida.IBaseHistogram;
 import hep.aida.ICloud1D;
 import hep.aida.ICloud2D;
 import hep.aida.IHistogram1D;
 import hep.aida.IHistogram2D;
-import hep.aida.IHistogramFactory;
-import hep.aida.IPlotter;
-import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
 import hep.aida.ITextStyle;
+import hep.aida.jfree.test.AbstractPlotTest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import junit.framework.TestCase;
 
 /**
  * This is basically an integration test. It converts AIDA objects to JFreeChart
@@ -26,23 +21,12 @@ import junit.framework.TestCase;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class AIDAToJFreeTest extends TestCase {
-
-    IAnalysisFactory af;
-    IPlotterFactory pf;
-    IHistogramFactory hf;
-
-    protected void setUp() {
-        AnalysisFactory.register();
-        af = IAnalysisFactory.create();
-        pf = af.createPlotterFactory();
-        hf = af.createHistogramFactory(null);
-    }
+public class AIDAToJFreeTest extends AbstractPlotTest {
 
     // Create a 1D cloud with random data
     private final ICloud1D cloud1D() {
         Random rand = new Random();
-        ICloud1D c1d = hf.createCloud1D("c1d");
+        ICloud1D c1d = histogramFactory.createCloud1D("c1d");
         for (int i = 0; i < 1000; i++) {
             c1d.fill(rand.nextDouble() * 100.);
         }
@@ -51,7 +35,7 @@ public class AIDAToJFreeTest extends TestCase {
 
     // Create a 1D histogram with random Gaussian distribution
     private final IHistogram1D histogram1D() {
-        IHistogram1D h1d = hf.createHistogram1D("h1d", 50, -5.0, 5.0);
+        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, -5.0, 5.0);
         Random rand = new Random();
         for (int i = 0; i < 1000; i++) {
             h1d.fill(rand.nextGaussian());
@@ -61,7 +45,7 @@ public class AIDAToJFreeTest extends TestCase {
 
     // Create a 2D cloud with randomly distributed points
     private final ICloud2D cloud2D() {
-        ICloud2D c2d = hf.createCloud2D("c2d");
+        ICloud2D c2d = histogramFactory.createCloud2D("c2d");
         Random rand = new Random();
         for (int i = 0; i < 10000; i++) {
             c2d.fill(Math.abs(rand.nextDouble()) * 100, Math.abs(rand.nextDouble()) * 100);
@@ -70,7 +54,7 @@ public class AIDAToJFreeTest extends TestCase {
     }
 
     private final IHistogram2D histogram2D() {
-        IHistogram2D h2d = hf.createHistogram2D("h2d", 100, 0.0, 100.0, 100, 0.0, 100.0);
+        IHistogram2D h2d = histogramFactory.createHistogram2D("h2d", 100, 0.0, 100.0, 100, 0.0, 100.0);
         Random rand = new Random();
         for (int i = 0; i < 100000; i++) {
             h2d.fill(Math.abs(rand.nextDouble()) * 100, Math.abs(rand.nextDouble()) * 100);
@@ -78,14 +62,7 @@ public class AIDAToJFreeTest extends TestCase {
         return h2d;
     }
 
-    public void test_h1d() throws Exception {
-
-    }
-
-    public void test_factory() throws Exception {
-
-        // Create plotter
-        IPlotter plotter = pf.create();
+    private void examples() {
 
         // Create a list with various types of histograms
         List<IBaseHistogram> histos = new ArrayList<IBaseHistogram>();
@@ -149,9 +126,10 @@ public class AIDAToJFreeTest extends TestCase {
         for (int i = 0; i < histos.size(); i++) {
             plotter.region(i).plot(histos.get(i), pstyle);
         }
-
-        // Show time
-        plotter.show();
-        Thread.sleep(100000); // Yeah, I know.
+    }
+    
+    public void test() {
+        examples();
+        mode();
     }
 }

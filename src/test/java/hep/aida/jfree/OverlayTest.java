@@ -1,47 +1,27 @@
 package hep.aida.jfree;
 
 import hep.aida.IAnalysisFactory;
-import hep.aida.IAxisStyle;
 import hep.aida.IHistogram1D;
 import hep.aida.IHistogramFactory;
 import hep.aida.IPlotter;
 import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
-import hep.aida.ITextStyle;
+import hep.aida.jfree.test.AbstractPlotTest;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-
-import junit.framework.TestCase;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public class OverlayTest extends TestCase {
-
-    IAnalysisFactory af;
-    IPlotterFactory pf;
-    IHistogramFactory hf;
-
-    protected void setUp() {
-        // AIDA setup
-        AnalysisFactory.register();
-        af = IAnalysisFactory.create();
-        pf = af.createPlotterFactory();
-        hf = af.createHistogramFactory(null);
-    }
+public class OverlayTest extends AbstractPlotTest {
 
     // Create a 1D histogram with random Gaussian distribution
     private final IHistogram1D histogram1D() {
-        IHistogram1D h1d = hf.createHistogram1D("h1d", 50, -5.0, 5.0);
+        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, -5.0, 5.0);
         return h1d;
     }
 
-    public void testHistogram1D() throws Exception {
-
-        // Create plotter
-        IPlotter plotter = pf.create();
+    private void overlay() {
 
         // Create a list with various types of histograms
         IHistogram1D h1d = histogram1D();
@@ -135,18 +115,20 @@ public class OverlayTest extends TestCase {
          */
 
         // Show time
-        plotter.show();
+        //plotter.show();
 
         // Overlay histograms in real time.
         Random rand = new Random();
-        for (int i = 0; i < 1000000000; i++) {
+        for (int i = 0; i < 10000; i++) {
             h1d.fill(rand.nextGaussian());
             overlayHist.fill(rand.nextGaussian());
             // overlayHist2.fill(rand.nextGaussian());
-            Thread.sleep(200);
+            //Thread.sleep(200);
         }
-
-        System.out.println("waiting ...");
-        Thread.sleep(100000); // Yeah, I know.
+    }
+    
+    public void testOverlay() {
+        overlay();
+        mode();
     }
 }

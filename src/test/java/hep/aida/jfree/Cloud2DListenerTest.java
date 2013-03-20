@@ -1,39 +1,20 @@
 package hep.aida.jfree;
 
-import hep.aida.IAnalysisFactory;
 import hep.aida.ICloud2D;
-import hep.aida.IHistogramFactory;
 import hep.aida.IPlotter;
-import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.test.AbstractPlotTest;
 
 import java.util.Random;
 
-import junit.framework.TestCase;
-
 /**
- * This is basically an integration test. It converts AIDA objects to JFreeChart
- * representations and plots them.
- * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
- * @version $Id: $
  */
-public class Cloud2DListenerTest extends TestCase {
-
-    IAnalysisFactory af;
-    IPlotterFactory pf;
-    IHistogramFactory hf;
-
-    protected void setUp() {
-        AnalysisFactory.register();
-        af = IAnalysisFactory.create();
-        pf = af.createPlotterFactory();
-        hf = af.createHistogramFactory(null);
-    }
+public class Cloud2DListenerTest extends AbstractPlotTest {
 
     // Create a 2D cloud with randomly distributed points
     private final ICloud2D cloud2D() {
-        ICloud2D c2d = hf.createCloud2D("c2d");
+        ICloud2D c2d = histogramFactory.createCloud2D("c2d");
         Random rand = new Random();
         for (int i = 0; i < 100; i++) {
             c2d.fill(Math.abs(rand.nextDouble()) * 100, Math.abs(rand.nextDouble()) * 100);
@@ -42,9 +23,6 @@ public class Cloud2DListenerTest extends TestCase {
     }
 
     public void testCloud2D() throws Exception {
-
-        // Create plotter
-        IPlotter plotter = pf.create();
 
         // Create a list with various types of histograms
         ICloud2D c2d = cloud2D();

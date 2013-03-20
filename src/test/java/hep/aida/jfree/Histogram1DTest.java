@@ -1,51 +1,31 @@
 package hep.aida.jfree;
 
-import hep.aida.IAnalysisFactory;
 import hep.aida.IAxisStyle;
 import hep.aida.IHistogram1D;
-import hep.aida.IHistogramFactory;
-import hep.aida.IPlotter;
-import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
 import hep.aida.ITextStyle;
+import hep.aida.jfree.test.AbstractPlotTest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import junit.framework.TestCase;
-
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public class Histogram1DTest extends TestCase {
-
-    IAnalysisFactory af;
-    IPlotterFactory pf;
-    IHistogramFactory hf;
-
-    protected void setUp() {
-        // AIDA setup
-        AnalysisFactory.register();
-        af = IAnalysisFactory.create();
-        pf = af.createPlotterFactory();
-        hf = af.createHistogramFactory(null);
-    }
+public class Histogram1DTest extends AbstractPlotTest {
 
     // Create a 1D histogram with random Gaussian distribution
     private final IHistogram1D histogram1D() {
-        IHistogram1D h1d = hf.createHistogram1D("h1d", 50, -5.0, 5.0);
-        // Random rand = new Random();
-        // for (int i = 0; i < 1000; i++) {
-        // h1d.fill(rand.nextGaussian());
-        // }
+        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, -5.0, 5.0);
+        Random rand = new Random();
+        for (int i = 0; i < 1000; i++) {
+            h1d.fill(rand.nextGaussian());
+        }
         return h1d;
     }
 
-    public void testHistogram1D() throws Exception {
-
-        // Create plotter
-        IPlotter plotter = pf.create();
+    public void histogramExample() {
 
         // Create a list with various types of histograms
         IHistogram1D h1d = histogram1D();
@@ -105,25 +85,10 @@ public class Histogram1DTest extends TestCase {
         plotter.region(0).plot(h1d, pstyle);
 
         plotter.region(1).plot(h1d, pstyle);
-
-        // Test IsObservable behavior to redraw histogram data.
-        for (int i = 0; i < 1000; i++) {
-            double rand = new Random().nextGaussian();
-            h1d.fill(rand);
-        }
-
-        // Show time
-        plotter.show();
     }
 
-    public void tearDown() {
-        System.out.println("Hit Ctrl + C to exit.");
-        while (true) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+    public void testBatch() {
+        histogramExample();
+        mode();
     }
 }

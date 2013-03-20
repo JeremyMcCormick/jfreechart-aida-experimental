@@ -52,7 +52,7 @@ import org.jfree.chart.plot.XYPlot;
 // -functions
 public abstract class AbstractStyleConverter implements StyleConverter {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     
     private ChartState state = null;
     private IPlotterStyle style = null;
@@ -296,8 +296,10 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param style
      */
     private static void applyDataBoxStyle(JFreeChart chart, IPlotterStyle style) {
-        System.out.println("applyDataBoxStyle");
-        System.out.println("background color: " + style.dataBoxStyle().backgroundStyle().color());
+        if (DEBUG) {
+            System.out.println("applyDataBoxStyle");
+            System.out.println("background color: " + style.dataBoxStyle().backgroundStyle().color());
+        }
         Color color = ColorUtil.toColor(style.dataBoxStyle().backgroundStyle(), Color.white);
         chart.getXYPlot().setBackgroundPaint(color);
         
@@ -315,9 +317,9 @@ public abstract class AbstractStyleConverter implements StyleConverter {
         Color color = ColorUtil.toColor(style.regionBoxStyle().backgroundStyle(), Color.white);
         chart.setBackgroundPaint(color);
         
-        Border border = BorderUtil.toBorder(style.regionBoxStyle().borderStyle());
-        if (border != null)
-            System.out.println("created border: " + border.getClass().getCanonicalName());
+        //Border border = BorderUtil.toBorder(style.regionBoxStyle().borderStyle());
+        //if (border != null)
+        //    System.out.println("created border: " + border.getClass().getCanonicalName());
 
         // TODO: set border styling here
         //style.regionBoxStyle().borderStyle().borderType();
@@ -331,8 +333,8 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      */
     private static void applyPanelStyle(ChartPanel panel, IPlotterStyle style) {
         Border border = BorderUtil.toBorder(style.regionBoxStyle().borderStyle());
-        if (border != null)
-            System.out.println("created border: " + border.getClass().getCanonicalName());
+        //if (border != null)
+        //    System.out.println("created border: " + border.getClass().getCanonicalName());
         panel.setBorder(border);
     }
     
@@ -460,7 +462,10 @@ public abstract class AbstractStyleConverter implements StyleConverter {
         if (allowZeroSuppression) {
             // System.out.println("allowZeroSuppression = " +
             // allowZeroSuppression);
-            ((NumberAxis) axis).setAutoRangeIncludesZero(false);
+            
+            // FIXME: Fixed if using a LogAxis.
+            if (axis instanceof NumberAxis)
+                ((NumberAxis) axis).setAutoRangeIncludesZero(false);
         }
 
         //

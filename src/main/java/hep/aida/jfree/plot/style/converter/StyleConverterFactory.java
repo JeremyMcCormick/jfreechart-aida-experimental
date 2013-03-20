@@ -1,9 +1,11 @@
 package hep.aida.jfree.plot.style.converter;
 
 import hep.aida.IBaseHistogram;
+import hep.aida.ICloud1D;
 import hep.aida.ICloud2D;
 import hep.aida.IHistogram1D;
 import hep.aida.IHistogram2D;
+import hep.aida.IProfile1D;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -16,7 +18,7 @@ public class StyleConverterFactory {
     private static final Cloud2DStyleConverter cloud2DConverter = new Cloud2DStyleConverter();
 
     public static StyleConverter getStyleConverter(IBaseHistogram hist) {
-        if (hist instanceof IHistogram1D) {
+        if (hist instanceof IHistogram1D || hist instanceof ICloud1D || hist instanceof IProfile1D) {
             return histogram1DConverter;
         } else if (hist instanceof ICloud2D) {
             return cloud2DConverter;

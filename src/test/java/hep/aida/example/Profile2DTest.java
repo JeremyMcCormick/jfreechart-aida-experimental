@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 
 public class Profile2DTest extends TestCase {
     
-    public static void test() {
+    public void test() throws Exception {
 	IAnalysisFactory af = IAnalysisFactory.create();
 	ITree tree = af.createTreeFactory().create();
 	IHistogramFactory hf = af.createHistogramFactory(tree);
@@ -56,9 +56,10 @@ public class Profile2DTest extends TestCase {
 	plotter.region(1).plot(prof2DVariableBinWidth, pstyle);
 	plotter.show();
 
+	plotter.writeToFile(this.getClass().getSimpleName() + ".png");
     }
 
-    public static void main(String[] argv) {
-	new Profile2DTest().test();
-    }
+    //public static void main(String[] argv) {
+    //new Profile2DTest().test();
+    //}
 }

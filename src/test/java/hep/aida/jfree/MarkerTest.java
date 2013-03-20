@@ -1,40 +1,25 @@
 package hep.aida.jfree;
 
-import hep.aida.IAnalysisFactory;
 import hep.aida.IHistogram1D;
-import hep.aida.IHistogramFactory;
 import hep.aida.IPlotter;
-import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.plot.style.util.MarkerUtil;
+import hep.aida.jfree.test.AbstractPlotTest;
 
 import java.util.Random;
-
-import junit.framework.TestCase;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class MarkerTest extends TestCase {
-
-    IAnalysisFactory af;
-    IPlotterFactory pf;
-    IHistogramFactory hf;
+public class MarkerTest extends AbstractPlotTest {
 
     int nfills = 100;
     int range = 10;
 
-    protected void setUp() {
-        AnalysisFactory.register();
-        af = IAnalysisFactory.create();
-        pf = af.createPlotterFactory();
-        hf = af.createHistogramFactory(null);
-    }
-
     // Create a 1D histogram with random Gaussian distribution
     private final IHistogram1D histogram1D() {
-        IHistogram1D h1d = hf.createHistogram1D("h1d", 10, 0, 10.0);
+        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 10, 0, 10.0);
         Random rand = new Random();
         for (int i = 0; i < nfills; i++) {
             h1d.fill(rand.nextInt(range));
@@ -42,9 +27,7 @@ public class MarkerTest extends TestCase {
         return h1d;
     }
 
-    public void test() throws Exception {
-        // Create plotter
-        IPlotter plotter = pf.create();
+    public void markerExample() {
 
         // Create a test histogram which will be used to show various style
         // options.
@@ -71,19 +54,10 @@ public class MarkerTest extends TestCase {
             plotter.region(i).plot(h, pstyle);
             plotter.region(i).setTitle(MarkerUtil.availableShapes[i]);
         }
-
-        // Show time.
-        plotter.show();
     }
 
-    public void tearDown() {
-        System.out.println("Hit Ctrl + C to exit.");
-        while (true) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+    public void testMarkers() {
+        markerExample();
+        mode();
     }
 }

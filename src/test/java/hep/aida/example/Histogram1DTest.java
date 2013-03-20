@@ -38,12 +38,13 @@ public class Histogram1DTest extends TestCase
       plotter.region(0).plot(h2);
       
       plotter.style().statisticsBoxStyle().setVisible(true);
-            
-      plotter.show();      
+      
+      plotter.writeToFile(this.getClass().getSimpleName() + ".png");
+      //plotter.show();      
    }
    
-   public static void main(String[] args) throws Exception
-   {
-       (new Histogram1DTest()).test();
-   }
+   //public static void main(String[] args) throws Exception
+   //{
+   //    (new Histogram1DTest()).test();
+   //}
 }

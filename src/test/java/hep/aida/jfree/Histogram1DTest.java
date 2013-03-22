@@ -1,13 +1,10 @@
 package hep.aida.jfree;
 
-import hep.aida.IAxisStyle;
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
-import hep.aida.ITextStyle;
+import hep.aida.jfree.plot.style.DefaultHistogram1DStyle;
 import hep.aida.jfree.test.AbstractPlotTest;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -18,20 +15,22 @@ public class Histogram1DTest extends AbstractPlotTest {
     protected void plot() {
 
         // Create a list with various types of histograms
-        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, -5.0, 5.0);
+        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 11, 0., 11.0);
         Random rand = new Random();
         for (int i = 0; i < 1000; i++) {
-            h1d.fill(rand.nextGaussian());
+            int value = rand.nextInt(10);
+            if (value % 2 == 0 || value == 3)
+                h1d.fill(value);
         }
 
         h1d.annotation().addItem("xAxisLabel", h1d.title() + " X");
         h1d.annotation().addItem("yAxisLabel", h1d.title() + " Y");
-
-        // Create 3x3 regions for showing plots
-        // plotter.createRegions(2, 2, 0);
-        // plotter.createRegion();
-
-        IPlotterStyle pstyle = plotter.style();
+        
+        IPlotterStyle pstyle = new DefaultHistogram1DStyle();
+        
+        /*
+        
+        old style stuff....
 
         // data fill color
         // pstyle.dataStyle().fillStyle().setColor("white");
@@ -73,6 +72,7 @@ public class Histogram1DTest extends AbstractPlotTest {
         pstyle.regionBoxStyle().backgroundStyle().setColor("white");
 
         pstyle.gridStyle().setVisible(true);
+        */
 
         plotter.createRegions(1, 2, 0);
         plotter.region(0).plot(h1d, pstyle);

@@ -34,10 +34,11 @@ import org.jfree.chart.plot.XYPlot;
  */
 public class PlotterRegion extends DummyPlotterRegion {
 
-    ChartPanel panel;
-    JFreeChart chart;
     double x, y, w, h;
     IPlotterStyle style;
+    
+    ChartPanel panel;
+    JFreeChart chart;
     AbstractStyleConverter styleConverter;
     List<PlotListener> listeners = new ArrayList<PlotListener>();
 
@@ -65,18 +66,6 @@ public class PlotterRegion extends DummyPlotterRegion {
         this.style = style;
     }
 
-    public JPanel getPanel() {
-        return panel;
-    }
-    
-    public XYPlot getPlot() {
-        return chart.getXYPlot();
-    }
-    
-    public JFreeChart getChart() {
-        return chart;
-    }
-
     double x() {
         return x;
     }
@@ -91,6 +80,18 @@ public class PlotterRegion extends DummyPlotterRegion {
 
     public double width() {
         return w;
+    }
+    
+    public JPanel getPanel() {
+        return panel;
+    }
+    
+    public XYPlot getPlot() {
+        return chart.getXYPlot();
+    }
+    
+    public JFreeChart getChart() {
+        return chart;
     }
 
     public void plot(IBaseHistogram hist) {

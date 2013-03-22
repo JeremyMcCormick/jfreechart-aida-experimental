@@ -1,6 +1,5 @@
 package hep.aida.jfree.converter;
 
-import hep.aida.IAxis;
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.dataset.DatasetConverter;
@@ -10,9 +9,7 @@ import java.awt.Color;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.DatasetRenderingOrder;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYErrorRenderer;
@@ -20,10 +17,6 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYIntervalSeries;
-import org.jfree.data.xy.XYIntervalSeriesCollection;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -39,11 +32,12 @@ public class Histogram1DConverter implements HistogramConverter<IHistogram1D> {
         return IHistogram1D.class;
     }
 
-    public JFreeChart convert(IHistogram1D h1d, IPlotterStyle style) {
-        return convertFullDatasets(h1d);
-    }
+    //public JFreeChart convert(IHistogram1D h1d, IPlotterStyle style) {
+    //    return convertFullDatasets(h1d);
+    //}
 
     // Convert 1D histogram to chart
+    /*
     static JFreeChart convertToBarChart(IHistogram1D h1d) {
         // Create datasets
         XYIntervalSeriesCollection[] datasets = DatasetConverter.forBarChart(h1d);
@@ -85,17 +79,20 @@ public class Histogram1DConverter implements HistogramConverter<IHistogram1D> {
 
         return chart;
     }
-
+    
     static JFreeChart convertToStepChart(IHistogram1D h1d) {
         // Create two datasets, one for values, and one for errors.
         XYSeries values = new XYSeries("values");
         XYIntervalSeries errors = new XYIntervalSeries("errors");
         IAxis axis = h1d.axis();
         int nbins = axis.bins();
-        for (int i = 0; i < nbins; i++) {
-            values.add(axis.binLowerEdge(i), h1d.binHeight(i));
+        for (int i = 0; i < nbins; i++) {            
+            // FIXME: Need to suppress zero values somehow or they get displayed with XYStepRenderer!!!
+            values.add(axis.binLowerEdge(i), h1d.binHeight(i));            
+            //if (h1d.binHeight(i) > 0) {
             double error = h1d.binError(i);
             errors.add(axis.binCenter(i), axis.binCenter(i), axis.binCenter(i), h1d.binHeight(i), h1d.binHeight(i) - error, h1d.binHeight(i) + error);
+            //}
             if (i == (nbins - 1)) {
                 values.add(axis.binUpperEdge(i), h1d.binHeight(i));
             }
@@ -134,8 +131,10 @@ public class Histogram1DConverter implements HistogramConverter<IHistogram1D> {
 
         return chart;
     }
+    */
 
-    public static JFreeChart convertFullDatasets(IHistogram1D h1d) {
+    public JFreeChart convert(IHistogram1D h1d, IPlotterStyle style) {
+        
         // Create all the datasets that might be needed later for supprting
         // various style settings.
         XYDataset[] datasets = createDatasets(h1d);

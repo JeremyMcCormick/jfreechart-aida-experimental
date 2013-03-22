@@ -19,6 +19,6 @@ class Cloud1DConverter implements HistogramConverter<ICloud1D> {
         c1d.convertToHistogram();
         if (c1d.histogram() == null)
             throw new RuntimeException("Cloud did not convert to histogram successfully!");
-        return Histogram1DConverter.convertFullDatasets(c1d.histogram());
+        return (new Histogram1DConverter()).convert(c1d.histogram(), style);
     }
 }

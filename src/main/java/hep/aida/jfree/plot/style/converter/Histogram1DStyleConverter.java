@@ -92,35 +92,36 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param style
      */
     protected void applyDataLineStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+        
         XYPlot plot = chart.getXYPlot();
-
         ILineStyle lineStyle = style.dataStyle().lineStyle();
-
         Color color = ColorUtil.toColor(lineStyle, DEFAULT_LINE_COLOR);
-
+        Stroke stroke = StrokeUtil.toStroke(lineStyle);
+        
         if (hist instanceof IHistogram1D) {
             if (lineStyle.isVisible()) {
-                // Set the outline color of bar chart.
-                plot.getRenderer(Histogram1DConverter.BAR_DATA).setSeriesOutlinePaint(0, color);
+                // Set the outline color of the bars.
+                XYItemRenderer barRenderer = plot.getRenderer(Histogram1DConverter.BAR_DATA); 
+                barRenderer.setSeriesOutlineStroke(0, stroke);
             } else {
                 if (!style.dataStyle().fillStyle().isVisible()) {
 
-                    // If lines nor fill are visible, then turn off the bar
-                    // chart renderer.
+                    // If lines nor fill are visible, then turn off the bar chart renderer.
                     plot.getRenderer(Histogram1DConverter.BAR_DATA).setSeriesVisible(0, false);
 
                     // Turn on the step renderer.
                     XYItemRenderer stepRenderer = plot.getRenderer(Histogram1DConverter.STEP_DATA);
                     stepRenderer.setSeriesVisible(0, true);
                     stepRenderer.setSeriesPaint(0, color);
+                    stepRenderer.setSeriesStroke(0, stroke);
                 }
             }
-            XYItemRenderer renderer = chart.getXYPlot().getRenderer(0);
+            //XYItemRenderer renderer = chart.getXYPlot().getRenderer(0);
 
             // Stroke of the data lines.
-            Stroke stroke = StrokeUtil.toStroke(lineStyle);
-            if (stroke != null)
-                renderer.setSeriesStroke(0, stroke);
+            //Stroke stroke = StrokeUtil.toStroke(lineStyle);
+            //if (stroke != null)
+            //    renderer.setSeriesStroke(0, stroke);
         }
     }
 

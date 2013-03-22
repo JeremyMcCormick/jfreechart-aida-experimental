@@ -3,7 +3,9 @@ package hep.aida.jfree.plot.style.converter;
 import hep.aida.IAxisStyle;
 import hep.aida.IBaseHistogram;
 import hep.aida.IGridStyle;
+import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.annotations.BasicMultiLineXYTextAnnotation;
 import hep.aida.jfree.plot.style.util.BorderUtil;
 import hep.aida.jfree.plot.style.util.ColorUtil;
 import hep.aida.jfree.plot.style.util.StrokeUtil;
@@ -26,6 +28,7 @@ import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.ui.TextAnchor;
 
 /**
  * This class converts from AIDA styles to JFreeChart.
@@ -153,6 +156,8 @@ public abstract class AbstractStyleConverter implements StyleConverter {
             } else {
                 makeErrorsInvisible(chart);
             }
+            
+            drawStatisticsBox();
 
             // Turn off both data and errors as style is set to invisible.
         } else {
@@ -564,6 +569,26 @@ public abstract class AbstractStyleConverter implements StyleConverter {
             visible = false;
         }
         return visible;
+    }
+    
+    // TEST 
+    protected void drawStatisticsBox() {
+        if (style.statisticsBoxStyle().isVisible()) {
+            if (state.histogram() instanceof IHistogram1D) {
+                System.out.println("drawing stat box");
+                XYPlot plot = state.plot();
+                IHistogram1D hist = (IHistogram1D)state.histogram();
+                int entries = hist.allEntries();
+                double mean = hist.mean();
+                double rms = hist.rms();
+                String stats = "entries: " + entries + "\n" + "mean: " + mean + "\n" + "rms: " + rms;
+                BasicMultiLineXYTextAnnotation annotation = new BasicMultiLineXYTextAnnotation(stats, 4, 100);
+                annotation.setTextAnchor(TextAnchor.TOP_LEFT);
+                //annotation.setBackgroundPaint(TRANSPARENT);
+                annotation.setOutlineStroke(new BasicStroke(1.0f));
+                plot.addAnnotation(annotation, true);
+            }
+        }
     }
 
     /**

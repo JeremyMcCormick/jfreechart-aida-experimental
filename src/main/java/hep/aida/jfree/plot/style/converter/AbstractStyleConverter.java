@@ -5,6 +5,7 @@ import hep.aida.IBaseHistogram;
 import hep.aida.IGridStyle;
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
+import hep.aida.IStatisticsBoxStyle;
 import hep.aida.jfree.annotations.BasicMultiLineXYTextAnnotation;
 import hep.aida.jfree.plot.style.util.BorderUtil;
 import hep.aida.jfree.plot.style.util.ColorUtil;
@@ -573,19 +574,24 @@ public abstract class AbstractStyleConverter implements StyleConverter {
     
     // TEST 
     protected void drawStatisticsBox() {
-        if (style.statisticsBoxStyle().isVisible()) {
+        IStatisticsBoxStyle statStyle = style.statisticsBoxStyle();
+        if (statStyle.isVisible()) {
             if (state.histogram() instanceof IHistogram1D) {
-                System.out.println("drawing stat box");
+                
                 XYPlot plot = state.plot();
                 IHistogram1D hist = (IHistogram1D)state.histogram();
                 int entries = hist.allEntries();
                 double mean = hist.mean();
                 double rms = hist.rms();
                 String stats = "entries: " + entries + "\n" + "mean: " + mean + "\n" + "rms: " + rms;
-                BasicMultiLineXYTextAnnotation annotation = new BasicMultiLineXYTextAnnotation(stats, 4, 100);
+                double x = statStyle.boxStyle().x();
+                double y = statStyle.boxStyle().y();
+                //System.out.println("drawing @ x, y = " + x + " " + y);
+                BasicMultiLineXYTextAnnotation annotation = new BasicMultiLineXYTextAnnotation(stats, x, y);
                 annotation.setTextAnchor(TextAnchor.TOP_LEFT);
                 //annotation.setBackgroundPaint(TRANSPARENT);
                 annotation.setOutlineStroke(new BasicStroke(1.0f));
+                annotation.setOutlineVisible(true);
                 plot.addAnnotation(annotation, true);
             }
         }

@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.swing.border.Border;
+
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.text.TextUtilities;
 import org.jfree.ui.RectangleEdge;
 
 
@@ -26,6 +27,7 @@ import org.jfree.ui.RectangleEdge;
  * -rotation
  * -horizontal chart
  * -multiple fonts
+ * -TextAnchor settings
  * -tooltips
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -38,6 +40,10 @@ public class BasicMultiLineXYTextAnnotation extends XYTextAnnotation {
     int lineSpacing;
     int width;
     int height;
+    int paddingLeft;
+    int paddingRight;
+    int paddingBottom;
+    Border border;
     
     public BasicMultiLineXYTextAnnotation(String text, double x, double y) {
         super(text, x, y);
@@ -56,13 +62,16 @@ public class BasicMultiLineXYTextAnnotation extends XYTextAnnotation {
         fontMetricsCalculated = false;
     }
     
+    public void setBorder(Border border) {
+        this.border = border;
+    }
+    
     public void setLineSpacing(int lineSpacing) {
         this.lineSpacing = lineSpacing;
     }
     
     private void calculateFontMetrics(Graphics2D graphics) {
         if (!fontMetricsCalculated) {
-            System.out.println("calculating font metrics");
             FontMetrics metrics = graphics.getFontMetrics(this.getFont());
             lineHeight = metrics.getHeight();            
             for (String line : lines) {
@@ -71,10 +80,11 @@ public class BasicMultiLineXYTextAnnotation extends XYTextAnnotation {
                     width = lineWidth;
                 } 
             }
-            height = lineHeight * lines.size();
-            System.out.println("lineHeight = " + lineHeight);
-            System.out.println("height = " + height);
-            System.out.println("width = " + width);            
+            paddingLeft = metrics.charWidth(' ');
+            paddingRight = metrics.charWidth(' ');
+            paddingBottom = metrics.charWidth(' ');
+            width += (paddingLeft + paddingRight);
+            height = (lineHeight * lines.size()) + paddingBottom;
             fontMetricsCalculated = true;
         }
     }
@@ -96,63 +106,31 @@ public class BasicMultiLineXYTextAnnotation extends XYTextAnnotation {
         RectangleEdge rangeEdge = Plot.resolveRangeAxisLocation(
                 plot.getRangeAxisLocation(), orientation);        
 
-        float textAnchorY = (float) domainAxis.valueToJava2D(
+        float textAnchorX = (float) domainAxis.valueToJava2D(
                 this.getX(), dataArea, domainEdge);
-        float textAnchorX = (float) rangeAxis.valueToJava2D(
+        float textAnchorY = (float) rangeAxis.valueToJava2D(
                 this.getY(), dataArea, rangeEdge);
         
-        float boxAnchorY = textAnchorY;
-        float boxAnchorX = textAnchorX;
+        float rectangleX = textAnchorX;
+        float rectangleY = textAnchorY;
         
-        /*
-        if (orientation == PlotOrientation.HORIZONTAL) {           
-            float tempAnchor = anchorX;
-            anchorX = anchorY;
-            anchorY = tempAnchor;
-        }
-        */
-        
-        // Draw box.
-        Rectangle2D rectangle = new Rectangle2D.Float(height, width, boxAnchorX, boxAnchorY);
+        textAnchorX += paddingLeft;
+                
+        // Draw outline box.
+        Rectangle2D rectangle = new Rectangle2D.Float(rectangleX, rectangleY, width, height);
         if (this.isOutlineVisible()) {
             g2.setStroke(this.getOutlineStroke());
+            g2.setPaint(this.getBackgroundPaint());
+            g2.draw(rectangle);
         }
-        g2.setPaint(this.getBackgroundPaint());
-        g2.draw(rectangle);
        
         // Draw text lines.
         g2.setFont(getFont());
         g2.setPaint(getPaint());       
+        textAnchorY += lineHeight;
         for (String line : lines) {
-            //System.out.println("adding line: " + line);
-            TextUtilities.drawRotatedString(line, g2, textAnchorY, textAnchorX,
-                    getTextAnchor(), getRotationAngle(), getRotationAnchor());
-            textAnchorX += lineHeight;
+            g2.drawString(line, textAnchorX, textAnchorY);
+            textAnchorY += lineHeight;
         }
-        
-        /*
-
-        Shape hotspot = TextUtilities.calculateRotatedStringBounds(
-                getText(), g2, anchorX, anchorY, getTextAnchor(),
-                getRotationAngle(), getRotationAnchor());
-        if (this.getBackgroundPaint() != null) {
-            g2.setPaint(this.getBackgroundPaint());
-            g2.fill(hotspot);
-        }
-        g2.setPaint(getPaint());
-        TextUtilities.drawRotatedString(getText(), g2, anchorX, anchorY,
-                getTextAnchor(), getRotationAngle(), getRotationAnchor());
-        if (this.isOutlineVisible()) {
-            g2.setStroke(this.getOutlineStroke());
-            g2.setPaint(this.getOutlinePaint());
-            g2.draw(hotspot);
-        }
-
-        String toolTip = getToolTipText();
-        String url = getURL();
-        if (toolTip != null || url != null) {
-            addEntity(info, hotspot, rendererIndex, toolTip, url);
-        }
-        */
     }
 }

@@ -592,6 +592,8 @@ public abstract class AbstractStyleConverter implements StyleConverter {
                 //annotation.setBackgroundPaint(TRANSPARENT);
                 annotation.setOutlineStroke(new BasicStroke(1.0f));
                 annotation.setOutlineVisible(true);
+                Font font = PlotterFontUtil.getFont(statStyle.textStyle());
+                annotation.setFont(font);
                 plot.addAnnotation(annotation, true);
             }
         }

@@ -2,6 +2,7 @@ package hep.aida.jfree.plot.style.converter;
 
 import hep.aida.IAxisStyle;
 import hep.aida.IBaseHistogram;
+import hep.aida.IBoxStyle;
 import hep.aida.IGridStyle;
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
@@ -301,17 +302,22 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param chart
      * @param style
      */
-    private static void applyDataBoxStyle(JFreeChart chart, IPlotterStyle style) {
-        if (DEBUG) {
-            System.out.println("applyDataBoxStyle");
-            System.out.println("background color: " + style.dataBoxStyle().backgroundStyle().color());
+    private static void applyDataBoxStyle(JFreeChart chart, IPlotterStyle style) {        
+        IBoxStyle boxStyle = style.dataBoxStyle();        
+        if (boxStyle.isVisible()) {            
+            if (boxStyle.backgroundStyle().isVisible()) {
+                Color color = ColorUtil.toColor(style.dataBoxStyle().backgroundStyle(), Color.white);
+                chart.getXYPlot().setBackgroundPaint(color);
+            }
+            if (boxStyle.borderStyle().isVisible()) {
+                chart.getXYPlot().setOutlineVisible(true);
+                Stroke stroke = StrokeUtil.toStroke(boxStyle.borderStyle());
+                chart.getXYPlot().setOutlineStroke(stroke);
+                Color color = ColorUtil.toColor(boxStyle.borderStyle(), Color.black);
+                chart.getXYPlot().setOutlinePaint(color);
+                
+            }
         }
-        Color color = ColorUtil.toColor(style.dataBoxStyle().backgroundStyle(), Color.white);
-        chart.getXYPlot().setBackgroundPaint(color);
-        
-        //chart.getXYPlot().setOutlineStroke(stroke);
-
-        // TODO: set border styling here
     }
 
     /**

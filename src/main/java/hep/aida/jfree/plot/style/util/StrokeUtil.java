@@ -1,5 +1,6 @@
 package hep.aida.jfree.plot.style.util;
 
+import hep.aida.IBoxStyle;
 import hep.aida.IGridStyle;
 import hep.aida.ILineStyle;
 
@@ -43,5 +44,5 @@ public final class StrokeUtil {
         BasicStroke stroke = new BasicStroke(lineThickness, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, lineType.getDashArray(), 0.0f);
 
         return stroke;
-    }
+    }    
 }

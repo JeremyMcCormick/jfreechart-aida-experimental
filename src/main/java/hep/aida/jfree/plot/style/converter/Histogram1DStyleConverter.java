@@ -103,6 +103,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
                 // Set the outline color of the bars.
                 XYItemRenderer barRenderer = plot.getRenderer(Histogram1DConverter.BAR_DATA); 
                 barRenderer.setSeriesOutlineStroke(0, stroke);
+                barRenderer.setSeriesOutlinePaint(0, color);
             } else {
                 if (!style.dataStyle().fillStyle().isVisible()) {
 
@@ -116,12 +117,6 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
                     stepRenderer.setSeriesStroke(0, stroke);
                 }
             }
-            //XYItemRenderer renderer = chart.getXYPlot().getRenderer(0);
-
-            // Stroke of the data lines.
-            //Stroke stroke = StrokeUtil.toStroke(lineStyle);
-            //if (stroke != null)
-            //    renderer.setSeriesStroke(0, stroke);
         }
     }
 

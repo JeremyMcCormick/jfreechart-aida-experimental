@@ -98,7 +98,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param hist The backing histogram for the chart.
      * @param style The styles to apply.
      */
-    private void applyStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    void applyStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
         if (DEBUG) {
             System.out.println("applying style to chart: " + chart.getTitle().getText());
             System.out.println("chart type: " + chart.getXYPlot().getClass().getCanonicalName());

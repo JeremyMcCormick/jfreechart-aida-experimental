@@ -21,7 +21,7 @@ public class DefaultChartTheme extends StandardChartTheme {
     public void apply(JFreeChart chart) {
         super.apply(chart);
 
-        chart.setAntiAlias(false);
+        //chart.setAntiAlias(false);
         // chart.setBackgroundPaint(Color.white);
         // chart.removeLegend();
     }

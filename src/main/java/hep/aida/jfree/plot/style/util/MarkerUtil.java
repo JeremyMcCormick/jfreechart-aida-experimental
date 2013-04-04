@@ -1,5 +1,7 @@
 package hep.aida.jfree.plot.style.util;
 
+import hep.aida.IMarkerStyle;
+
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
@@ -19,15 +21,16 @@ public final class MarkerUtil {
 
     // Available shape names for data markers.
     public static final String[] availableShapes = new String[] { "dot", "box", "triangle", "diamond", "star", "verticalLine", "horizontalLine", "cross", "circle", "square" };
+    
+    public static Shape getShape(IMarkerStyle markerStyle) {
+        return getMarkerShape(markerStyle.shape(), markerStyle.size());
+    }
 
     /**
      * Create an AWT shape from a name and a size.
      * 
-     * @param markerShape
-     *            The name of the shape or AIDA index.
-     * @param size
-     *            The size of the shape, the effect of which depends on the
-     *            type.
+     * @param markerShape The name of the shape or AIDA index.
+     * @param size The size of the shape, the effect of which depends on the type.
      * @return The name of the shape.
      */
     public static Shape getMarkerShape(String markerShape, float size) {

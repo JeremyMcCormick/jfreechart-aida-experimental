@@ -54,19 +54,19 @@ public class DefaultChartTheme extends StandardChartTheme {
         plot.getRangeAxis().setMinorTickMarksVisible(true);
 
         // Configure domain tick marks.
-        plot.getDomainAxis().setTickMarkInsideLength(0.0f);
-        plot.getDomainAxis().setTickMarkOutsideLength(4.0f);
-        plot.getDomainAxis().setMinorTickMarkInsideLength(0.0f);
-        plot.getDomainAxis().setMinorTickMarkOutsideLength(2.0f);
+        plot.getDomainAxis().setTickMarkInsideLength(4.0f);
+        plot.getDomainAxis().setTickMarkOutsideLength(0.0f);
+        plot.getDomainAxis().setMinorTickMarkInsideLength(2.0f);
+        plot.getDomainAxis().setMinorTickMarkOutsideLength(0.0f);
         plot.getDomainAxis().setTickMarkPaint(Color.black);
         plot.getDomainAxis().setAxisLinePaint(Color.black);
         plot.getDomainAxis().setAxisLineStroke(new BasicStroke(1.0f));
 
         // Configure range tick marks.
-        plot.getRangeAxis().setTickMarkInsideLength(0.0f);
-        plot.getRangeAxis().setTickMarkOutsideLength(4.0f);
-        plot.getRangeAxis().setMinorTickMarkInsideLength(0.0f);
-        plot.getRangeAxis().setMinorTickMarkOutsideLength(2.0f);
+        plot.getRangeAxis().setTickMarkInsideLength(4.0f);
+        plot.getRangeAxis().setTickMarkOutsideLength(0.0f);
+        plot.getRangeAxis().setMinorTickMarkInsideLength(2.0f);
+        plot.getRangeAxis().setMinorTickMarkOutsideLength(0.0f);
         plot.getRangeAxis().setTickMarkPaint(Color.black);
         plot.getRangeAxis().setAxisLinePaint(Color.black);
         plot.getRangeAxis().setAxisLineStroke(new BasicStroke(1.0f));

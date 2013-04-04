@@ -120,7 +120,8 @@ public class BasicMultiLineXYTextAnnotation extends XYTextAnnotation {
         Rectangle2D rectangle = new Rectangle2D.Float(rectangleX, rectangleY, width, height);
         if (this.isOutlineVisible()) {
             g2.setStroke(this.getOutlineStroke());
-            g2.setPaint(this.getBackgroundPaint());
+            //g2.setPaint(this.getBackgroundPaint());
+            g2.setPaint(this.getOutlinePaint());
             g2.draw(rectangle);
         }
        

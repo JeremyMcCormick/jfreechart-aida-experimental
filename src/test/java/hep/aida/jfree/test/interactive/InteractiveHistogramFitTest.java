@@ -21,37 +21,15 @@ public class InteractiveHistogramFitTest extends AbstractPlotTest{
             "ChiSquared", 
             "CleverChiSquared", 
             "BinnedMaximumLikelihood", 
-            "LeastSquares"/*, 
-            "UnbinnedMaximumLikelihood"*/ };
+            "LeastSquares" };
+    
+    // TODO: Should test all of these function types?
     
     /*
     public static String[] defaultNames = { "g2", "g", "e", 
         "moyal", "lorentzian", 
         "p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
-    
-    public String fitStatus(int fitStatus) {
-        switch ( fitStatus ) {
-            case 1 :
-                return "Diagonal approximation";
-            case 2 :
-                return "Converged with non positive definite matrix";
-            case 3 :
-                return "Converged";
-            case 4 :
-                return "Converged with small gradient";
-            case 5 :
-                return "Converged with small step size";
-            case 6 :
-                return "Not Converged";
-            case 7 :
-                return "Stopped, reached max iterations";
-            case 8 :
-                return "Stopped, too many large steps. Function might be unbound.";
-            default :
-                return "Undefined";                
-        }
-    }
-            */
+    */
     
     public void plot() {
              
@@ -82,25 +60,14 @@ public class InteractiveHistogramFitTest extends AbstractPlotTest{
            plotter.region(i).setTitle(fitTypes[i]);
            IFunction fit = doFit(fitTypes[i], h1d);
            plotter.region(i).plot(fit, functionStyle);
-           System.out.println();
        }              
     }
     
     private IFunction doFit(String fitType, IHistogram1D h) {
-        //System.out.println("fitType = " + fitType);
         IFitter fitter = analysisFactory.createFitFactory().createFitter(fitType);        
         if (fitter == null)
             throw new RuntimeException("failed to create fitter with type " + fitType);
-        //System.out.println("created fitter with type = " + fitter.getClass().getCanonicalName());
         IFitResult fitResult = fitter.fit(h, "g");
-        //System.out.println("fitStatus = " + fitStatus(fitResult.fitStatus()));
-        //System.out.println("function type = " + fitResult.fittedFunction().getClass().getCanonicalName());
-        //System.out.println("fit method name = " + fitResult.fitMethodName());
-        //System.out.println("values...");
-        //IFunction function = fitResult.fittedFunction();
-        //for (int i=0, n=h.axis().bins(); i<n; i++) {
-        //    System.out.println("bin[" + i + "] => f(" + h.axis().binCenter(i) + ") = " + function.value(new double[] {h.axis().binCenter(i)}));
-        //}
         return fitResult.fittedFunction();
     }
     

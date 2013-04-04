@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.test.interactive;
 
 import hep.aida.ICloud2D;
 import hep.aida.IPlotterStyle;

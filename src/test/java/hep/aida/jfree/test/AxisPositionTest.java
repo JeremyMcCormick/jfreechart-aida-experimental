@@ -1,7 +1,7 @@
-package hep.aida.jfree;
+package hep.aida.jfree.test;
 
 import hep.aida.IAxisStyle;
-import hep.aida.ICloud1D;
+import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
 import hep.aida.ITextStyle;
 import hep.aida.jfree.test.AbstractPlotTest;
@@ -13,21 +13,22 @@ import java.util.Random;
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public class Cloud1DTest extends AbstractPlotTest {
+public class AxisPositionTest extends AbstractPlotTest {
 
     protected void plot() {
 
+        // Create 1D histogram.
+        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, 0.0, 5.0);
         Random rand = new Random();
-        ICloud1D c1d = histogramFactory.createCloud1D("c1d");
-        for (int i = 0; i < 100000; i++) {
-            c1d.fill(rand.nextDouble() * 100.);
+        for (int i = 0; i < 1000000; i++) {
+            h1d.fill(Math.abs(rand.nextGaussian()));
         }
-        
-        // Set labels for axes automatically based on title
-        c1d.annotation().addItem("xAxisLabel", c1d.title() + " X");
-        c1d.annotation().addItem("yAxisLabel", c1d.title() + " Y");
+
+        h1d.annotation().addItem("xAxisLabel", h1d.title() + " X");
+        h1d.annotation().addItem("yAxisLabel", h1d.title() + " Y");
 
         // Create 3x3 regions for showing plots
+        // plotter.createRegions(3, 3, 0);
         plotter.createRegion();
 
         IPlotterStyle pstyle = plotter.style();
@@ -37,7 +38,7 @@ public class Cloud1DTest extends AbstractPlotTest {
         pstyle.dataStyle().fillStyle().setVisible(false);
 
         pstyle.dataStyle().outlineStyle().setVisible(true);
-        // pstyle.dataStyle().outlineStyle().setColor("black");
+        pstyle.dataStyle().outlineStyle().setColor("blue");
         // pstyle.dataStyle().outlineStyle().setVisible(false);
 
         pstyle.dataStyle().lineStyle().setVisible(false);
@@ -69,9 +70,13 @@ public class Cloud1DTest extends AbstractPlotTest {
         }
 
         // background color
-        // pstyle.regionBoxStyle().backgroundStyle().setColor("white");
+        pstyle.regionBoxStyle().backgroundStyle().setColor("white");
 
-        // Plot histograms into regions
-        plotter.region(0).plot(c1d);
+        // Set log scale.
+        // pstyle.xAxisStyle().setScaling("log");
+        // pstyle.yAxisStyle().setScaling("log");
+        pstyle.yAxisStyle().setParameter("yAxis", "Y1");
+
+        plotter.region(0).plot(h1d, pstyle);
     }
 }

@@ -1,6 +1,5 @@
 package hep.aida.jfree.plot.style.util;
 
-import hep.aida.IBoxStyle;
 import hep.aida.IGridStyle;
 import hep.aida.ILineStyle;
 

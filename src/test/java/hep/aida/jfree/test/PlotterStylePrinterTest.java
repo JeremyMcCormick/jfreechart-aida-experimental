@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.test;
 
 import hep.aida.jfree.plot.style.util.PlotterStylePrinter;
 import hep.aida.jfree.test.AbstractPlotTest;

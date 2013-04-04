@@ -1,12 +1,15 @@
 package hep.aida.jfree.plotter;
 
 import hep.aida.IBaseHistogram;
+import hep.aida.IFunction;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.converter.FunctionConverter;
 import hep.aida.jfree.converter.HistogramConverter;
 import hep.aida.jfree.converter.HistogramConverterFactory;
 import hep.aida.jfree.plot.listener.PlotListener;
 import hep.aida.jfree.plot.listener.PlotListenerFactory;
 import hep.aida.jfree.plot.style.converter.AbstractStyleConverter;
+import hep.aida.jfree.plot.style.converter.StyleConverter;
 import hep.aida.jfree.plot.style.converter.StyleConverterFactory;
 import hep.aida.ref.event.IsObservable;
 import hep.aida.ref.plotter.DummyPlotterRegion;
@@ -120,6 +123,26 @@ public class PlotterRegion extends DummyPlotterRegion {
             System.err.println("WARNING: Histogram type " + hist.getClass().getCanonicalName() + " is not supported yet.");
         }
     }
+    
+    public void plot(IFunction function) {
+        plot(function, this.style, null);
+    }
+    
+    public void plot(IFunction function, IPlotterStyle style) {
+        plot(function, style, null);
+    }
+    
+    public void plot(IFunction function, IPlotterStyle style, String options) {
+        
+        // Add function to JFreeChart object.
+        FunctionConverter.addFunction(chart, function);
+        
+        // Apply styles to function.
+        StyleConverter styleConverter = StyleConverterFactory.getStyleConverter(function);
+        styleConverter.setStyle(style);
+        styleConverter.setChartState(new ChartState(panel, chart, function, chart.getXYPlot().getDatasetCount() - 1));        
+        styleConverter.applyStyle();
+    }
 
     private void setBaseChart(IBaseHistogram hist, JFreeChart newChart) {
         
@@ -204,8 +227,13 @@ public class PlotterRegion extends DummyPlotterRegion {
         addListener(hist, datasetIndices);
     }
 
+    // FIXME: This should be fixed so it can be called at any time, not just when chart is non-null.
     public void setTitle(String title) {
-        chart.setTitle(title);
+        if (chart != null) {
+            chart.setTitle(title);
+        } else {
+            System.err.println("Cannot set title.  No chart exists for this region yet.");
+        }
     }
     
     public synchronized void update() {

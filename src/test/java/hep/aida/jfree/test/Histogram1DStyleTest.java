@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.test;
 
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
@@ -52,7 +52,7 @@ public class Histogram1DStyleTest extends AbstractPlotTest {
         // Turn off grid lines until explicitly enabled.
         pstyle.gridStyle().setVisible(false);
 
-        // 0) Default style.
+        // 0) Filled with bars.
         plotter.region(0).plot(h, pstyle);
         plotter.region(0).setTitle("0) filled and bars");
 

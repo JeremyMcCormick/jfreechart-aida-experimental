@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.test;
 
 import hep.aida.IAxisStyle;
 import hep.aida.IBaseHistogram;

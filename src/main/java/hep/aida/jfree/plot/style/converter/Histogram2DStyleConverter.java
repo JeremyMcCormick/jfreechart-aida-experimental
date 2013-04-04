@@ -23,8 +23,8 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
  */
 public class Histogram2DStyleConverter extends AbstractStyleConverter implements StyleConverter {
 
-    public void applyStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
-
+    void applyStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+        
         // Apply styles to the chart, NOT directly having to do with data,
         // e.g. title, background colors, etc.
         applyNonDataStyle(chart, hist, style);
@@ -46,24 +46,35 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
     /*
      * TODO:
      * 
-     * Color map styles to implement:
+     * Color map styles to implement, as separate classes in hep.aida.jfree.renderer package:
      * 
-     * -warm -cool -thermal -grayscale -userdefined
+     * -warm 
+     * -cool 
+     * -thermal 
+     * -grayscale 
+     * -userdefined (might leave this out for now)
      * 
      * e.g.
      * 
      * style.dataStyle().fillStyle().setParameter("colorMapScheme", "rainbow");
      * 
-     * Old JFreeChart class PaintScale scale = new GrayPaintScale(0.,
-     * h2d.maxBinHeight());
+     * Implementations of these can be found in jas-plotter in:
+     *  
+     * jas.plot.ColorMap
+     * 
+     * See its method getColor() which has logic for each type of color map.
+     * 
+     * Old JFreeChart class: 
+     * 
+     * PaintScale scale = new GrayPaintScale(0., h2d.maxBinHeight());
      */
 
     // TODO: implement style.dataStyle().fillStyle() to fill boxes if selected
     public void applyHistogram2DStyle(JFreeChart chart, IHistogram2D h2d, IPlotterStyle style) {
-
+        
         String histStyle = style.parameterValue("hist2DStyle");
 
-        if (histStyle != null) {
+        if (histStyle != null) {            
             if (histStyle.equals("box")) {
                 // Replace the existing chart with a box plot.
                 Histogram2DConverter.replaceWithBoxPlot(h2d, chart);

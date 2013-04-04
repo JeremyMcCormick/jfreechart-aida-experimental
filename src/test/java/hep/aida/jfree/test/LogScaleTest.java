@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.test;
 
 import hep.aida.IAxisStyle;
 import hep.aida.IHistogram1D;
@@ -17,7 +17,6 @@ public class LogScaleTest extends AbstractPlotTest {
 
     public void plot() {
 
-        // Create a list with various types of histograms
         IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, 0.0, 5.0);
         Random rand = new Random();
         for (int i = 0; i < 1000000; i++) {

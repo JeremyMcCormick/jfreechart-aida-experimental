@@ -1,4 +1,4 @@
-package hep.aida.jfree;
+package hep.aida.jfree.test;
 
 import hep.aida.IHistogram2D;
 import hep.aida.IPlotterStyle;
@@ -44,9 +44,9 @@ public class Histogram2DTest extends AbstractPlotTest {
         pstyle.dataStyle().fillStyle().setVisible(true);
         pstyle.dataStyle().fillStyle().setColor("blue");
         plotter.region(1).plot(h2d, pstyle);
-
+               
         Random rand = new Random();
-        for (int i = 0; i < 100000000; i++) {
+        for (int i = 0; i < 1000; i++) {
             h2d.fill(rand.nextInt(100), rand.nextInt(100));
         }
     }

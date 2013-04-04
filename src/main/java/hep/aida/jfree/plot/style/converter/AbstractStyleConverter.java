@@ -50,8 +50,9 @@ import org.jfree.ui.TextAnchor;
 // Some remaining style tasks:
 //
 // -foreground color
-//   -What is this supposed to paint? Which components? Overrides other styles?
+//   -What is this supposed to paint? Which components? Overrides other styles?  See freehep-jaida for details.
 // -data area border type
+//   -Borders are tough in JFreeChart because plots are not built with internal Swing JComponents.
 // -2D histograms (see JAIDA code)
 //   -color map types
 // -functions
@@ -79,6 +80,10 @@ public abstract class AbstractStyleConverter implements StyleConverter {
     
     public void setStyle(IPlotterStyle style) {
         this.style = style;
+    }
+    
+    public IPlotterStyle getStyle() {
+        return this.style;
     }
     
     /**
@@ -387,13 +392,11 @@ public abstract class AbstractStyleConverter implements StyleConverter {
         if (axisStyle.parameterValue(Style.AXIS_LOWER_LIMIT) != null) {
             double lowerLimit = Double.parseDouble(axisStyle.parameterValue(Style.AXIS_LOWER_LIMIT));
             axis.setLowerBound(lowerLimit);
-            // System.out.println("lowerLimit = " + lowerLimit);
         }
 
         if (axisStyle.parameterValue(Style.AXIS_UPPER_LIMIT) != null) {
             double upperLimit = Double.parseDouble(axisStyle.parameterValue(Style.AXIS_UPPER_LIMIT));
             axis.setUpperBound(upperLimit);
-            // System.out.println("upperLimit = " + upperLimit);
         }
     }
 
@@ -578,7 +581,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
         return visible;
     }
     
-    // TEST 
+    // FIXME: Only works for 1D histograms.
     protected void drawStatisticsBox() {
         IStatisticsBoxStyle statStyle = style.statisticsBoxStyle();
         if (statStyle.isVisible()) {
@@ -595,9 +598,9 @@ public abstract class AbstractStyleConverter implements StyleConverter {
                 //System.out.println("drawing @ x, y = " + x + " " + y);
                 BasicMultiLineXYTextAnnotation annotation = new BasicMultiLineXYTextAnnotation(stats, x, y);
                 annotation.setTextAnchor(TextAnchor.TOP_LEFT);
-                //annotation.setBackgroundPaint(TRANSPARENT);
                 annotation.setOutlineStroke(new BasicStroke(1.0f));
                 annotation.setOutlineVisible(true);
+                annotation.setOutlinePaint(ColorUtil.toColor(statStyle.boxStyle().borderStyle()));
                 Font font = PlotterFontUtil.getFont(statStyle.textStyle());
                 annotation.setFont(font);
                 plot.addAnnotation(annotation, true);

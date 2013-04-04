@@ -2,9 +2,12 @@ package hep.aida.jfree.dataset;
 
 import hep.aida.IAxis;
 import hep.aida.ICloud2D;
+import hep.aida.IFunction;
 import hep.aida.IHistogram1D;
 import hep.aida.IHistogram2D;
+import hep.aida.jfree.function.Function2DAdapter;
 
+import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.xy.DefaultXYDataset;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYDataset;
@@ -148,6 +151,10 @@ public class DatasetConverter {
         ds.addSeries("data", data);
 
         return ds;
+    }
+    
+    public static XYDataset toXYDataset(IFunction function, double start, double end, int samples) {
+        return DatasetUtilities.sampleFunction2D(new Function2DAdapter(function), start, end, samples, "functionData");
     }
 
     /*

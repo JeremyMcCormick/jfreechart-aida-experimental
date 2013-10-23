@@ -19,6 +19,7 @@ import hep.aida.ref.plotter.Style;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Paint;
 import java.awt.Stroke;
 
 import javax.swing.border.Border;
@@ -600,7 +601,10 @@ public abstract class AbstractStyleConverter implements StyleConverter {
                 annotation.setTextAnchor(TextAnchor.TOP_LEFT);
                 annotation.setOutlineStroke(new BasicStroke(1.0f));
                 annotation.setOutlineVisible(true);
-                annotation.setOutlinePaint(ColorUtil.toColor(statStyle.boxStyle().borderStyle()));
+                Paint borderPaint = ColorUtil.toColor(statStyle.boxStyle().borderStyle());
+                if (borderPaint != null) {
+                    annotation.setOutlinePaint(borderPaint);
+                }
                 Font font = PlotterFontUtil.getFont(statStyle.textStyle());
                 annotation.setFont(font);
                 plot.addAnnotation(annotation, true);

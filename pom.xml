@@ -9,7 +9,7 @@
         <repository>
             <id>freehep-maven</id>
             <name>FreeHEP Maven 2 Repository</name>
-            <url>http://java.freehep.org/maven2</url>
+            <url>http://srs.slac.stanford.edu/nexus/content/groups/freehep-maven2-public/</url>
         </repository>
     </repositories>
     <distributionManagement>

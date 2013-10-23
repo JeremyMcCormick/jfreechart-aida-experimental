@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>jfreechart-aida-experimental</groupId>
     <artifactId>jfreechart-aida-experimental</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <name>JFreeChart AIDA Experimental</name>
     <description>Experiments with plotting AIDA objects using JFreeChart</description>
     <repositories>
@@ -12,17 +12,36 @@
             <url>http://java.freehep.org/maven2</url>
         </repository>
     </repositories>
+    <distributionManagement>
+        <repository>
+            <id>lcsim-maven-slac-linux-repo</id>
+            <name>org.lcsim Maven Repository</name>
+            <url>scpexe://svn.slac.stanford.edu///nfs/slac/g/lcd/mc/prj/www/lcsim/maven2</url>
+        </repository>
+        <snapshotRepository>
+            <id>lcsim-maven-slac-linux-snapshot-repo</id>
+            <name>org.lcsim Maven Snapshot Repository</name>
+            <url>scpexe://svn.slac.stanford.edu///nfs/slac/g/lcd/mc/prj/www/lcsim/maven2</url>
+        </snapshotRepository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
             <version>1.0.14</version>
         </dependency>
-        <!-- <dependency> <groupId>org.jfree.chart</groupId> <artifactId>jfreechart-fse</artifactId> <version>1.0-SNAPSHOT</version> </dependency> -->
+        <!--
+        <dependency>
+            <groupId>org.freehep</groupId>
+            <artifactId>freehep-jaida-standard-distribution</artifactId>
+            <version>3.4.6</version>
+            <type>pom</type>
+        </dependency>
+        -->
         <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-jaida</artifactId>
-            <version>3.4.4-SNAPSHOT</version>
+            <version>3.4.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.freehep</groupId>

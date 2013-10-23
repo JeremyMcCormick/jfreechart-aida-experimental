@@ -22,7 +22,7 @@ public abstract class PlotListener implements AIDAListener {
     JFreeChart chart;
     IBaseHistogram hist;
     boolean updating = false;
-    private final int DEFAULT_INTERVAL = 10; // in ms
+    private final int DEFAULT_INTERVAL = 1000; // in ms
     int updateInterval = DEFAULT_INTERVAL;
     int[] datasetIndices;
 

@@ -14,11 +14,13 @@ import javax.swing.JPanel;
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-class Plotter extends DummyPlotter {
+public class Plotter extends DummyPlotter {
 
     List<PlotterRegion> regions = new ArrayList<PlotterRegion>();
     JPanel rootPanel;
     JFrame frame;
+    boolean useFrames;
+    boolean setup;
 
     Plotter() {
         configureRootPanel();
@@ -31,42 +33,54 @@ class Plotter extends DummyPlotter {
     }
 
     private void setupRegions() {
-    	if (frame == null) {
-    	    frame = new JFrame();
-    	    plotRegions();
-    	    frame.setContentPane(rootPanel);
-    	    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    	    frame.pack();
-    	}
+        if (!setup) {
+            if (useFrames)
+                frame = new JFrame();
+            plotRegions();
+            if (useFrames) {
+                frame.setContentPane(rootPanel);
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.pack();
+            }
+            setup = true;
+        }
+    }
+    
+    public void useFrames(boolean useFrames) {
+        this.useFrames = useFrames;
     }
 
     public void show() {
         setupRegions();
-        frame.setVisible(true);
+        if (useFrames)
+            frame.setVisible(true);
     }
 
     public void hide() {
         frame.setVisible(false);
+        frame = null;
+        setup = false;
     }
 
     public void destroyRegions() {
+        regions.clear();
     }
 
     public JPanel panel() {
         return this.rootPanel;
     }
-    
+
     public void writeToFile(String file) throws IOException {
         String extension = "";
         int i = file.lastIndexOf('.');
         if (i > 0) {
-            extension = file.substring(i+1);
+            extension = file.substring(i + 1);
         } else {
             throw new IllegalArgumentException("File name has no extension: " + file);
         }
         writeToFile(file, extension);
     }
-   
+
     public void writeToFile(String file, String type) throws IOException {
         if (frame == null) {
             setupRegions();
@@ -104,7 +118,7 @@ class Plotter extends DummyPlotter {
         // ".justCreateRegion => x = " + x + ", y = " + y + ", w = " + width +
         // ", " + ", h = " + height);
         PlotterRegion region = new PlotterRegion(this.style(), x, y, width, height);
-        //region.setStyle(this.style());
+        // region.setStyle(this.style());
         regions.add(region);
         return region;
     }

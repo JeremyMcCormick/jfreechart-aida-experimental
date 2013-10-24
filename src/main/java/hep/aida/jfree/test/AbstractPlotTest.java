@@ -6,6 +6,7 @@ import hep.aida.IPlotter;
 import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.AnalysisFactory;
+import hep.aida.jfree.plotter.Plotter;
 
 import java.io.IOException;
 
@@ -27,6 +28,7 @@ public abstract class AbstractPlotTest extends TestCase {
         plotterFactory = analysisFactory.createPlotterFactory();
         histogramFactory = analysisFactory.createHistogramFactory(null);
         plotter = plotterFactory.create();
+        ((Plotter)plotter).useFrames(true);
         style = plotter.style();
     }
     

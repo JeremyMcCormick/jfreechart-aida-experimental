@@ -2,26 +2,27 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>jfreechart-aida-experimental</groupId>
     <artifactId>jfreechart-aida-experimental</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
     <name>JFreeChart AIDA Experimental</name>
     <description>Experiments with plotting AIDA objects using JFreeChart</description>
+    <packaging>jar</packaging>
     <repositories>
         <repository>
-            <id>freehep-maven</id>
-            <name>FreeHEP Maven 2 Repository</name>
+            <id>freehep-repo-public</id>
+            <name>FreeHEP Maven Public</name>
             <url>http://srs.slac.stanford.edu/nexus/content/groups/freehep-maven2-public/</url>
         </repository>
     </repositories>
     <distributionManagement>
         <repository>
-            <id>lcsim-maven-slac-linux-repo</id>
-            <name>org.lcsim Maven Repository</name>
-            <url>scpexe://svn.slac.stanford.edu///nfs/slac/g/lcd/mc/prj/www/lcsim/maven2</url>
+            <id>lcsim-repo-releases</id>
+            <name>LCSIM Releases maven repository</name>
+            <url>http://srs.slac.stanford.edu/nexus/content/repositories/lcsim-maven2-releases/</url>
         </repository>
         <snapshotRepository>
-            <id>lcsim-maven-slac-linux-snapshot-repo</id>
-            <name>org.lcsim Maven Snapshot Repository</name>
-            <url>scpexe://svn.slac.stanford.edu///nfs/slac/g/lcd/mc/prj/www/lcsim/maven2</url>
+            <id>lcsim-repo-snapshots</id>
+            <name>LCSIM Snapshots maven repository</name>
+            <url>http://srs.slac.stanford.edu/nexus/content/repositories/lcsim-maven2-snapshot/</url>
         </snapshotRepository>
     </distributionManagement>
     <dependencies>
@@ -80,13 +81,7 @@
         </dependency>
     </dependencies>
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh-external</artifactId>
-                <version>2.4</version>
-            </extension>
-        </extensions>
+        <defaultGoal>install</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -103,7 +98,7 @@
                 <configuration>
                     <excludes>
                         <exclude>hep/aida/example/**.java</exclude>
-                        <exclude>hep/aida/jfree/Interactive**Test.java</exclude>
+                        <exclude>hep/aida/jfree/test/interactive/**.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -131,6 +126,16 @@
                                     <exclude>hep.testdata.aida:*</exclude>
                                 </excludes>
                             </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>

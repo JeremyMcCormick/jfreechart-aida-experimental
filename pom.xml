@@ -6,6 +6,11 @@
     <name>JFreeChart AIDA Experimental</name>
     <description>Experiments with plotting AIDA objects using JFreeChart</description>
     <packaging>jar</packaging>
+    <scm>
+        <url>https://github.com/JeremyMcCormick/jfreechart-aida-experimental/</url>
+        <connection>scm:git:git://github.com/JeremyMcCormick/jfreechart-aida-experimental.git</connection>
+        <developerConnection>scm:git:git@github.com:JeremyMcCormick/jfreechart-aida-experimental.git</developerConnection>
+    </scm>
     <repositories>
         <repository>
             <id>freehep-repo-public</id>

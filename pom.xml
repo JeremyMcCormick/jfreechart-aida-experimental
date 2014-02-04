@@ -31,53 +31,11 @@
             <artifactId>jfreechart</artifactId>
             <version>1.0.14</version>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-jaida-standard-distribution</artifactId>
-            <version>3.4.6</version>
+            <version>3.4.7-1</version>
             <type>pom</type>
-        </dependency>
-        -->
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-jaida</artifactId>
-            <version>3.4.7-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-jaida-jminuit</artifactId>
-            <version>3.3.0-12</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-jminuit</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-graphicsio</artifactId>
-            <version>2.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-graphicsio-pdf</artifactId>
-            <version>2.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-graphicsio-ps</artifactId>
-            <version>2.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-graphicsio-svg</artifactId>
-            <version>2.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.freehep</groupId>
-            <artifactId>freehep-graphicsio-swf</artifactId>
-            <version>2.2.1</version>
         </dependency>
     </dependencies>
     <build>
@@ -88,8 +46,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.0</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <plugin>

@@ -39,8 +39,7 @@ import org.jfree.ui.TextAnchor;
  * See this method for how to apply styles from AIDA using the JAS3 plotter,
  * which was used as a reference:
  * 
- * freehep-jaida: hep.aida.ref.plotter.PlotterRegion.applyStyle(JASHistData
- * jasHistData, IPlotterStyle style);
+ * freehep-jaida: hep.aida.ref.plotter.PlotterRegion.applyStyle(JASHistData jasHistData, IPlotterStyle style);
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
@@ -53,9 +52,9 @@ import org.jfree.ui.TextAnchor;
 // -foreground color
 //   -What is this supposed to paint? Which components? Overrides other styles?  See freehep-jaida for details.
 // -data area border type
-//   -Borders are tough in JFreeChart because plots are not built with internal Swing JComponents.
+//   -Borders are difficult to draw generically in JFreeChart because plots are not built with internal Swing JComponents.
 // -2D histograms (see JAIDA code)
-//   -color map types
+//   -different color map types
 // -functions
 public abstract class AbstractStyleConverter implements StyleConverter {
 
@@ -157,17 +156,18 @@ public abstract class AbstractStyleConverter implements StyleConverter {
                 applyDataOutlineStyle(chart, hist, style);
             }
 
-            // Set error styling .
+            // Set error style.
             if (areErrorsVisible(style)) {
                 applyErrorBarStyle(chart, style);
-                // Turn off display of error values.
+            // Turn off display of error values.
             } else {
                 makeErrorsInvisible(chart);
             }
-            
+        
+            // Draw the statistics box.
             drawStatisticsBox();
 
-            // Turn off both data and errors as style is set to invisible.
+        // Turn off both data and errors as style is set to invisible.
         } else {
             makeDataInvisible(chart);
             makeErrorsInvisible(chart);
@@ -279,13 +279,9 @@ public abstract class AbstractStyleConverter implements StyleConverter {
 
     /**
      * Set log axis if selected.
-     * 
-     * @param plot
-     *            The plot with the axes.
-     * @param axisStyle
-     *            The AIDA axis style settings.
-     * @param domain
-     *            True if axis is domain; false if range.
+     * @param plot The plot with the axes.
+     * @param axisStyle The AIDA axis style settings.
+     * @param domain True if axis is domain; false if range.
      */
     private static void applyLogAxis(XYPlot plot, IAxisStyle axisStyle, boolean domain) {
         String scale = axisStyle.scaling();
@@ -345,7 +341,6 @@ public abstract class AbstractStyleConverter implements StyleConverter {
 
     /**
      * Apply panel style.
-     * 
      * @param panel The ChartPanel.
      * @param style The plotter style.
      */

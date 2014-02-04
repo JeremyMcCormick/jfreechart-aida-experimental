@@ -1,5 +1,7 @@
 package hep.aida.jfree.converter;
 
+import org.jfree.chart.axis.NumberAxis;
+
 import hep.aida.IBaseHistogram;
 
 /**
@@ -20,5 +22,9 @@ class ConverterUtil {
         }
         return labels;
     }
+    
+    // TODO: Set tick unit source here to force display of label for the
+    // max value of the axis.
+    // http://www.jfree.org/phpBB2/viewtopic.php?f=3&t=28597&p=79591&hilit=NumberAxis+tick#p79591
 
 }

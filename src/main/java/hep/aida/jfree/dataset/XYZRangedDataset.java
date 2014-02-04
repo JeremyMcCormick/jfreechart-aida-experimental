@@ -30,7 +30,7 @@ public class XYZRangedDataset extends DefaultXYZDataset {
         }
     }
 
-    Map<Comparable, ZRange> ranges = new HashMap<Comparable, ZRange>();
+    Map<Comparable<?>, ZRange> ranges = new HashMap<Comparable<?>, ZRange>();
 
     public XYZRangedDataset() {
     }

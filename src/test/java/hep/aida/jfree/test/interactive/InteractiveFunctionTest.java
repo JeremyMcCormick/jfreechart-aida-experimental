@@ -32,7 +32,7 @@ public class InteractiveFunctionTest extends AbstractPlotTest {
         IFitter fitter = fitFactory.createFitter("Chi2", "jminuit");
 
         // Perform the fits
-        //IFitResult fitResult = fitter.fit(profile, "p1");
+        IFitResult fitResult = fitter.fit(profile, "p1");
         //IFunction fitResTest = fitResult.fittedFunction();
         //for (int i = 0, n = profile.entries(); i < n; i++) {
         //    double v = fitResTest.value(new double[] { profile.axis().binCenter(i) });
@@ -45,7 +45,7 @@ public class InteractiveFunctionTest extends AbstractPlotTest {
         style.gridStyle().setVisible(false);
         
         // Plot profile.
-        //plotter.region(0).plot(profile, style);
+        plotter.region(0).plot(profile, style);
         
         // Set function style.
         IPlotterStyle functionStyle = plotterFactory.createPlotterStyle();
@@ -56,7 +56,7 @@ public class InteractiveFunctionTest extends AbstractPlotTest {
         functionStyle.dataStyle().markerStyle().setSize(6);
         
         // Plot function.
-        //plotter.region(0).plot(fitResult.fittedFunction(), functionStyle);
+        plotter.region(0).plot(fitResult.fittedFunction(), functionStyle);
         
         IHistogram1D hist = histogramFactory.createHistogram1D("histo", 50, -5.0, 5);
         for (int i=0; i<1000; i++) {
@@ -65,16 +65,14 @@ public class InteractiveFunctionTest extends AbstractPlotTest {
         
         // Create the Fitter and fit the profiles
         System.out.println("fitting histo");
-        //fitResult = fitter.fit(hist, "h1");
+        fitResult = fitter.fit(hist, "h1");
         //System.out.println("DONE fitting histo");
         
         //System.out.println("fitStatus = " + fitResult.fitStatus());
         
-        plotter.region(1).plot(hist, style);
+        //plotter.region(1).plot(hist, style);
+        //plotter.region(1).plot(fitResult.fittedFunction(), functionStyle);        
         
-        /*
-        plotter.region(1).plot(fitResult.fittedFunction(), functionStyle);        
-*/
         plotter.show();
     }
     

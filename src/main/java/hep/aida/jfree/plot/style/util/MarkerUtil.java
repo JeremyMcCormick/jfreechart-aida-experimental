@@ -20,7 +20,10 @@ public final class MarkerUtil {
     }
 
     // Available shape names for data markers.
-    public static final String[] availableShapes = new String[] { "dot", "box", "triangle", "diamond", "star", "verticalLine", "horizontalLine", "cross", "circle", "square" };
+    public static final String[] availableShapes = 
+            new String[] { "dot", "box", "triangle", "diamond", 
+                           "star", "verticalLine", "horizontalLine", 
+                           "cross", "circle", "square" };
     
     public static Shape getShape(IMarkerStyle markerStyle) {
         return getMarkerShape(markerStyle.shape(), markerStyle.size());

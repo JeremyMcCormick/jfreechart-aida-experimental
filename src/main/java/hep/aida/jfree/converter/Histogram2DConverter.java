@@ -14,7 +14,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
@@ -29,38 +28,13 @@ import org.jfree.ui.RectangleInsets;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class Histogram2DConverter implements HistogramConverter<IHistogram2D> {
+public class Histogram2DConverter implements Converter<IHistogram2D> {
 
     static public final int COLOR_DATA = 0;
     static public final int COLOR_SCALE_LEGEND = 1;
-    static public final int DEFAULT_MINOR_TIC_COUNT = 2;
 
     public Class<IHistogram2D> convertsType() {
         return IHistogram2D.class;
-    }
-
-    public static double[] calculateZLimits(XYZDataset ds) {
-        double zLogMin;
-        double zMin;
-        double zMax;
-        if (ds.getItemCount(0) == 0) {
-            zMin = 0;
-            zLogMin = Double.POSITIVE_INFINITY;
-            zMax = 1;
-        } else {
-            zLogMin = Double.POSITIVE_INFINITY;
-            zMin = Double.POSITIVE_INFINITY;
-            zMax = Double.NEGATIVE_INFINITY;
-
-            for (int i = 0, n = ds.getItemCount(0); i < n; i++) {
-                double d = ds.getZValue(0, i);
-                zMin = Math.min(zMin, d);
-                if (d > 0.0000000000001) // was zero???
-                    zLogMin = Math.min(zLogMin, d);
-                zMax = Math.max(zMax, d);
-            }
-        }
-        return new double[] { zMin, zMax, zLogMin };
     }
 
     /**
@@ -73,13 +47,7 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D> {
     static JFreeChart toColorMap(IHistogram2D h2d, IPlotterStyle style) {
         // Create dataset.
         XYZDataset dataset = DatasetConverter.convert(h2d);
-
-        // Create X axis.
-        NumberAxis xAxis = new NumberAxis(null);
-
-        // Create Y axis.
-        NumberAxis yAxis = new NumberAxis(null);
-
+        
         // Check if using a log scale.
         boolean logScale = false;
         if (style.zAxisStyle().parameterValue("scale").startsWith("log")) {
@@ -90,7 +58,7 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D> {
         XYBlockRenderer renderer = createColorMapRenderer(dataset, h2d, style);
 
         // Create the plot.
-        XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
+        XYPlot plot = new XYPlot(dataset, null, null, renderer);
         JFreeChart chart = new JFreeChart(h2d.title(), plot);
 
         // Configure the axes;
@@ -136,22 +104,15 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D> {
         return renderer;
     }
 
-    // FIXME: Only used in test right now.
     public JFreeChart toBoxPlot(IHistogram2D h2d, IPlotterStyle style) {
         // Create dataset.
         XYZDataset dataset = DatasetConverter.toXYZRangedDataset(h2d);
 
         // Create plot
         NumberAxis xAxis = new NumberAxis(null);
-        xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        xAxis.setLowerMargin(0.0);
-        xAxis.setUpperMargin(0.05);
 
         // Y axis.
         NumberAxis yAxis = new NumberAxis(null);
-        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        yAxis.setLowerMargin(0.0);
-        yAxis.setUpperMargin(0.05);
 
         // Set the renderer.
         XYBoxRenderer renderer = new XYBoxRenderer(h2d.xAxis().binWidth(0), h2d.yAxis().binWidth(0));
@@ -186,35 +147,21 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D> {
         return chart;
     }
 
-    // FIXME: More work needed here for small bin sizes in which case way too
-    // many tic labels are displayed.
     private static void configureAxes(IHistogram2D h2d, JFreeChart chart, double margin) {
-        // Setup X axis.
-        NumberAxis xAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
-        xAxis.setUpperBound(h2d.xAxis().binUpperEdge(h2d.yAxis().bins() - 1));
-        xAxis.setUpperMargin(margin);
-        xAxis.setTickUnit(new NumberTickUnit(h2d.xAxis().binWidth(0)));
-        xAxis.setMinorTickCount(DEFAULT_MINOR_TIC_COUNT);
-        xAxis.setMinorTickMarksVisible(true);
-        chart.getXYPlot().setDomainAxis(xAxis);
 
-        // Setup Y axis.
-        NumberAxis yAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
-        yAxis.setUpperBound(h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
-        yAxis.setUpperMargin(margin);
-        yAxis.setTickUnit(new NumberTickUnit(h2d.yAxis().binWidth(0)));
-        yAxis.setMinorTickCount(DEFAULT_MINOR_TIC_COUNT);
-        yAxis.setMinorTickMarksVisible(true);
+        String[] labels = ConverterUtil.getAxisLabels(h2d);
+        
+        NumberAxis xAxis = new NumberAxis(labels[0]);
+        NumberAxis yAxis = new NumberAxis(labels[1]);
+        
+        chart.getXYPlot().setDomainAxis(xAxis);
         chart.getXYPlot().setRangeAxis(yAxis);
     }
 
     /**
      * Replace existing chart dataset and renderer with a box plot.
-     * 
-     * @param h2d
-     *            The backing histogram.
-     * @param chart
-     *            The chart into which the box plot will be drawn.
+     * @param h2d The backing histogram.
+     * @param chart The chart into which the box plot will be drawn.
      */
     public static void replaceWithBoxPlot(IHistogram2D h2d, JFreeChart chart) {
         // Create the dataset.
@@ -257,13 +204,10 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D> {
      * This method creates a legend for the paint scale used by the block
      * renderer.
      * 
-     * Inspired by this post:
+     * Inspired by <a href="http://www.jfree.org/phpBB2/viewtopic.php?f=3&t=29588#p81629">this post</a>
      * 
-     * <a href="http://www.jfree.org/phpBB2/viewtopic.php?f=3&t=29588#p81629">
-     * Tooltips not shown in XYZPlot</a>
-     * 
-     * FIXME: The display of tic labels still needs some work, and the legend
-     * gets a bit weird when the log scale is used.
+     * FIXME: The display of the tick labels still needs some work, 
+     * and the legend looks weird when the log scale is used.
      * 
      * @param chart
      * @param scale
@@ -298,5 +242,29 @@ public class Histogram2DConverter implements HistogramConverter<IHistogram2D> {
         legend.setStripWidth(20D);
         legend.setPosition(RectangleEdge.RIGHT);
         chart.addSubtitle(legend);
+    }
+    
+    public static double[] calculateZLimits(XYZDataset ds) {
+        double zLogMin;
+        double zMin;
+        double zMax;
+        if (ds.getItemCount(0) == 0) {
+            zMin = 0;
+            zLogMin = Double.POSITIVE_INFINITY;
+            zMax = 1;
+        } else {
+            zLogMin = Double.POSITIVE_INFINITY;
+            zMin = Double.POSITIVE_INFINITY;
+            zMax = Double.NEGATIVE_INFINITY;
+
+            for (int i = 0, n = ds.getItemCount(0); i < n; i++) {
+                double d = ds.getZValue(0, i);
+                zMin = Math.min(zMin, d);
+                if (d > 0.0000000000001) // was zero???
+                    zLogMin = Math.min(zLogMin, d);
+                zMax = Math.max(zMax, d);
+            }
+        }
+        return new double[] { zMin, zMax, zLogMin };
     }
 }

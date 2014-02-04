@@ -13,21 +13,15 @@ import hep.aida.IProfile1D;
  */
 public class StyleConverterFactory {
 
-    private static final Histogram1DStyleConverter histogram1DConverter = new Histogram1DStyleConverter();
-    private static final Histogram2DStyleConverter histogram2DConverter = new Histogram2DStyleConverter();
-    private static final Cloud2DStyleConverter cloud2DConverter = new Cloud2DStyleConverter();
-    private static final FunctionStyleConverter functionConverter = new FunctionStyleConverter();
-
-    // FIXME: Should this return a new object since the converters have some plot state?
     public static StyleConverter getStyleConverter(Object object) {
         if (object instanceof IHistogram1D || object instanceof ICloud1D || object instanceof IProfile1D) {
-            return histogram1DConverter;
+            return new Histogram1DStyleConverter();
         } else if (object instanceof ICloud2D) {
-            return cloud2DConverter;
+            return new Cloud2DStyleConverter();
         } else if (object instanceof IHistogram2D) {
-            return histogram2DConverter;
+            return new Histogram2DStyleConverter();
         } else if (object instanceof IFunction) {
-            return functionConverter;
+            return new FunctionStyleConverter();
         } else {
             return null;
         }

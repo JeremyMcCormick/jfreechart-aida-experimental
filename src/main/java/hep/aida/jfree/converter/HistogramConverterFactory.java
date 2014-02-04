@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class HistogramConverterFactory {
 
-    List<HistogramConverter> converters = new ArrayList<HistogramConverter>();
+    List<Converter<?>> converters = new ArrayList<Converter<?>>();
 
     static private HistogramConverterFactory instance = null;
 
@@ -44,9 +44,9 @@ public class HistogramConverterFactory {
         converters.add(new Profile1DConverter());
     }
 
-    public HistogramConverter getConverter(IBaseHistogram hist) {
-        for (HistogramConverter cnv : converters) {
-            if (cnv.convertsType().isInstance(hist)) {
+    public Converter getConverter(Object object) {
+        for (Converter cnv : converters) {
+            if (cnv.convertsType().isInstance(object)) {
                 return cnv;
             }
         }

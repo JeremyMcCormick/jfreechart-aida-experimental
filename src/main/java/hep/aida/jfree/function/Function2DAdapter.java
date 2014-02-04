@@ -6,6 +6,7 @@ import org.jfree.data.function.Function2D;
 
 
 /**
+ * Adapt an AIDA <tt>IFunction<tt/> to a JFreeChart <tt>Function2D</tt>.
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
 public class Function2DAdapter implements Function2D {

@@ -1,6 +1,6 @@
 package hep.aida.jfree.plot.listener;
 
-import hep.aida.IBaseHistogram;
+//import hep.aida.IBaseHistogram;
 import hep.aida.IHistogram1D;
 import hep.aida.jfree.converter.Histogram1DConverter;
 import hep.aida.ref.histogram.Histogram1D;
@@ -15,11 +15,11 @@ import org.jfree.data.xy.XYDataset;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class Histogram1DListener extends PlotListener {
+public class Histogram1DListener extends PlotListener<IHistogram1D> {
 
     IHistogram1D h1d;
 
-    Histogram1DListener(IBaseHistogram hist, JFreeChart chart, int[] datasetIndices) {
+    Histogram1DListener(IHistogram1D hist, JFreeChart chart, int[] datasetIndices) {
         super(hist, chart, datasetIndices);
         if (!(hist instanceof IHistogram1D)) {
             throw new IllegalArgumentException("hist is not an instance of IHistogram1D.");

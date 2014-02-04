@@ -28,7 +28,7 @@ public abstract class AbstractPlotTest extends TestCase {
         plotterFactory = analysisFactory.createPlotterFactory();
         histogramFactory = analysisFactory.createHistogramFactory(null);
         plotter = plotterFactory.create();
-        ((Plotter)plotter).useFrames(true);
+        //((Plotter)plotter).setEmbedded(false);
         style = plotter.style();
     }
     

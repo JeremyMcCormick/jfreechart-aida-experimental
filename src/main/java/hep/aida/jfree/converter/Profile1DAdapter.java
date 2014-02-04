@@ -41,7 +41,7 @@ public class Profile1DAdapter implements IHistogram1D {
     }
 
     public void scale(double arg0) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("method not supported");
+        throw new UnsupportedOperationException("Method not supported.");
     }
 
     public double sumAllBinHeights() {
@@ -73,13 +73,11 @@ public class Profile1DAdapter implements IHistogram1D {
     }
 
     public void reset() throws RuntimeException {
-        throw new UnsupportedOperationException("method not supported");
-        // profile.reset();
+        profile.reset();
     }
 
     public void setTitle(String arg0) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("method not supported");
-        // profile.setTitle(arg0);
+        profile.setTitle(arg0);
     }
 
     public String title() {
@@ -87,7 +85,7 @@ public class Profile1DAdapter implements IHistogram1D {
     }
 
     public void add(IHistogram1D arg0) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("method not supported");
+        throw new UnsupportedOperationException("Method not supported.");
     }
 
     public IAxis axis() {
@@ -115,11 +113,11 @@ public class Profile1DAdapter implements IHistogram1D {
     }
 
     public void fill(double arg0) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("method not supported");
+        throw new UnsupportedOperationException("Method not supported.");
     }
 
     public void fill(double arg0, double arg1) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("method not supported");
+        throw new UnsupportedOperationException("Method not supported.");
     }
 
     public double mean() {

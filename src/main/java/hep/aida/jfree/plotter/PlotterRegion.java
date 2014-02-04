@@ -4,7 +4,7 @@ import hep.aida.IBaseHistogram;
 import hep.aida.IFunction;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.converter.FunctionConverter;
-import hep.aida.jfree.converter.HistogramConverter;
+import hep.aida.jfree.converter.Converter;
 import hep.aida.jfree.converter.HistogramConverterFactory;
 import hep.aida.jfree.plot.listener.PlotListener;
 import hep.aida.jfree.plot.listener.PlotListenerFactory;
@@ -26,24 +26,26 @@ import org.jfree.chart.plot.XYPlot;
 /**
  * This class implements the plotting of AIDA data objects using a JFreeChart
  * backend. Most of the complex logic for converting from the internal AIDA data
- * representation to JFreeChart classes is contained in converter classes in
- * another package that are called from here. Each region has a ChartPanel
- * associated with it, as well as a single JFreeChart object onto which data is
- * plotted. Histograms overlay is handled by appending data sets onto the chart's XYPlot. 
- * Each histogram added onto the region is assigned a unique listener so that updates to it, 
- * e.g. calls to the fill method, will result in the displayed plot being updated on the fly.
+ * representation to JFreeChart classes is contained in converter classes in the
+ * {@link hep.aida.jfree.converter} package that are called from here. Each region 
+ * has a <tt>ChartPanel</tt> associated with it, as well as a single JFreeChart 
+ * object onto which data is plotted. Histogram overlay is handled by appending 
+ * data sets onto the chart's XYPlot object.  Each histogram added onto the region 
+ * is assigned a unique listener so that updates to it, e.g. calls to the fill method, 
+ * will result in the displayed plot being updated on the fly.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
+ * @version $Id: $
  */
 public class PlotterRegion extends DummyPlotterRegion {
 
     double x, y, w, h;
     IPlotterStyle style;
     
-    ChartPanel panel;
+    ChartPanel chartPanel;
     JFreeChart chart;
     AbstractStyleConverter styleConverter;
-    List<PlotListener> listeners = new ArrayList<PlotListener>();
+    List<PlotListener<?>> listeners = new ArrayList<PlotListener<?>>();
 
     /**
      * Create a new plotter region.
@@ -61,10 +63,18 @@ public class PlotterRegion extends DummyPlotterRegion {
         this.h = h;
     }
     
+    /**
+     * Return the <tt>IPlotterStyle<tt> of this region.
+     * @return The <tt>IPlotterStyle</tt> of this region.
+     */
     public IPlotterStyle style() {
         return style;
     }
     
+    /**
+     * Set the <tt>IPlotterStyle</tt> of this region.
+     * @param The <tt>IPlotterStyle</tt> of this region.
+     */
     public void setStyle(IPlotterStyle style) {
         this.style = style;
     }
@@ -86,7 +96,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
     
     public JPanel getPanel() {
-        return panel;
+        return chartPanel;
     }
     
     public XYPlot getPlot() {
@@ -102,14 +112,13 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
 
     public void plot(IBaseHistogram hist, IPlotterStyle style) {
-        // System.out.println("PlotterRegion.plot - " + hist.title());
 
         // Find the appropriate converter for this AIDA data type.
-        HistogramConverter converter = HistogramConverterFactory.instance().getConverter(hist);
+        Converter<?> converter = HistogramConverterFactory.instance().getConverter(hist);
         
         // The plot will only show if there is a converter registered.
         if (converter != null) {
-            // Create a new chart.
+            // Create a new chart
             JFreeChart newChart = createChart(hist, style, converter);
             if (chart == null) {
                 // This is the first plot onto the region.
@@ -140,7 +149,7 @@ public class PlotterRegion extends DummyPlotterRegion {
         // Apply styles to function.
         StyleConverter styleConverter = StyleConverterFactory.getStyleConverter(function);
         styleConverter.setStyle(style);
-        styleConverter.setChartState(new ChartState(panel, chart, function, chart.getXYPlot().getDatasetCount() - 1));        
+        styleConverter.setChartState(new ChartState(chartPanel, chart, function, chart.getXYPlot().getDatasetCount() - 1));        
         styleConverter.applyStyle();
     }
 
@@ -150,11 +159,11 @@ public class PlotterRegion extends DummyPlotterRegion {
         chart = newChart;
 
         // Create the JPanel for the region.
-        panel = new ChartPanel(chart);
+        chartPanel = new ChartPanel(chart);
         
         // Apply region styles to the new panel.  Only the base chart has its own JPanel.
         if (styleConverter != null) {
-            styleConverter.getChartState().setPanel(panel);
+            styleConverter.getChartState().setPanel(chartPanel);
             styleConverter.applyPanelStyle();
         }
 
@@ -164,14 +173,15 @@ public class PlotterRegion extends DummyPlotterRegion {
         addListener(hist, datasetIndices);
     }
 
-    private JFreeChart createChart(IBaseHistogram hist, IPlotterStyle style, HistogramConverter converter) {
+    private JFreeChart createChart(IBaseHistogram hist, IPlotterStyle style, Converter converter) {
 
         // Create a new chart.
         JFreeChart newChart = converter.convert(hist, style);
 
         // Apply AIDA styles to the chart.
         if (style != null) {
-            styleConverter = (AbstractStyleConverter)StyleConverterFactory.getStyleConverter(hist);
+            styleConverter = (AbstractStyleConverter)StyleConverterFactory
+                    .getStyleConverter(hist);
             if (styleConverter != null) {
                 ChartState state = new ChartState(null, newChart, hist);
                 styleConverter.setChartState(state);
@@ -187,7 +197,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
 
     private void addListener(IBaseHistogram hist, int[] datasetIndices) {
-        PlotListener listener = PlotListenerFactory.createListener(hist, chart, datasetIndices);
+        PlotListener<?> listener = PlotListenerFactory.createListener(hist, chart, datasetIndices);
         if (listener != null) {
             ((IsObservable) hist).addListener(listener);
             this.listeners.add(listener);
@@ -204,6 +214,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
 
     private void overlay(IBaseHistogram hist, XYPlot overlayPlot) {
+        
         // This is the array of dataset indices for the listener.
         int[] datasetIndices = getDatasetIndices(overlayPlot, chart.getXYPlot().getDatasetCount());
 
@@ -227,7 +238,10 @@ public class PlotterRegion extends DummyPlotterRegion {
         addListener(hist, datasetIndices);
     }
 
-    // FIXME: This should be fixed so it can be called at any time, not just when chart is non-null.
+    /* 
+     * FIXME: This should be fixed so it can be called at any time, not just when chart 
+     * is non-null
+     */
     public void setTitle(String title) {
         if (chart != null) {
             chart.setTitle(title);
@@ -237,7 +251,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
     
     public synchronized void update() {
-        for (PlotListener listener : listeners) {
+        for (PlotListener<?> listener : listeners) {
             listener.update();
         }
     }

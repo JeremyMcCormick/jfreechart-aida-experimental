@@ -1,6 +1,5 @@
 package hep.aida.jfree.plot.listener;
 
-import hep.aida.IBaseHistogram;
 import hep.aida.IHistogram2D;
 import hep.aida.jfree.converter.Histogram2DConverter;
 import hep.aida.jfree.dataset.DatasetConverter;
@@ -21,12 +20,13 @@ import org.jfree.data.xy.XYZDataset;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class Histogram2DListener extends PlotListener {
+public class Histogram2DListener extends PlotListener<IHistogram2D> {
 
     private IHistogram2D h2d;
+    
     static private int updateInterval = 1000;
 
-    Histogram2DListener(IBaseHistogram hist, JFreeChart chart, int[] datasetIndices) {
+    Histogram2DListener(IHistogram2D hist, JFreeChart chart, int[] datasetIndices) {
         super(hist, chart, datasetIndices, updateInterval);
         if (!(hist instanceof IHistogram2D)) {
             throw new IllegalArgumentException("hist is not an instance of IHistogram2D.");
@@ -45,6 +45,9 @@ public class Histogram2DListener extends PlotListener {
 
     private void rebuildColorMap(XYPlot plot) {
 
+        System.out.println("colorMap redraw start: " + System.currentTimeMillis()); 
+        //long startTime = System.currentTimeMillis();
+        
         chart.setNotify(false);
 
         XYZDataset dataset = DatasetConverter.convert(h2d);
@@ -61,5 +64,7 @@ public class Histogram2DListener extends PlotListener {
 
         chart.setNotify(true);
         chart.fireChartChanged();
+        
+        System.out.println("colorMap redraw done: " + System.currentTimeMillis());
     }
 }

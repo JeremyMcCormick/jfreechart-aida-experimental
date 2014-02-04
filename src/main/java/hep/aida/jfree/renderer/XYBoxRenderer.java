@@ -29,25 +29,9 @@ public class XYBoxRenderer extends AbstractXYItemRenderer {
     double boxWidth;
     double boxHeight;
 
-    /*
-     * double boxHypotenuse; double theta; // upper left angle of triangle
-     * double phi; // lower right angle of triangle
-     */
-
     public XYBoxRenderer(double boxWidth, double boxHeight) {
         this.boxWidth = boxWidth;
         this.boxHeight = boxHeight;
-        /*
-         * this.boxHypotenuse = sqrt(boxWidth * boxWidth + boxHeight *
-         * boxHeight); this.theta = asin(this.boxHeight / this.boxHypotenuse);
-         * this.phi = Math.PI - (Math.PI/2) - theta;
-         * 
-         * System.out.println("boxHypotenuse = " + this.boxHypotenuse);
-         * System.out.println("theta = " + this.theta);
-         * System.out.println("phi = " + this.phi);
-         * System.out.println("angles sum = " + (this.theta + this.phi +
-         * Math.PI/2));
-         */
     }
 
     private double getHeightScaled(double z, ZRange range) {
@@ -57,17 +41,6 @@ public class XYBoxRenderer extends AbstractXYItemRenderer {
     private double getWidthScaled(double z, ZRange range) {
         return (z / range.getZMax()) * boxWidth;
     }
-
-    /*
-     * private double getHypotenuseScaled(double z, ZRange range) { double scale
-     * = z / range.zmax; return boxHypotenuse * scale; }
-     * 
-     * private double getHeight(double hypotenuse) { return hypotenuse *
-     * sin(theta); }
-     * 
-     * private double getWidth(double hypotenuse) { return hypotenuse *
-     * cos(theta); }
-     */
 
     public void drawItem(Graphics2D g2, XYItemRendererState state, Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot, ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset, int series, int item, CrosshairState crosshairState, int pass) {
 
@@ -94,16 +67,6 @@ public class XYBoxRenderer extends AbstractXYItemRenderer {
         double heightScaled = this.getHeightScaled(z, zrange);
         double widthScaled = this.getWidthScaled(z, zrange);
 
-        /*
-         * double hypotenuseLengthScaled = this.getHypotenuseScaled(z, zrange);
-         * double heightNew = this.getHeight(hypotenuseLengthScaled); double
-         * widthNew = this.getWidth(hypotenuseLengthScaled);
-         * System.out.println("z = " + z); System.out.println("heightScaled = "
-         * + heightScaled); System.out.println("widthScaled = " + widthScaled);
-         * System.out.println("heightNew = " + heightNew);
-         * System.out.println("widthNew = " + widthNew); System.out.println();
-         */
-
         double xx0 = domainAxis.valueToJava2D(x, dataArea, plot.getDomainAxisEdge());
         double yy0 = rangeAxis.valueToJava2D(y, dataArea, plot.getRangeAxisEdge());
         double xx1 = domainAxis.valueToJava2D(x + widthScaled, dataArea, plot.getDomainAxisEdge());
@@ -122,7 +85,6 @@ public class XYBoxRenderer extends AbstractXYItemRenderer {
             // Don't know if this adjustment to XY works in all generality
             // but seems okay for test case.
             box = new Rectangle2D.Double(Math.min(xx0, xx1) - widthDraw / 2, Math.min(yy0, yy1) + heightDraw / 2, Math.abs(xx1 - xx0), Math.abs(yy1 - yy0));
-
         }
         g2.setPaint(this.getSeriesOutlinePaint(series));
         Stroke stroke = this.getSeriesStroke(series);

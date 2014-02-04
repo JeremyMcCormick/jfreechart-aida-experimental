@@ -20,12 +20,10 @@ public class AnalysisFactory extends hep.aida.ref.AnalysisFactory {
     }
 
     /**
-     * Register this class as the AIDA AnalysisFactory by setting the magic
-     * system property
+     * Register this class as the AIDA AnalysisFactory by setting the system property.
      */
-    public final static void register() {
-        // Set the system property that will cause this class to be the default
-        // AIDA factory implementation.
+    public final static void register() {        
+        // Set the system property for this class to provide the AIDA factory implementation.
         System.setProperty("hep.aida.IAnalysisFactory", AnalysisFactory.class.getName());
 
         // Setup JFreeChart default configuration.

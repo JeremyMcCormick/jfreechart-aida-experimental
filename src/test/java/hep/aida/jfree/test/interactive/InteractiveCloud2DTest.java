@@ -5,7 +5,10 @@ import hep.aida.IPlotterStyle;
 import hep.aida.jfree.plotter.PlotterRegion;
 import hep.aida.jfree.test.AbstractPlotTest;
 
+import java.awt.geom.Rectangle2D;
 import java.util.Random;
+
+import org.jfree.chart.ChartPanel;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -35,10 +38,13 @@ public class InteractiveCloud2DTest extends AbstractPlotTest {
         plotter.show();
 
         Random rand = new Random();
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < 1000; i++) {
+            //try {
+            //    Thread.sleep(100);
+            //} catch (InterruptedException x) {    
+            //}
             c2d.fill(Math.abs(rand.nextDouble()) * 100, Math.abs(rand.nextDouble()) * 100);
         }
-        
         ((PlotterRegion)plotter.region(0)).update();
     }
     
@@ -48,3 +54,6 @@ public class InteractiveCloud2DTest extends AbstractPlotTest {
         mode();
     }
 }
+
+//Rectangle2D plotArea = ((ChartPanel)regionPanel).getChartRenderingInfo().getPlotInfo().getDataArea();
+//System.out.println("region " + i + " has height " + plotArea.getHeight() + " and width " + plotArea.getWidth());

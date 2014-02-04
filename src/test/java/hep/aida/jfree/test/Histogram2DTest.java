@@ -13,10 +13,16 @@ public class Histogram2DTest extends AbstractPlotTest {
 
     protected void plot() {
 
-        // Create a 1D histo
-        IHistogram2D h2d = histogramFactory.createHistogram2D("h2d", 100, 0., 100., 100, 0., 100.);
+        // Create a 2D histogram.
+        IHistogram2D h2d = histogramFactory.createHistogram2D("h2d", 50, 0., 500., 50, 0., 500.);
 
-        // Set labels for axes.
+        // Fill the histogram with random data.
+        Random rand = new Random();
+        for (int i = 0; i < 20000; i++) {
+            h2d.fill(rand.nextInt(500), rand.nextInt(500));
+        }
+
+        // Set labels for the axes.
         h2d.annotation().addItem("xAxisLabel", h2d.title() + " X");
         h2d.annotation().addItem("yAxisLabel", h2d.title() + " Y");
 
@@ -26,16 +32,16 @@ public class Histogram2DTest extends AbstractPlotTest {
         pstyle.yAxisStyle().setParameter("allowZeroSuppression", "false");
 
         // background color
-        pstyle.regionBoxStyle().backgroundStyle().setColor("white");
+        //pstyle.regionBoxStyle().backgroundStyle().setColor("white");
 
         // Log scale.
         // pstyle.zAxisStyle().setParameter("scale", "log");
 
         // Plot histogram into region.
-        plotter.createRegions(1, 2, 0);
+        //plotter.createRegions(1, 2, 0);
 
         // Display as color map.
-        plotter.region(0).plot(h2d, pstyle);
+        //plotter.region(0).plot(h2d, pstyle);
 
         // Display as box plot.
         pstyle.setParameter("hist2DStyle", "box");
@@ -43,11 +49,8 @@ public class Histogram2DTest extends AbstractPlotTest {
         pstyle.dataStyle().lineStyle().setColor("blue");
         pstyle.dataStyle().fillStyle().setVisible(true);
         pstyle.dataStyle().fillStyle().setColor("blue");
-        plotter.region(1).plot(h2d, pstyle);
-               
-        Random rand = new Random();
-        for (int i = 0; i < 1000; i++) {
-            h2d.fill(rand.nextInt(100), rand.nextInt(100));
-        }
+                 
+        plotter.createRegion();
+        plotter.region(0).plot(h2d, pstyle);
     }
 }

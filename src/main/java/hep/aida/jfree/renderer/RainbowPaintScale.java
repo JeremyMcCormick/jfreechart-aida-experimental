@@ -1,14 +1,14 @@
 package hep.aida.jfree.renderer;
 
-
 import java.awt.Color;
 import java.awt.Paint;
 
 /**
  * This class provides a rainbow color scale for JFreeChart plots.
  * 
- * The code is copied from part of jas.plot.ColorMap in the JAS plotter, as well
- * as logic for normalizing values in the jas.hist.TwoDOverlay class.
+ * The code is copied and modified from part of jas.plot.ColorMap in the JAS plotter.
+ * 
+ * There is also code taken from jas.hist.TwoDOverlay for normalizing data values.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $

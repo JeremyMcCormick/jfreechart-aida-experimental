@@ -36,11 +36,13 @@ public class Cloud1DTest extends AbstractPlotTest {
         // pstyle.dataStyle().fillStyle().setColor("white");
         pstyle.dataStyle().fillStyle().setVisible(false);
 
-        pstyle.dataStyle().outlineStyle().setVisible(true);
+        pstyle.dataStyle().outlineStyle().setVisible(false);
         // pstyle.dataStyle().outlineStyle().setColor("black");
         // pstyle.dataStyle().outlineStyle().setVisible(false);
 
         pstyle.dataStyle().lineStyle().setVisible(false);
+        
+        pstyle.gridStyle().setVisible(false);
 
         // title style
         ITextStyle titleStyle = pstyle.titleStyle().textStyle();

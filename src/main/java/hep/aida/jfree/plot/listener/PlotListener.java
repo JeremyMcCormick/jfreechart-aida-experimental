@@ -1,6 +1,5 @@
 package hep.aida.jfree.plot.listener;
 
-import hep.aida.IBaseHistogram;
 import hep.aida.ref.event.AIDAListener;
 import hep.aida.ref.event.AIDAObservable;
 
@@ -17,12 +16,11 @@ import org.jfree.chart.JFreeChart;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public abstract class PlotListener implements AIDAListener {
+public abstract class PlotListener<T> implements AIDAListener {
 
     JFreeChart chart;
-    IBaseHistogram hist;
-    boolean updating = false;
-    private final int DEFAULT_INTERVAL = 1000; // in ms
+    T plot;
+    private final int DEFAULT_INTERVAL = 100; // in ms
     int updateInterval = DEFAULT_INTERVAL;
     int[] datasetIndices;
 
@@ -32,9 +30,11 @@ public abstract class PlotListener implements AIDAListener {
      * @param chart The corresponding chart for the histogram.
      * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
-    PlotListener(IBaseHistogram hist, JFreeChart chart, int[] datasetIndices) {
+    PlotListener(T plot, JFreeChart chart, int[] datasetIndices) {
+        if (!(plot instanceof AIDAObservable))
+            throw new IllegalArgumentException("The plot object is not an instance of AIDAObservable.");
         this.chart = chart;
-        this.hist = hist;
+        this.plot = plot;
         this.datasetIndices = datasetIndices;
     }
 
@@ -44,24 +44,32 @@ public abstract class PlotListener implements AIDAListener {
      * @param chart The corresponding chart for the histogram.
      * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
-    PlotListener(IBaseHistogram hist, JFreeChart chart, int[] datasetIndices, int updateInterval) {
+    PlotListener(T plot, JFreeChart chart, int[] datasetIndices, int updateInterval) {
+        if (!(plot instanceof AIDAObservable))
+            throw new IllegalArgumentException("The plot object is not an instance of AIDAObservable.");
         this.chart = chart;
-        this.hist = hist;
+        this.plot = plot;
         this.datasetIndices = datasetIndices;
         this.updateInterval = updateInterval;
     }
 
+    /** 
+     * Start the task to update the plot graphics.
+     * @param e The EventObject, which is unused.
+     */
     public void stateChanged(EventObject e) {
-        // Start task to update the plot graphics.
         Timer updateTimer = new Timer();
         updateTimer.schedule(new UpdateTask(this), updateInterval);
     }
 
+    /**
+     * The <tt>TimerTask</tt> for updating the plot graphics.
+     */
     class UpdateTask extends TimerTask {
 
-        PlotListener listener;
+        PlotListener<T> listener;
 
-        UpdateTask(PlotListener listener) {
+        UpdateTask(PlotListener<T> listener) {
             this.listener = listener;
         }
 
@@ -70,7 +78,7 @@ public abstract class PlotListener implements AIDAListener {
             update();
 
             // Set valid for next callback.
-            ((AIDAObservable) hist).setValid(listener);
+            ((AIDAObservable) plot).setValid(listener);
         }
     }
 

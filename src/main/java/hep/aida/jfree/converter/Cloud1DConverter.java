@@ -8,7 +8,7 @@ import org.jfree.chart.JFreeChart;
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-class Cloud1DConverter implements HistogramConverter<ICloud1D> {
+class Cloud1DConverter implements Converter<ICloud1D> {
 
     public Class<ICloud1D> convertsType() {
         return ICloud1D.class;

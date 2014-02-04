@@ -18,6 +18,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
  * @version $Id: $
  */
 public class FunctionStyleConverter extends AbstractStyleConverter {
+    
     public void applyStyle() {
         IPlotterStyle style = getStyle();
         int datasetIndex = this.getChartState().getDatasetIndex();

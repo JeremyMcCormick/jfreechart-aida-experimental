@@ -1,6 +1,5 @@
 package hep.aida.jfree.plot.listener;
 
-import hep.aida.IBaseHistogram;
 import hep.aida.ICloud1D;
 import hep.aida.jfree.converter.Histogram1DConverter;
 
@@ -8,11 +7,11 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 
-public class Cloud1DListener extends PlotListener {
+public class Cloud1DListener extends PlotListener<ICloud1D> {
     
     ICloud1D c1d;
         
-    Cloud1DListener(IBaseHistogram hist, JFreeChart chart, int[] datasetIndices) {
+    Cloud1DListener(ICloud1D hist, JFreeChart chart, int[] datasetIndices) {
         super(hist, chart, datasetIndices);
         if (!(hist instanceof ICloud1D)) {
             throw new IllegalArgumentException("hist is not an instance of ICloud1D.");

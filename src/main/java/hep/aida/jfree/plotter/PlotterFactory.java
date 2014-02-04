@@ -8,6 +8,7 @@ import hep.aida.IPlotter;
 public class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory {
 
     String name;
+    boolean embedded = false;
 
     public PlotterFactory() {
         super();
@@ -19,29 +20,16 @@ public class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory {
     }
 
     public IPlotter create(String plotterName) {
-        return new Plotter();
+        Plotter plotter = new Plotter();
+        plotter.setEmbedded(embedded);
+        return plotter;
     }
 
     public IPlotter create() {
         return create((String) null);
     }
-
-    /*
-     public IPlotterStyle createPlotterStyle() {
-         //System.out.println("createPlotterStyle"); IPlotterStyle style =
-         super.createPlotterStyle(); applyDefaultPlotterStyle(style); 
-         return style; }
-         
-     public IPlotterStyle createPlotterStyle(IPlotterStyle style) {
-         //System.out.println("createPlotterStyle(style)");
-         applyDefaultPlotterStyle(style); 
-         return style; 
-     }
-      
-     private static void applyDefaultPlotterStyle(IPlotterStyle style) {
-         //System.out.println("applyDefaultPlotterStyle");
-         style.xAxisStyle().setParameter("allowZeroSuppression", "false");
-         style.yAxisStyle().setParameter("allowZeroSuppression", "false"); 
-     }
-     */
+    
+    protected void setEmbedded(boolean embedded) {
+        this.embedded = embedded;
+    }
 }

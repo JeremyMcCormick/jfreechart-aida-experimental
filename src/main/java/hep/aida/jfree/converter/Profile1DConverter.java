@@ -9,7 +9,7 @@ import org.jfree.chart.JFreeChart;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class Profile1DConverter implements HistogramConverter<IProfile1D> {
+public class Profile1DConverter implements Converter<IProfile1D> {
 
     public Class<IProfile1D> convertsType() {
         return IProfile1D.class;

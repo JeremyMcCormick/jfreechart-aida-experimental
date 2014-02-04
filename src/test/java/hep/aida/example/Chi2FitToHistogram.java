@@ -1,6 +1,7 @@
 package hep.aida.example;
 
 import hep.aida.IAnalysisFactory;
+import hep.aida.IFitData;
 import hep.aida.IFitFactory;
 import hep.aida.IFitResult;
 import hep.aida.IFitter;
@@ -28,6 +29,8 @@ public class Chi2FitToHistogram {
       
       // Do Fit
       IFitter fitter = fitFactory.createFitter("chi2");
+      IFitData data = fitFactory.createFitData();
+
       IFitResult result = fitter.fit(h1d,"g");
       
       // Show results

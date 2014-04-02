@@ -10,8 +10,8 @@
         <url>https://github.com/JeremyMcCormick/jfreechart-aida-experimental/</url>
         <connection>scm:git:git://github.com/JeremyMcCormick/jfreechart-aida-experimental.git</connection>
         <developerConnection>scm:git:git@github.com:JeremyMcCormick/jfreechart-aida-experimental.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
     <repositories>
         <repository>
             <id>freehep-repo-public</id>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-jaida-standard-distribution</artifactId>
-            <version>3.4.7-1</version>
+            <version>3.4.9-SNAPSHOT</version>
             <type>pom</type>
         </dependency>
     </dependencies>

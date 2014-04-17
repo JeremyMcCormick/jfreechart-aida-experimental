@@ -26,6 +26,7 @@ public class ColorMapTest extends AbstractPlotTest {
 
         pstyle.xAxisStyle().setParameter("allowZeroSuppression", "false");
         pstyle.yAxisStyle().setParameter("allowZeroSuppression", "false");
+        pstyle.zAxisStyle().setParameter("scale", "log");
 
         // Plot histogram into region.
         plotter.createRegion();

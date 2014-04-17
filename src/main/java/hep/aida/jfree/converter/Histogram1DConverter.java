@@ -88,6 +88,9 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         return chart;
     }
 
+    // FIXME: These should all be series in the same Dataset and not separate Datasets.
+    // FIXME: Can this data be generated on demand or only if needed?  For instance, step and point
+    // data is not needed unless those styles are being used (e.g. rarely).
     public static XYDataset[] createDatasets(IHistogram1D h1d) {
         
         XYDataset[] datasets = new XYDataset[4];

@@ -4,7 +4,6 @@ import hep.aida.ref.plotter.PlotterStyle;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
- * @version $Id: $
  */
 public class DefaultHistogram1DStyle extends PlotterStyle {
     

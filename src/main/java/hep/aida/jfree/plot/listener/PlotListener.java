@@ -4,6 +4,8 @@ import hep.aida.ref.event.AIDAListener;
 import hep.aida.ref.event.AIDAObservable;
 
 import java.util.EventObject;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -11,7 +13,7 @@ import org.jfree.chart.JFreeChart;
 
 /**
  * This listener class is assigned to histograms so that the JFreeChart backend
- * can update its plots on the fly when the fill method is called.
+ * can update the plot graphics when fill methods are called through the AIDA API.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
@@ -23,6 +25,7 @@ public abstract class PlotListener<T> implements AIDAListener {
     private final int DEFAULT_INTERVAL = 100; // in ms
     int updateInterval = DEFAULT_INTERVAL;
     int[] datasetIndices;
+    Timer updateTimer = new Timer();
 
     /**
      * 
@@ -58,8 +61,10 @@ public abstract class PlotListener<T> implements AIDAListener {
      * @param e The EventObject, which is unused.
      */
     public void stateChanged(EventObject e) {
-        Timer updateTimer = new Timer();
-        updateTimer.schedule(new UpdateTask(this), updateInterval);
+        synchronized(this) {
+            updateTimer.purge();
+            updateTimer.schedule(new UpdateTask(this), updateInterval);
+        }
     }
 
     /**
@@ -74,6 +79,9 @@ public abstract class PlotListener<T> implements AIDAListener {
         }
 
         public void run() {
+            
+            //System.out.println("UpdateTask on thread " + Thread.currentThread().getId() + " for plot type " + plot.getClass().getCanonicalName());
+            
             // Update the plot.
             update();
 

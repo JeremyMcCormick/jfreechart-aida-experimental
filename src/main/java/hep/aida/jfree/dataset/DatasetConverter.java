@@ -9,7 +9,6 @@ import hep.aida.jfree.function.Function2DAdapter;
 
 import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.xy.DefaultXYDataset;
-import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYIntervalSeries;
 import org.jfree.data.xy.XYIntervalSeriesCollection;
@@ -46,24 +45,7 @@ public class DatasetConverter {
     }
 
     public static XYZDataset convert(IHistogram2D h2d) {
-        DefaultXYZDataset dataset = new DefaultXYZDataset();
-        int xbins = h2d.xAxis().bins();
-        int ybins = h2d.yAxis().bins();
-        int nvalues = xbins * ybins;
-        double data[][] = new double[3][nvalues];
-        int curr = 0;
-        for (int i = 0; i < xbins; i++) {
-            for (int j = 0; j < ybins; j++) {
-                data[0][curr] = h2d.xAxis().binCenter(i);
-                data[1][curr] = h2d.yAxis().binCenter(j);
-                data[2][curr] = h2d.binHeight(i, j);
-                // System.out.println("binHeight[" + i + "][" + j + "]  = " +
-                // h2d.binHeight(i, j));
-                ++curr;
-            }
-        }
-        dataset.addSeries("data", data);
-        return dataset;
+        return new Histogram2DAdapter(h2d);
     }
 
     public static XYSeriesCollection convert(ICloud2D c2d) {
@@ -83,6 +65,7 @@ public class DatasetConverter {
      */
 
     public static XYIntervalSeriesCollection[] forBarChart(IHistogram1D h1d) {
+        
         XYIntervalSeriesCollection valuesDataset = new XYIntervalSeriesCollection();
         XYIntervalSeries values = new XYIntervalSeries("values");
 

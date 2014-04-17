@@ -3,6 +3,8 @@ package hep.aida.jfree.converter;
 import hep.aida.IHistogram2D;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.dataset.DatasetConverter;
+import hep.aida.jfree.renderer.AbstractPaintScale;
+import hep.aida.jfree.renderer.GreyPaintScale;
 import hep.aida.jfree.renderer.RainbowPaintScale;
 import hep.aida.jfree.renderer.XYBoxRenderer;
 
@@ -45,6 +47,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @return
      */
     static JFreeChart toColorMap(IHistogram2D h2d, IPlotterStyle style) {
+                
         // Create dataset.
         XYZDataset dataset = DatasetConverter.convert(h2d);
         
@@ -75,7 +78,8 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
     }
 
     /**
-     * Create the renderer for the color map.
+     * This is the primary method for creating and configuring a Renderer
+     * that will display XYZ data as a color map.
      * 
      * @param dataset
      * @param h2d
@@ -83,24 +87,47 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @return The renderer for the color map.
      */
     static XYBlockRenderer createColorMapRenderer(XYZDataset dataset, IHistogram2D h2d, IPlotterStyle style) {
-        // Set the renderer.
+                
+        // Setup the Renderer.
+        // FIXME: Assumes all bin widths are the same!
         XYBlockRenderer renderer = new XYBlockRenderer();
         renderer.setBlockHeight(h2d.yAxis().binWidth(0));
         renderer.setBlockWidth(h2d.xAxis().binWidth(0));
-
-        // Check if using a log scale.
-        boolean logScale = false;
-        if (style.zAxisStyle().parameterValue("scale").startsWith("log")) {
-            logScale = true;
+        
+        // Calculate the lower and upper Z value bounds for the Dataset.
+        double[] zlimits = calculateZBounds(dataset);         
+        
+        // Get the color map style if it exists.
+        String colorMapScheme = null;
+        try {
+            colorMapScheme = style.dataStyle().fillStyle().parameterValue("colorMapScheme");
+        } catch (IllegalArgumentException e) {            
         }
-
-        // Calculate Z limits from the dataset.
-        double[] zlimits = Histogram2DConverter.calculateZLimits(dataset);
-
-        // Use custom rainbow paint scale.
-        RainbowPaintScale scale = new RainbowPaintScale(zlimits[0], zlimits[1], zlimits[2], logScale);
-        renderer.setPaintScale(scale);
-
+        if (colorMapScheme == null || colorMapScheme.equals("none"))
+            colorMapScheme = "rainbow";
+                
+        // Create the PaintScale based on the color map setting.
+        PaintScale paintScale = null;
+        if (colorMapScheme.equals("rainbow"))
+            paintScale = new RainbowPaintScale(zlimits[0], zlimits[1]);
+        else if (colorMapScheme.equals("greyscale"))
+            paintScale = new GreyPaintScale(zlimits[0], zlimits[1]);
+        
+        // Set log scale if selected.q
+        String logScale = null;
+        try {
+            logScale = style.zAxisStyle().parameterValue("scale");
+        } catch (IllegalArgumentException e) {            
+        }               
+        if (logScale != null) {
+            if (logScale.startsWith("log")) {
+                ((AbstractPaintScale)paintScale).setLogScale();
+            }
+        }
+        
+        // Register the PaintScale with the Renderer.
+        renderer.setPaintScale(paintScale);
+        
         return renderer;
     }
 
@@ -204,7 +231,8 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * This method creates a legend for the paint scale used by the block
      * renderer.
      * 
-     * Inspired by <a href="http://www.jfree.org/phpBB2/viewtopic.php?f=3&t=29588#p81629">this post</a>
+     * Inspired by 
+     * <a href="http://www.jfree.org/phpBB2/viewtopic.php?f=3&t=29588#p81629">this post</a>
      * 
      * FIXME: The display of the tick labels still needs some work, 
      * and the legend looks weird when the log scale is used.
@@ -266,5 +294,27 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
             }
         }
         return new double[] { zMin, zMax, zLogMin };
+    }
+    
+    public static double[] calculateZBounds(XYZDataset ds) {
+        double zmin = Double.POSITIVE_INFINITY;
+        double zmax = Double.NEGATIVE_INFINITY;
+        for (int i = 0, n = ds.getItemCount(0); i < n; i++) {
+            double value = ds.getZValue(0, i);
+            //System.out.println("value: " + value);
+            if (value != 0) {
+                if (value < zmin)
+                    zmin = value;
+                if (value > zmax)
+                    zmax = value;
+            }
+        }
+        if (zmin == Double.POSITIVE_INFINITY)
+            zmin = 0;
+        if (zmax == Double.NEGATIVE_INFINITY)
+            zmax = 1.0;
+        //System.out.println("calculateZBounds: " + zmin + "," + zmax);
+        //if (true) throw new RuntimeException("bork");
+        return new double[] {zmin, zmax};
     }
 }

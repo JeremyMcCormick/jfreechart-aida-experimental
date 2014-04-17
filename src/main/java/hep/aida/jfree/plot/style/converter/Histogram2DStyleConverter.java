@@ -85,7 +85,7 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
                 // not already displayed as one.
                 if (!(chart.getXYPlot().getRenderer() instanceof XYBlockRenderer)) {
                     Histogram2DConverter.replaceWithColorMap(h2d, chart, style);
-                }
+                }  
             } else {
                 throw new RuntimeException("Unknown hist2DStyle: " + histStyle);
             }

@@ -3,7 +3,7 @@ package hep.aida.jfree.plot.listener;
 import hep.aida.IHistogram2D;
 import hep.aida.jfree.converter.Histogram2DConverter;
 import hep.aida.jfree.dataset.DatasetConverter;
-import hep.aida.jfree.renderer.RainbowPaintScale;
+import hep.aida.jfree.renderer.AbstractPaintScale;
 import hep.aida.jfree.renderer.XYBoxRenderer;
 
 import org.jfree.chart.JFreeChart;
@@ -35,36 +35,36 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
     }
 
     public synchronized void update() {
-        XYPlot plot = (XYPlot) chart.getPlot();
+        XYPlot plot = (XYPlot)chart.getPlot();
         if (plot.getRenderer() instanceof XYBoxRenderer) {
+            // Box plot
             plot.setDataset(0, DatasetConverter.toXYZRangedDataset(h2d));
         } else {
-            rebuildColorMap(plot);
+            // Color map
+            updateColorMap(plot);
         }
     }
 
-    private void rebuildColorMap(XYPlot plot) {
-
-        System.out.println("colorMap redraw start: " + System.currentTimeMillis()); 
-        //long startTime = System.currentTimeMillis();
+    private void updateColorMap(XYPlot plot) {
         
+        // Turn off notification while plot is being changed.
         chart.setNotify(false);
-
-        XYZDataset dataset = DatasetConverter.convert(h2d);
-        double[] zlimits = Histogram2DConverter.calculateZLimits(dataset);
+        
+        // Calculate the Z bounds.
+        double[] zbounds = Histogram2DConverter.calculateZBounds((XYZDataset)plot.getDataset());
+        
+        // Set the new Z bounds on the PaintScale.        
         PaintScale scale = ((XYBlockRenderer) plot.getRenderer()).getPaintScale();
-        if (scale instanceof RainbowPaintScale) {
-            ((RainbowPaintScale) scale).setZParameters(zlimits);
+        if (scale instanceof AbstractPaintScale) {
+            ((AbstractPaintScale) scale).setBounds(zbounds[0], zbounds[1]);
         }
-        // TODO: Handle other types of paint scales here.
-
-        plot.setDataset(0, dataset);
+        
+        // Rebuild the plot's legend.
         PaintScaleLegend legend = (PaintScaleLegend) chart.getSubtitle(Histogram2DConverter.COLOR_SCALE_LEGEND);
         legend.getAxis().setRange(new Range(scale.getLowerBound(), scale.getUpperBound()));
 
+        // Fire notification for redraw.
         chart.setNotify(true);
         chart.fireChartChanged();
-        
-        System.out.println("colorMap redraw done: " + System.currentTimeMillis());
     }
 }

@@ -6,20 +6,20 @@ import org.jfree.data.xy.AbstractIntervalXYDataset;
 
 /**
  * <p>
- * This is a Dataset adapter for 1D histograms that provides four 
- * series for different types of display:
+ * This class adapts an <code>IHistogram1D</code> to a <code>AbstractIntervalXYDataset</code>
+ * and provides four data series for different types of plot display, which include:
  * </p>
  * <ul> 
- * <li>data series for use with a <code>XYBarRenderer</code></li>
- * <li>errors series for use with the <code>XYErrorRenderer</code></li>
- * <li>step series data displayable with a <code>XYStepRenderer</code></li> 
- * <li>points series usable with the <code>XYLineAndShapeRenderer</code></li>
+ * <li>values like an <code>XYIntervalSeries</code> for an <code>XYBarRenderer</code></li>
+ * <li>errors like an <code>XYIntervalSeries</code> for an <code>XYErrorRenderer</code></li>
+ * <li>step data like an <code>XYSeries</code> for an <code>XYStepRenderer</code></li> 
+ * <li>point data similar to a <code>DefaultXYDataset</code> for an <code>XYLineAndShapeRenderer</code></li>
  * </ul>
  * <p>
- * Since JFreeChart does not support multiple <code>Renderer</code> objects
- * assigned to the same dataset, the best way to support overlayed display
- * of the same histogram is by creating multiple adapters that are assigned 
- * to the same <code>IHistogram1D</code>.
+ * Since JFreeChart does not support multiple <code>XYItemRenderer</code> objects assigned to the same dataset, 
+ * the best way to support concurrent display of the same histogram with different styles is by adding the 
+ * same adapter to the plot more than once with a different renderer.  The series visibility can then be set 
+ * via the <code>XYItemRenderer</code> interface for each one.
  * </p>
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -40,7 +40,7 @@ public class Histogram1DAdapter extends AbstractIntervalXYDataset {
     
     IHistogram1D histogram;
     
-    Histogram1DAdapter(IHistogram1D histogram) {
+    public Histogram1DAdapter(IHistogram1D histogram) {
         this.histogram = histogram;
     }
      

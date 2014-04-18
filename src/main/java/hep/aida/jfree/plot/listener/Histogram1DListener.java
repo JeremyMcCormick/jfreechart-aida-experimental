@@ -28,10 +28,11 @@ public class Histogram1DListener extends PlotListener<IHistogram1D> {
     }
 
     public synchronized void update() {
-        XYPlot plot = (XYPlot) chart.getPlot();
-        XYDataset[] datasets = Histogram1DConverter.createDatasets(h1d);
-        for (int i = 0; i < datasetIndices.length; i++) {
-             plot.setDataset(datasetIndices[i], datasets[i]);
-        }
+        //XYPlot plot = (XYPlot) chart.getPlot();
+        //XYDataset[] datasets = Histogram1DConverter.createDatasets(h1d);
+        //for (int i = 0; i < datasetIndices.length; i++) {
+        //     plot.setDataset(datasetIndices[i], datasets[i]);
+        //}
+        chart.fireChartChanged(); // FIXME: Is this even needed?
     }
 }

@@ -1,5 +1,9 @@
 package hep.aida.jfree.plot.style.converter;
 
+import static hep.aida.jfree.dataset.Histogram1DAdapter.ERRORS;
+import static hep.aida.jfree.dataset.Histogram1DAdapter.POINTS;
+import static hep.aida.jfree.dataset.Histogram1DAdapter.STEPS;
+import static hep.aida.jfree.dataset.Histogram1DAdapter.VALUES;
 import static hep.aida.ref.plotter.Style.ERRORBAR_DECORATION;
 import hep.aida.IBaseHistogram;
 import hep.aida.IDataStyle;
@@ -8,7 +12,6 @@ import hep.aida.IHistogram1D;
 import hep.aida.ILineStyle;
 import hep.aida.IMarkerStyle;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.converter.Histogram1DConverter;
 import hep.aida.jfree.plot.style.util.ColorUtil;
 import hep.aida.jfree.plot.style.util.MarkerUtil;
 import hep.aida.jfree.plot.style.util.StrokeUtil;
@@ -25,7 +28,6 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
- * @version $Id: $
  */
 public class Histogram1DStyleConverter extends AbstractStyleConverter {
 
@@ -34,7 +36,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param chart
      */
     protected void makeDataInvisible(JFreeChart chart) {
-        chart.getXYPlot().getRenderer(Histogram1DConverter.BAR_DATA).setSeriesVisible(0, false);
+        chart.getXYPlot().getRenderer(VALUES).setSeriesVisible(VALUES, false);
     }
 
     /**
@@ -42,7 +44,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param chart
      */
     protected void makeErrorsInvisible(JFreeChart chart) {
-        chart.getXYPlot().getRenderer(Histogram1DConverter.ERROR_DATA).setSeriesVisible(0, false);
+        chart.getXYPlot().getRenderer(ERRORS).setSeriesVisible(ERRORS, false);
     }
 
     /**
@@ -53,15 +55,15 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      */
     protected void applyDataMarkerStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
         IMarkerStyle markerStyle = style.dataStyle().markerStyle();
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer(Histogram1DConverter.POINT_DATA);
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer(POINTS);
         if (markerStyle.isVisible()) {
-            renderer.setSeriesVisible(0, true);
+            renderer.setSeriesVisible(POINTS, true);
             Shape shape = MarkerUtil.getMarkerShape(markerStyle.shape(), markerStyle.size());
-            renderer.setSeriesShape(0, shape);
+            renderer.setSeriesShape(POINTS, shape);
             Color color = ColorUtil.toColor(markerStyle, DEFAULT_SHAPE_COLOR);
-            renderer.setSeriesPaint(0, color);
+            renderer.setSeriesPaint(POINTS, color);
         } else {
-            renderer.setSeriesShapesVisible(0, false);
+            renderer.setSeriesShapesVisible(POINTS, false);
         }
     }
 
@@ -73,15 +75,15 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      */
     protected void applyDataOutlineStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
         ILineStyle outlineStyle = style.dataStyle().outlineStyle();
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer(Histogram1DConverter.POINT_DATA);
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer(POINTS);
         if (outlineStyle.isVisible()) {
-            renderer.setSeriesVisible(0, true);
+            renderer.setSeriesVisible(POINTS, true);
             Color color = ColorUtil.toColor(outlineStyle, DEFAULT_LINE_COLOR);
-            renderer.setSeriesPaint(0, color);
+            renderer.setSeriesPaint(POINTS, color);
             Stroke stroke = StrokeUtil.toStroke(outlineStyle);
-            renderer.setSeriesStroke(0, stroke);
+            renderer.setSeriesStroke(POINTS, stroke);
         } else {
-            renderer.setSeriesLinesVisible(0, false);
+            renderer.setSeriesLinesVisible(POINTS, false);
         }
     }
 
@@ -101,20 +103,21 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
         if (hist instanceof IHistogram1D) {
             if (lineStyle.isVisible()) {
                 // Set the outline color of the bars.
-                XYItemRenderer barRenderer = plot.getRenderer(Histogram1DConverter.BAR_DATA); 
-                barRenderer.setSeriesOutlineStroke(0, stroke);
-                barRenderer.setSeriesOutlinePaint(0, color);
+                XYItemRenderer barRenderer = plot.getRenderer(VALUES);
+                barRenderer.setSeriesVisible(VALUES, true);
+                barRenderer.setSeriesOutlineStroke(VALUES, stroke);
+                barRenderer.setSeriesOutlinePaint(VALUES, color);
             } else {
                 if (!style.dataStyle().fillStyle().isVisible()) {
 
                     // If lines nor fill are visible, then turn off the bar chart renderer.
-                    plot.getRenderer(Histogram1DConverter.BAR_DATA).setSeriesVisible(0, false);
+                    plot.getRenderer(VALUES).setSeriesVisible(VALUES, false);
 
                     // Turn on the step renderer.
-                    XYItemRenderer stepRenderer = plot.getRenderer(Histogram1DConverter.STEP_DATA);
-                    stepRenderer.setSeriesVisible(0, true);
-                    stepRenderer.setSeriesPaint(0, color);
-                    stepRenderer.setSeriesStroke(0, stroke);
+                    XYItemRenderer stepRenderer = plot.getRenderer(STEPS);
+                    stepRenderer.setSeriesVisible(STEPS, true);
+                    stepRenderer.setSeriesPaint(STEPS, color);
+                    stepRenderer.setSeriesStroke(STEPS, stroke);
                 }
             }
         }
@@ -131,14 +134,15 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
         IDataStyle dataStyle = style.dataStyle();
         IFillStyle dataFillStyle = dataStyle.fillStyle();
 
-        XYItemRenderer renderer = plot.getRenderer(Histogram1DConverter.BAR_DATA);
+        XYItemRenderer renderer = plot.getRenderer(VALUES);
 
         if (dataFillStyle.isVisible()) {
             Color color = ColorUtil.toColor(dataFillStyle, DEFAULT_FILL_COLOR);
-            renderer.setSeriesPaint(0, color);
-            renderer.setSeriesOutlinePaint(0, color);
+            renderer.setSeriesVisible(VALUES, true);
+            renderer.setSeriesPaint(VALUES, color);
+            renderer.setSeriesOutlinePaint(VALUES, color);
         } else {
-            renderer.setSeriesPaint(0, TRANSPARENT);
+            renderer.setSeriesPaint(VALUES, TRANSPARENT);
         }
     }
 
@@ -148,13 +152,9 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param style
      */
     protected void applyErrorBarStyle(JFreeChart chart, IPlotterStyle style) {
-        // Get the error renderer.
-        XYErrorRenderer renderer = (XYErrorRenderer) chart.getXYPlot().getRenderer(Histogram1DConverter.ERROR_DATA);
 
-        // It looks like there are no errors defined.
-        if (renderer == null) {
-            return;
-        }
+        // Get the error renderer.
+        XYErrorRenderer renderer = (XYErrorRenderer) chart.getXYPlot().getRenderer(ERRORS);
 
         // Style for error bars.
         ILineStyle errorStyle = style.dataStyle().errorBarStyle();
@@ -162,16 +162,18 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
         // Set invisible if selected.
         if (errorStyle.isVisible()) {
 
+            renderer.setSeriesVisible(ERRORS, true);
+            
             // Set the line color.
             Color errorColor = ColorUtil.toColor(errorStyle, DEFAULT_LINE_COLOR);
             if (errorColor != null)
-                renderer.setSeriesPaint(0, errorColor);
+                renderer.setSeriesPaint(ERRORS, errorColor);
 
             // Create the stroke from the error line style.
             Stroke stroke = StrokeUtil.toStroke(errorStyle);
 
             // Set the stroke on the renderer.
-            renderer.setSeriesStroke(0, stroke);
+            renderer.setSeriesStroke(ERRORS, stroke);
 
             // Default cap length.
             // renderer.setCapLength(4.0f);
@@ -188,7 +190,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
             // }
             // }
         } else {
-            renderer.setSeriesVisible(0, false);
+            renderer.setSeriesVisible(ERRORS, false);
         }
     }
 }

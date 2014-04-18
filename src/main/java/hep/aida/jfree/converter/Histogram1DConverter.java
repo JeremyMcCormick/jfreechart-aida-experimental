@@ -2,7 +2,8 @@ package hep.aida.jfree.converter;
 
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.dataset.DatasetConverter;
+import hep.aida.jfree.dataset.Histogram1DAdapter;
+import static hep.aida.jfree.dataset.Histogram1DAdapter.*;
 
 import java.awt.Color;
 
@@ -34,34 +35,37 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
 
     public JFreeChart convert(IHistogram1D h1d, IPlotterStyle style) {
         
-        // Create all the datasets that might be needed later for supprting
-        // various style settings.
+        // Create the backing datasets.
         XYDataset[] datasets = createDatasets(h1d);
 
         // Array for the renderers.
         XYItemRenderer[] renderers = new XYItemRenderer[datasets.length];
 
-        // Step renderer which draws the histogram step contour.
-        XYItemRenderer renderer = new XYStepRenderer();
-        renderer.setSeriesVisible(0, false);
-        renderers[STEP_DATA] = renderer;
-
         // Bar renderer which draws bar chart.
         XYBarRenderer barRenderer = new XYBarRenderer();
         barRenderer.setDrawBarOutline(true);
-        renderers[BAR_DATA] = barRenderer;
-
-        // Line and shape renderer for lines between points and markers.
-        renderer = new XYLineAndShapeRenderer();
-        renderer.setSeriesVisible(0, false);
-        renderers[POINT_DATA] = renderer;
+        renderers[VALUES] = barRenderer;
 
         // Error renderer that draws error bars and caps.
         XYErrorRenderer errorRenderer = new XYErrorRenderer();
         errorRenderer.setBaseShapesVisible(false);
-        errorRenderer.setSeriesPaint(0, Color.black);
-        renderers[ERROR_DATA] = errorRenderer;
-
+        errorRenderer.setSeriesPaint(ERRORS, Color.black);
+        renderers[ERRORS] = errorRenderer;
+        
+        // Step renderer which draws the histogram step contour.
+        XYItemRenderer stepRenderer = new XYStepRenderer();
+        renderers[STEPS] = stepRenderer;
+        
+        // Line and shape renderer for lines between points and markers.
+        XYLineAndShapeRenderer pointRenderer = new XYLineAndShapeRenderer();
+        renderers[POINTS] = pointRenderer;
+        
+        for (int i=0; i<=3; i++) {
+            for (int j=0; j<=3; j++) {
+                renderers[i].setSeriesVisible(j, false);
+            }
+        }
+                        
         // Set the axis labels.
         String[] labels = ConverterUtil.getAxisLabels(h1d);
         NumberAxis xAxis = new NumberAxis(labels[0]);
@@ -88,28 +92,12 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         return chart;
     }
 
-    // FIXME: These should all be series in the same Dataset and not separate Datasets.
-    // FIXME: Can this data be generated on demand or only if needed?  For instance, step and point
-    // data is not needed unless those styles are being used (e.g. rarely).
-    public static XYDataset[] createDatasets(IHistogram1D h1d) {
-        
-        XYDataset[] datasets = new XYDataset[4];
-        XYDataset[] stepData = DatasetConverter.forStepChart(h1d);
-        XYDataset[] barData = DatasetConverter.forBarChart(h1d);
-        XYDataset points = DatasetConverter.forPoints(h1d);
-
-        // step data
-        datasets[STEP_DATA] = stepData[0];
-
-        // bar data
-        datasets[BAR_DATA] = barData[0];
-
-        // center points of bins for lines and markers
-        datasets[POINT_DATA] = points;
-
-        // errors
-        datasets[ERROR_DATA] = stepData[1];
-
+    public static XYDataset[] createDatasets(IHistogram1D h1d) {        
+        XYDataset[] datasets = new XYDataset[4];                             
+        Histogram1DAdapter adapter = new Histogram1DAdapter(h1d);
+        for (int i=0; i<=3; i++) {
+            datasets[i] = adapter;
+        }
         return datasets;
     }
 }

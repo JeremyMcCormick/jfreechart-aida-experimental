@@ -4,6 +4,7 @@ import hep.aida.IHistogram2D;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.dataset.DatasetConverter;
 import hep.aida.jfree.renderer.AbstractPaintScale;
+import hep.aida.jfree.renderer.CustomPaintScale;
 import hep.aida.jfree.renderer.GreyPaintScale;
 import hep.aida.jfree.renderer.RainbowPaintScale;
 import hep.aida.jfree.renderer.XYBoxRenderer;
@@ -11,6 +12,7 @@ import hep.aida.jfree.renderer.XYBoxRenderer;
 import java.awt.Color;
 import java.awt.Font;
 
+import org.freehep.swing.ColorConverter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
@@ -32,8 +34,13 @@ import org.jfree.ui.RectangleInsets;
  */
 public class Histogram2DConverter implements Converter<IHistogram2D> {
 
-    static public final int COLOR_DATA = 0;
-    static public final int COLOR_SCALE_LEGEND = 1;
+    public static final int COLOR_DATA = 0;
+    public static final int COLOR_SCALE_LEGEND = 1;
+    
+    // from JASHist2DHistogramStyle
+    public static String COLORMAP_RAINBOW = "COLORMAP_RAINBOW";
+    public static String COLORMAP_GRAYSCALE = "COLORMAP_GRAYSCALE";
+    public static String COLORMAP_USERDEFINED = "COLORMAP_USERDEFINED";
 
     public Class<IHistogram2D> convertsType() {
         return IHistogram2D.class;
@@ -69,7 +76,8 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
 
         // Add paint scale color legend.
         createPaintScaleLegend(chart, renderer.getPaintScale(), logScale);
-
+        
+        // Turn off the default legend.
         chart.getLegend().setVisible(false);
 
         ChartFactory.getChartTheme().apply(chart);
@@ -86,6 +94,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @param style
      * @return The renderer for the color map.
      */
+    // FIXME: The style setting Strings should match those of JASHist2DHistogramStyle.
     static XYBlockRenderer createColorMapRenderer(XYZDataset dataset, IHistogram2D h2d, IPlotterStyle style) {
                 
         // Setup the Renderer.
@@ -104,14 +113,23 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         } catch (IllegalArgumentException e) {            
         }
         if (colorMapScheme == null || colorMapScheme.equals("none"))
-            colorMapScheme = "rainbow";
+            colorMapScheme = COLORMAP_RAINBOW;
                 
         // Create the PaintScale based on the color map setting.
         PaintScale paintScale = null;
-        if (colorMapScheme.equals("rainbow"))
+        if (colorMapScheme.equals(COLORMAP_RAINBOW)) {
             paintScale = new RainbowPaintScale(zlimits[0], zlimits[1]);
-        else if (colorMapScheme.equals("greyscale"))
+        } else if (colorMapScheme.equals(COLORMAP_GRAYSCALE)) {
             paintScale = new GreyPaintScale(zlimits[0], zlimits[1]);
+        } else if (colorMapScheme.equals(COLORMAP_USERDEFINED)) {
+            try {
+                Color startColor = ColorConverter.get(style.dataStyle().fillStyle().parameterValue("startColor"));
+                Color endColor = ColorConverter.get(style.dataStyle().fillStyle().parameterValue("endColor"));
+                paintScale = new CustomPaintScale(startColor, endColor, zlimits[0], zlimits[1]);
+            } catch (Exception e) {                
+                throw new RuntimeException(e);
+            }
+        }
         
         // Set log scale if selected.q
         String logScale = null;
@@ -216,6 +234,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
     }
 
     public static void replaceWithColorMap(IHistogram2D h2d, JFreeChart chart, IPlotterStyle style) {
+        
         // Create the dataset.
         XYZDataset dataset = DatasetConverter.convert(h2d);
 
@@ -272,6 +291,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         chart.addSubtitle(legend);
     }
     
+    /*
     public static double[] calculateZLimits(XYZDataset ds) {
         double zLogMin;
         double zMin;
@@ -295,6 +315,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         }
         return new double[] { zMin, zMax, zLogMin };
     }
+    */
     
     public static double[] calculateZBounds(XYZDataset ds) {
         double zmin = Double.POSITIVE_INFINITY;

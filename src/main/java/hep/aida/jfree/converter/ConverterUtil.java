@@ -1,14 +1,12 @@
 package hep.aida.jfree.converter;
 
-import org.jfree.chart.axis.NumberAxis;
-
 import hep.aida.IBaseHistogram;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-class ConverterUtil {
+public class ConverterUtil {
 
     public static final String[] getAxisLabels(IBaseHistogram h) {
         String[] labels = new String[] { "", "" };

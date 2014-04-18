@@ -481,10 +481,8 @@ public abstract class AbstractStyleConverter implements StyleConverter {
 
         //
         // Not sure about how to use this, because JFreeChart's labels on the Y
-        // axis are aligned
-        // vertically by default. The default style in JAIDA is a horizontal
-        // label placed at the top
-        // of the axis.
+        // axis are aligned vertically by default. The default style in JAIDA is a horizontal
+        // label placed at the top of the axis.
         //
 
         // Set vertical axis label.

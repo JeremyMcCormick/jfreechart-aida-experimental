@@ -2,21 +2,21 @@ package hep.aida.jfree.dataset;
 
 import hep.aida.IHistogram2D;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jfree.data.xy.AbstractXYZDataset;
 import org.jfree.data.xy.XYZDataset;
 
 /**
  * This adapter implements JFreeChart's XYZDataset interface 
- * from a list of backing AIDA IHistogram2D objects.
+ * from a backing AIDA IHistogram2D object.  It is hard-coded 
+ * to have only a single data series so the <code>series</code>
+ * arguments are always ignored.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public class Histogram2DAdapter extends AbstractXYZDataset implements XYZDataset  {
+public class Histogram2DAdapter extends AbstractXYZDataset implements XYZDataset, HasZBounds  {
 
     IHistogram2D histogram;
+    Bounds bounds = new Bounds();
         
     Histogram2DAdapter(IHistogram2D histogram) {
         this.histogram = histogram;
@@ -31,6 +31,10 @@ public class Histogram2DAdapter extends AbstractXYZDataset implements XYZDataset
     public Number getX(int series, int item) {
         int x = item / histogram.xAxis().bins();
         return histogram.xAxis().binCenter(x);
+    }
+    
+    public double getXValue(int series, int item) {
+        return getX(series, item).doubleValue();
     }
 
     @Override
@@ -55,4 +59,14 @@ public class Histogram2DAdapter extends AbstractXYZDataset implements XYZDataset
     public Comparable getSeriesKey(int series) {
         return histogram.title();
     }    
+           
+    public Bounds getZBounds(int series) {
+        return bounds;
+    }
+    
+    public Bounds recomputeZBounds() {
+        if (histogram.entries() != 0)
+            bounds.computeZBounds(this, 0);
+        return bounds;
+    }
 }

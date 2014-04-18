@@ -1,31 +1,23 @@
 package hep.aida.jfree.dataset;
 
-import java.util.Random;
-
 import hep.aida.IAnalysisFactory;
 import hep.aida.IHistogram2D;
 import hep.aida.IHistogramFactory;
-import hep.aida.IPlotter;
-import hep.aida.IPlotterFactory;
-import hep.aida.IPlotterStyle;
 import hep.aida.jfree.AnalysisFactory;
+
+import java.util.Random;
+
 import junit.framework.TestCase;
 
 public class Histogram2DAdapterTest extends TestCase {
 
-    protected IAnalysisFactory analysisFactory;
-    protected IPlotterFactory plotterFactory;
-    protected IHistogramFactory histogramFactory;
-    protected IPlotter plotter;
-    protected IPlotterStyle style;
+    IAnalysisFactory analysisFactory;
+    IHistogramFactory histogramFactory;
     
     protected void setUp() {
         AnalysisFactory.register();
         analysisFactory = IAnalysisFactory.create();
-        plotterFactory = analysisFactory.createPlotterFactory();
         histogramFactory = analysisFactory.createHistogramFactory(null);
-        plotter = plotterFactory.create();
-        style = plotter.style();
     }
     
     public void testHistogram2DAdapter() {

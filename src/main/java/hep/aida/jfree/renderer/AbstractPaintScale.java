@@ -11,6 +11,9 @@ import org.jfree.chart.renderer.PaintScale;
 public abstract class AbstractPaintScale implements PaintScale {
 
     ColorScale colorScale;
+    
+    protected AbstractPaintScale() {
+    }
         
     public void setLogScale() {
         colorScale.setScalingLogarithmic();

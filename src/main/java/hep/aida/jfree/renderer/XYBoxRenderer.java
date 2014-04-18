@@ -1,7 +1,7 @@
 package hep.aida.jfree.renderer;
 
-import hep.aida.jfree.dataset.XYZRangedDataset;
-import hep.aida.jfree.dataset.XYZRangedDataset.ZRange;
+import hep.aida.jfree.dataset.Bounds;
+import hep.aida.jfree.dataset.HasZBounds;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
@@ -34,12 +34,12 @@ public class XYBoxRenderer extends AbstractXYItemRenderer {
         this.boxHeight = boxHeight;
     }
 
-    private double getHeightScaled(double z, ZRange range) {
-        return (z / range.getZMax()) * boxHeight;
+    private double getHeightScaled(double z, Bounds bounds) {
+        return (z / bounds.getMaximum()) * boxHeight;
     }
 
-    private double getWidthScaled(double z, ZRange range) {
-        return (z / range.getZMax()) * boxWidth;
+    private double getWidthScaled(double z, Bounds bounds) {
+        return (z / bounds.getMaximum()) * boxWidth;
     }
 
     public void drawItem(Graphics2D g2, XYItemRendererState state, Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot, ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset, int series, int item, CrosshairState crosshairState, int pass) {
@@ -57,15 +57,15 @@ public class XYBoxRenderer extends AbstractXYItemRenderer {
         if (z == 0)
             return;
 
-        ZRange zrange = null;
-        if (dataset instanceof XYZRangedDataset) {
-            zrange = ((XYZRangedDataset) dataset).getZRange(series);
+        Bounds bounds = null;
+        if (dataset instanceof HasZBounds) {
+            bounds = ((HasZBounds)dataset).getZBounds(series);
         } else {
-            throw new IllegalArgumentException("Dataset is wrong type: " + dataset.getClass().getCanonicalName());
+            throw new IllegalArgumentException("XYZDataset type " + dataset.getClass().getCanonicalName() + " does not have Z bounds.");
         }
 
-        double heightScaled = this.getHeightScaled(z, zrange);
-        double widthScaled = this.getWidthScaled(z, zrange);
+        double heightScaled = this.getHeightScaled(z, bounds);
+        double widthScaled = this.getWidthScaled(z, bounds);
 
         double xx0 = domainAxis.valueToJava2D(x, dataArea, plot.getDomainAxisEdge());
         double yy0 = rangeAxis.valueToJava2D(y, dataArea, plot.getRangeAxisEdge());

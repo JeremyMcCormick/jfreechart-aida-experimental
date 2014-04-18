@@ -22,7 +22,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
  * @version $Id: $
  */
 public class Histogram2DStyleConverter extends AbstractStyleConverter implements StyleConverter {
-
+    
     void applyStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
         
         // Apply styles to the chart, NOT directly having to do with data,
@@ -43,33 +43,7 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
         }
     }
 
-    /*
-     * TODO:
-     * 
-     * Color map styles to implement, as separate classes in hep.aida.jfree.renderer package:
-     * 
-     * -warm 
-     * -cool 
-     * -thermal 
-     * -grayscale 
-     * -userdefined (might leave this out for now)
-     * 
-     * e.g.
-     * 
-     * style.dataStyle().fillStyle().setParameter("colorMapScheme", "rainbow");
-     * 
-     * Implementations of these can be found in jas-plotter in:
-     *  
-     * jas.plot.ColorMap
-     * 
-     * See its method getColor() which has logic for each type of color map.
-     * 
-     * Old JFreeChart class: 
-     * 
-     * PaintScale scale = new GrayPaintScale(0., h2d.maxBinHeight());
-     */
-
-    // TODO: implement style.dataStyle().fillStyle() to fill boxes if selected
+    // TODO: implement style.dataStyle().fillStyle() to fill boxes if selected for box or ellipse plot
     public void applyHistogram2DStyle(JFreeChart chart, IHistogram2D h2d, IPlotterStyle style) {
         
         String histStyle = style.parameterValue("hist2DStyle");

@@ -2,7 +2,9 @@ package hep.aida.jfree.converter;
 
 import hep.aida.IHistogram2D;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.dataset.Bounds;
 import hep.aida.jfree.dataset.DatasetConverter;
+import hep.aida.jfree.dataset.Histogram2DAdapter;
 import hep.aida.jfree.renderer.AbstractPaintScale;
 import hep.aida.jfree.renderer.CustomPaintScale;
 import hep.aida.jfree.renderer.GreyPaintScale;
@@ -104,7 +106,17 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         renderer.setBlockWidth(h2d.xAxis().binWidth(0));
         
         // Calculate the lower and upper Z value bounds for the Dataset.
-        double[] zlimits = calculateZBounds(dataset);         
+        //double[] zlimits = calculateZBounds(dataset);
+        Bounds bounds = null;
+        if (dataset instanceof Histogram2DAdapter) {
+            bounds = ((Histogram2DAdapter)dataset).recomputeZBounds();
+        }
+        double minimum = 0.0;
+        double maximum = 1.0;
+        if (bounds.isValid()) {
+            minimum = bounds.getMinimum();
+            maximum = bounds.getMaximum();
+        }
         
         // Get the color map style if it exists.
         String colorMapScheme = null;
@@ -118,14 +130,14 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         // Create the PaintScale based on the color map setting.
         PaintScale paintScale = null;
         if (colorMapScheme.equals(COLORMAP_RAINBOW)) {
-            paintScale = new RainbowPaintScale(zlimits[0], zlimits[1]);
+            paintScale = new RainbowPaintScale(minimum, maximum);
         } else if (colorMapScheme.equals(COLORMAP_GRAYSCALE)) {
-            paintScale = new GreyPaintScale(zlimits[0], zlimits[1]);
+            paintScale = new GreyPaintScale(minimum, maximum);
         } else if (colorMapScheme.equals(COLORMAP_USERDEFINED)) {
             try {
                 Color startColor = ColorConverter.get(style.dataStyle().fillStyle().parameterValue("startColor"));
                 Color endColor = ColorConverter.get(style.dataStyle().fillStyle().parameterValue("endColor"));
-                paintScale = new CustomPaintScale(startColor, endColor, zlimits[0], zlimits[1]);
+                paintScale = new CustomPaintScale(startColor, endColor, minimum, maximum);
             } catch (Exception e) {                
                 throw new RuntimeException(e);
             }
@@ -151,7 +163,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
 
     public JFreeChart toBoxPlot(IHistogram2D h2d, IPlotterStyle style) {
         // Create dataset.
-        XYZDataset dataset = DatasetConverter.toXYZRangedDataset(h2d);
+        XYZDataset dataset = DatasetConverter.convert(h2d);
 
         // Create plot
         NumberAxis xAxis = new NumberAxis(null);
@@ -209,15 +221,16 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @param chart The chart into which the box plot will be drawn.
      */
     public static void replaceWithBoxPlot(IHistogram2D h2d, JFreeChart chart) {
+        
         // Create the dataset.
-        XYZDataset dataset = DatasetConverter.toXYZRangedDataset(h2d);
+        //XYZDataset dataset = DatasetConverter.toXYZRangedDataset(h2d);
 
         // Create the renderer.
         XYBoxRenderer renderer = new XYBoxRenderer(h2d.xAxis().binWidth(0), h2d.yAxis().binWidth(0));
 
         // Set the renderer and dataset and make visible.
         chart.getXYPlot().setRenderer(0, renderer);
-        chart.getXYPlot().setDataset(0, dataset);
+        //chart.getXYPlot().setDataset(0, dataset);
         renderer.setSeriesVisible(0, true);
 
         // Configure the axes;
@@ -289,53 +302,5 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         legend.setStripWidth(20D);
         legend.setPosition(RectangleEdge.RIGHT);
         chart.addSubtitle(legend);
-    }
-    
-    /*
-    public static double[] calculateZLimits(XYZDataset ds) {
-        double zLogMin;
-        double zMin;
-        double zMax;
-        if (ds.getItemCount(0) == 0) {
-            zMin = 0;
-            zLogMin = Double.POSITIVE_INFINITY;
-            zMax = 1;
-        } else {
-            zLogMin = Double.POSITIVE_INFINITY;
-            zMin = Double.POSITIVE_INFINITY;
-            zMax = Double.NEGATIVE_INFINITY;
-
-            for (int i = 0, n = ds.getItemCount(0); i < n; i++) {
-                double d = ds.getZValue(0, i);
-                zMin = Math.min(zMin, d);
-                if (d > 0.0000000000001) // was zero???
-                    zLogMin = Math.min(zLogMin, d);
-                zMax = Math.max(zMax, d);
-            }
-        }
-        return new double[] { zMin, zMax, zLogMin };
-    }
-    */
-    
-    public static double[] calculateZBounds(XYZDataset ds) {
-        double zmin = Double.POSITIVE_INFINITY;
-        double zmax = Double.NEGATIVE_INFINITY;
-        for (int i = 0, n = ds.getItemCount(0); i < n; i++) {
-            double value = ds.getZValue(0, i);
-            //System.out.println("value: " + value);
-            if (value != 0) {
-                if (value < zmin)
-                    zmin = value;
-                if (value > zmax)
-                    zmax = value;
-            }
-        }
-        if (zmin == Double.POSITIVE_INFINITY)
-            zmin = 0;
-        if (zmax == Double.NEGATIVE_INFINITY)
-            zmax = 1.0;
-        //System.out.println("calculateZBounds: " + zmin + "," + zmax);
-        //if (true) throw new RuntimeException("bork");
-        return new double[] {zmin, zmax};
-    }
+    }   
 }

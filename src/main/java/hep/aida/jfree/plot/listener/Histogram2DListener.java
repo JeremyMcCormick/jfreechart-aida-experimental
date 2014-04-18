@@ -2,7 +2,9 @@ package hep.aida.jfree.plot.listener;
 
 import hep.aida.IHistogram2D;
 import hep.aida.jfree.converter.Histogram2DConverter;
+import hep.aida.jfree.dataset.Bounds;
 import hep.aida.jfree.dataset.DatasetConverter;
+import hep.aida.jfree.dataset.Histogram2DAdapter;
 import hep.aida.jfree.renderer.AbstractPaintScale;
 import hep.aida.jfree.renderer.XYBoxRenderer;
 
@@ -38,6 +40,7 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
         XYPlot plot = (XYPlot)chart.getPlot();
         if (plot.getRenderer() instanceof XYBoxRenderer) {
             // Box plot
+            // FIXME: Replace with adapter to avoid data copying.
             plot.setDataset(0, DatasetConverter.toXYZRangedDataset(h2d));
         } else {
             // Color map
@@ -50,13 +53,15 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
         // Turn off notification while plot is being changed.
         chart.setNotify(false);
         
-        // Calculate the Z bounds.
-        double[] zbounds = Histogram2DConverter.calculateZBounds((XYZDataset)plot.getDataset());
+        Histogram2DAdapter adapter = (Histogram2DAdapter)plot.getDataset();         
+        
+        // Recalculate the Z bounds.        
+        Bounds zBounds = adapter.recomputeZBounds();
         
         // Set the new Z bounds on the PaintScale.        
         PaintScale scale = ((XYBlockRenderer) plot.getRenderer()).getPaintScale();
         if (scale instanceof AbstractPaintScale) {
-            ((AbstractPaintScale) scale).setBounds(zbounds[0], zbounds[1]);
+            ((AbstractPaintScale) scale).setBounds(zBounds.getMinimum(), zBounds.getMaximum());
         }
         
         // Rebuild the plot's legend.

@@ -4,8 +4,6 @@ import hep.aida.ref.event.AIDAListener;
 import hep.aida.ref.event.AIDAObservable;
 
 import java.util.EventObject;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,7 +20,7 @@ public abstract class PlotListener<T> implements AIDAListener {
 
     JFreeChart chart;
     T plot;
-    private final int DEFAULT_INTERVAL = 100; // in ms
+    private final int DEFAULT_INTERVAL = 500; // in ms
     int updateInterval = DEFAULT_INTERVAL;
     int[] datasetIndices;
     Timer updateTimer = new Timer();
@@ -62,7 +60,10 @@ public abstract class PlotListener<T> implements AIDAListener {
      */
     public void stateChanged(EventObject e) {
         synchronized(this) {
+            // Boot other pending draw tasks off this timer.
             updateTimer.purge();
+            
+            // Schedule a draw task.
             updateTimer.schedule(new UpdateTask(this), updateInterval);
         }
     }
@@ -94,5 +95,8 @@ public abstract class PlotListener<T> implements AIDAListener {
      * This method updates the JFreeChart plot based on changes to the AIDA object.
      * Sub-classes should override this method with specific implementations.
      */
-    public abstract void update();
+    public synchronized void update() {
+        // Force redraw of the datasets.
+        chart.fireChartChanged(); 
+    }
 }

@@ -103,7 +103,7 @@ public class InteractiveColorMapTest extends TestCase {
     }
     
     public void testCustomColorMap() {
-        IHistogram2D greyScaleColorMap = histogramFactory.createHistogram2D("greyscale", 100, 0., 100., 100, 0., 100.);
+        IHistogram2D greyScaleColorMap = histogramFactory.createHistogram2D("userdefined", 100, 0., 100., 100, 0., 100.);
         
         // Set axis labels.
         greyScaleColorMap.annotation().addItem("xAxisLabel", greyScaleColorMap.title() + " X");

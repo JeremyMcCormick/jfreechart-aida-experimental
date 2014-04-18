@@ -5,93 +5,135 @@ import hep.aida.IHistogram1D;
 import org.jfree.data.xy.AbstractIntervalXYDataset;
 
 /**
- * This is a Dataset adapter for 1D histograms.
+ * <p>
+ * This is a Dataset adapter for 1D histograms that provides four 
+ * series for different types of display:
+ * </p>
+ * <ul> 
+ * <li>data series for use with a <code>XYBarRenderer</code></li>
+ * <li>errors series for use with the <code>XYErrorRenderer</code></li>
+ * <li>step series data displayable with a <code>XYStepRenderer</code></li> 
+ * <li>points series usable with the <code>XYLineAndShapeRenderer</code></li>
+ * </ul>
+ * <p>
+ * Since JFreeChart does not support multiple <code>Renderer</code> objects
+ * assigned to the same dataset, the best way to support overlayed display
+ * of the same histogram is by creating multiple adapters that are assigned 
+ * to the same <code>IHistogram1D</code>.
+ * </p>
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
 public class Histogram1DAdapter extends AbstractIntervalXYDataset {
     
-    static int VALUES_SERIES = 0;
-    static int ERRORS_SERIES = 1;
-    
-    static String VALUES_KEY = "values";
-    static String ERRORS_KEY = "errors";
-    
-    static String[] KEYS = new String[] {VALUES_KEY, ERRORS_KEY};
+    public static final int VALUES = 0;
+    public static final int ERRORS = 1;
+    public static final int STEPS = 2;
+    public static final int POINTS = 3;
+        
+    static final String[] KEYS = new String[] { 
+        "values", 
+        "errors",
+        "steps",
+        "points"
+    };
     
     IHistogram1D histogram;
     
     Histogram1DAdapter(IHistogram1D histogram) {
         this.histogram = histogram;
     }
-
-    // DATA
-    //axis.binCenter(i), axis.binLowerEdge(i), axis.binUpperEdge(i), h1d.binHeight(i), 0.0, h1d.binHeight(i)
-    //add(double x, double xLow, double xHigh, double y, double yLow, double yHigh)
-    
-    // ERRORS
-    //double error = h1d.binError(i);
-    //errors.add(axis.binCenter(i), axis.binCenter(i), axis.binCenter(i), h1d.binHeight(i), h1d.binHeight(i) - error, h1d.binHeight(i) + error);
-    
+     
     @Override
     public Number getStartX(int series, int item) {
-        // data
-        if (series == VALUES_SERIES)
-            return histogram.axis().binLowerEdge(series);
-        else if (series == ERRORS_SERIES)
+        if (series == VALUES)
+            return histogram.axis().binLowerEdge(item);
+        else if (series == ERRORS)
             return histogram.axis().binCenter(item);
+        else if (series == POINTS || series == STEPS) 
+            return getX(series, item);
         else 
             throw new IllegalArgumentException("Unknown series " + series);
     }
 
     @Override
     public Number getEndX(int series, int item) {
-        // data
-        if (series == VALUES_SERIES)
+        if (series == VALUES)
             return histogram.axis().binUpperEdge(item);
-        // errors
-        else if (series == ERRORS_SERIES)
+        else if (series == ERRORS)
             return histogram.axis().binCenter(item);
+        else if (series == POINTS || series == STEPS) 
+            return getX(series, item);
         else 
             throw new IllegalArgumentException("Unknown series " + series);
     }
 
     @Override
     public Number getStartY(int series, int item) {
-        // for data Y always at zero
-        if (series == VALUES_SERIES)
+        if (series == VALUES)
             return 0;
-        // errors
-        else if (series == ERRORS_SERIES)
+        else if (series == ERRORS)
             return histogram.binHeight(item) - histogram.binError(item);
+        else if (series == POINTS || series == STEPS) 
+            return getY(series, item);
         else 
             throw new IllegalArgumentException("Unknown series " + series);
     }
 
     @Override
     public Number getEndY(int series, int item) {
-        // data
-        if (series == VALUES_SERIES)
+        if (series == VALUES)
             return histogram.binHeight(item);
-        else if (series == ERRORS_SERIES)
+        else if (series == ERRORS)
             return histogram.binHeight(item) + histogram.binError(item);
+        else if (series == POINTS || series == STEPS) 
+            return getY(series, item);
         else 
             throw new IllegalArgumentException("Unknown series " + series);
     }
 
     @Override
     public int getItemCount(int series) {
-        return histogram.entries();
+        if (series == VALUES || series == ERRORS || series == POINTS)
+            return histogram.axis().bins();
+        else if (series == STEPS)
+            return histogram.axis().bins() + 3;
+        else
+            throw new IllegalArgumentException("Unknown series " + series);
     }
 
     @Override
     public Number getX(int series, int item) {
-        return histogram.axis().binCenter(item);
+        if (series == VALUES || series == ERRORS)
+            return histogram.axis().binCenter(item);
+        else if (series == STEPS)
+            if (item == 0)
+                return histogram.axis().binLowerEdge(0);
+            else if (item >= (getItemCount(STEPS) - 1))
+                return histogram.axis().binUpperEdge(histogram.axis().bins() - 1);
+            else
+                return histogram.axis().binLowerEdge(item - 1);
+        else if (series == POINTS)
+            return histogram.axis().binCenter(item);
+        else 
+            throw new IllegalArgumentException("Unknown series " + series);            
     }
 
     @Override
     public Number getY(int series, int item) {
-        return histogram.binHeight(item);
+        if (series == VALUES || series == ERRORS)
+            return histogram.binHeight(item);
+        else if (series == STEPS)
+            if (item == 0 || item == (getItemCount(STEPS) - 1))
+                return 0;
+            else if (item == (getItemCount(STEPS) - 2))
+                return histogram.binHeight(histogram.axis().bins() - 1);
+            else
+                return histogram.binHeight(item - 1);
+        else if (series == POINTS)
+            return histogram.binHeight(item);
+        else 
+            throw new IllegalArgumentException("Unknown series " + series);
     }
 
     @Override

@@ -47,7 +47,9 @@ public class Histogram2DAdapter extends AbstractXYZDataset implements XYZDataset
     public Number getZ(int series, int item) {
         int x = getX(series, item).intValue();
         int y = getY(series, item).intValue();
-        return histogram.binHeight(x, y);
+        int xBin = histogram.coordToIndexX(x);
+        int yBin = histogram.coordToIndexY(y);
+        return histogram.binHeight(xBin, yBin);
     }
 
     @Override

@@ -18,8 +18,12 @@ public class Histogram2DAdapter extends AbstractXYZDataset implements XYZDataset
     IHistogram2D histogram;
     Bounds bounds = new Bounds();
         
-    Histogram2DAdapter(IHistogram2D histogram) {
+    public Histogram2DAdapter(IHistogram2D histogram) {
         this.histogram = histogram;
+    }
+    
+    public IHistogram2D getHistogram() {
+        return histogram;
     }
         
     @Override

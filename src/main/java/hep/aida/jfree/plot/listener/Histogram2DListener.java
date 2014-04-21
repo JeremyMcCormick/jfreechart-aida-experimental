@@ -3,7 +3,6 @@ package hep.aida.jfree.plot.listener;
 import hep.aida.IHistogram2D;
 import hep.aida.jfree.converter.Histogram2DConverter;
 import hep.aida.jfree.dataset.Bounds;
-import hep.aida.jfree.dataset.DatasetConverter;
 import hep.aida.jfree.dataset.Histogram2DAdapter;
 import hep.aida.jfree.renderer.AbstractPaintScale;
 import hep.aida.jfree.renderer.XYBoxRenderer;
@@ -14,7 +13,6 @@ import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.title.PaintScaleLegend;
 import org.jfree.data.Range;
-import org.jfree.data.xy.XYZDataset;
 
 /**
  * This is a listener to update display of a 2D histogram in JFreeChart.
@@ -37,27 +35,30 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
     }
 
     public synchronized void update() {
-        XYPlot plot = (XYPlot)chart.getPlot();
-        if (plot.getRenderer() instanceof XYBoxRenderer) {
-            // Box plot
-            // FIXME: Replace with adapter to avoid data copying.
-            plot.setDataset(0, DatasetConverter.toXYZRangedDataset(h2d));
-        } else {
-            // Color map
-            updateColorMap(plot);
-        }
-    }
-
-    private void updateColorMap(XYPlot plot) {
         
-        // Turn off notification while plot is being changed.
         chart.setNotify(false);
         
-        Histogram2DAdapter adapter = (Histogram2DAdapter)plot.getDataset();         
-        
-        // Recalculate the Z bounds.        
+        XYPlot plot = (XYPlot)chart.getPlot();        
+        Histogram2DAdapter adapter = (Histogram2DAdapter)plot.getDataset();                 
         Bounds zBounds = adapter.recomputeZBounds();
         
+        if (plot.getRenderer() instanceof XYBlockRenderer) {
+            updateColorMap(plot, zBounds);
+        } else if (plot.getRenderer() instanceof XYBoxRenderer) {
+            updateBoxPlot(plot, zBounds);
+        }
+        
+        chart.setNotify(true);
+        chart.fireChartChanged();        
+    }
+
+    private void updateBoxPlot(XYPlot plot, Bounds zBounds) {
+        // Update box plot bounds.
+        ((XYBoxRenderer)plot.getRenderer()).setMaximumValue(zBounds.getMaximum());
+    }
+
+    private void updateColorMap(XYPlot plot, Bounds zBounds) {
+                        
         // Set the new Z bounds on the PaintScale.        
         PaintScale scale = ((XYBlockRenderer) plot.getRenderer()).getPaintScale();
         if (scale instanceof AbstractPaintScale) {
@@ -67,9 +68,5 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
         // Rebuild the plot's legend.
         PaintScaleLegend legend = (PaintScaleLegend) chart.getSubtitle(Histogram2DConverter.COLOR_SCALE_LEGEND);
         legend.getAxis().setRange(new Range(scale.getLowerBound(), scale.getUpperBound()));
-
-        // Fire notification for redraw.
-        chart.setNotify(true);
-        chart.fireChartChanged();
     }
 }

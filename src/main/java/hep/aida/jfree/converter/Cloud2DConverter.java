@@ -2,12 +2,11 @@ package hep.aida.jfree.converter;
 
 import hep.aida.ICloud2D;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.dataset.DatasetConverter;
+import hep.aida.jfree.dataset.Cloud2DAdapter;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -19,14 +18,14 @@ class Cloud2DConverter implements Converter<ICloud2D> {
     }
 
     // Convert 2D cloud to chart.
-    public JFreeChart convert(ICloud2D c2d, IPlotterStyle style) {
+    public JFreeChart convert(ICloud2D cloud, IPlotterStyle style) {
 
         // Create dataset.
-        XYSeriesCollection dataset = DatasetConverter.convert(c2d);
+        Cloud2DAdapter adapter = new Cloud2DAdapter(cloud);
 
         // Create chart.
         JFreeChart chart = ChartFactory.createScatterPlot(
-                c2d.title(), null, null, dataset, 
+                cloud.title(), null, null, adapter, 
                 PlotOrientation.VERTICAL, true, true, false);
         
         return chart;

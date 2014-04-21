@@ -1,8 +1,5 @@
 package hep.aida.jfree.renderer;
 
-import hep.aida.jfree.dataset.Bounds;
-import hep.aida.jfree.dataset.HasZBounds;
-
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Paint;
@@ -22,31 +19,36 @@ import org.jfree.data.xy.XYZDataset;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
- * @version $Id: $
  */
 public class XYBoxRenderer extends AbstractXYItemRenderer {
 
     double boxWidth;
     double boxHeight;
+    
+    double maximumValue = 1.0;
 
     public XYBoxRenderer(double boxWidth, double boxHeight) {
         this.boxWidth = boxWidth;
-        this.boxHeight = boxHeight;
+        this.boxHeight = boxHeight;        
+    }
+    
+    public void setMaximumValue(double maximumValue) {
+        this.maximumValue = maximumValue;
     }
 
-    private double getHeightScaled(double z, Bounds bounds) {
-        return (z / bounds.getMaximum()) * boxHeight;
+    private double getHeightScaled(double z) {
+        return (z / maximumValue) * boxHeight;
     }
 
-    private double getWidthScaled(double z, Bounds bounds) {
-        return (z / bounds.getMaximum()) * boxWidth;
+    private double getWidthScaled(double z) {
+        return (z / maximumValue) * boxWidth;
     }
 
     public void drawItem(Graphics2D g2, XYItemRendererState state, Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot, ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset, int series, int item, CrosshairState crosshairState, int pass) {
 
         if (!this.isSeriesVisible(series))
             return;
-
+        
         double x = dataset.getXValue(series, item);
         double y = dataset.getYValue(series, item);
         double z = 0.0;
@@ -56,16 +58,9 @@ public class XYBoxRenderer extends AbstractXYItemRenderer {
 
         if (z == 0)
             return;
-
-        Bounds bounds = null;
-        if (dataset instanceof HasZBounds) {
-            bounds = ((HasZBounds)dataset).getZBounds(series);
-        } else {
-            throw new IllegalArgumentException("XYZDataset type " + dataset.getClass().getCanonicalName() + " does not have Z bounds.");
-        }
-
-        double heightScaled = this.getHeightScaled(z, bounds);
-        double widthScaled = this.getWidthScaled(z, bounds);
+             
+        double heightScaled = getHeightScaled(z);
+        double widthScaled = getWidthScaled(z);
 
         double xx0 = domainAxis.valueToJava2D(x, dataArea, plot.getDomainAxisEdge());
         double yy0 = rangeAxis.valueToJava2D(y, dataArea, plot.getRangeAxisEdge());

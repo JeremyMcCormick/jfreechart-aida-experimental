@@ -1,7 +1,5 @@
 package hep.aida.jfree.converter;
 
-import hep.aida.IBaseHistogram;
-
 import java.util.ArrayList;
 import java.util.List;
 

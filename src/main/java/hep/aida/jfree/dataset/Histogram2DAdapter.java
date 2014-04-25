@@ -33,7 +33,7 @@ public class Histogram2DAdapter extends AbstractXYZDataset implements XYZDataset
 
     @Override
     public Number getX(int series, int item) {
-        int x = item / histogram.xAxis().bins();
+        int x = item % histogram.xAxis().bins();
         return histogram.xAxis().binCenter(x);
     }
     
@@ -43,7 +43,7 @@ public class Histogram2DAdapter extends AbstractXYZDataset implements XYZDataset
 
     @Override
     public Number getY(int series, int item) {
-        int y = item % histogram.xAxis().bins();
+        int y = item / histogram.xAxis().bins();
         return histogram.yAxis().binCenter(y);
     }
 

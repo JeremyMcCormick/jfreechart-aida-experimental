@@ -1,12 +1,14 @@
 package hep.aida.jfree.test;
 
 import hep.aida.IAnalysisFactory;
+import hep.aida.IFitFactory;
 import hep.aida.IHistogramFactory;
 import hep.aida.IPlotter;
 import hep.aida.IPlotterFactory;
 import hep.aida.IPlotterStyle;
+import hep.aida.ITree;
+import hep.aida.ITreeFactory;
 import hep.aida.jfree.AnalysisFactory;
-import hep.aida.jfree.plotter.Plotter;
 
 import java.io.IOException;
 
@@ -17,6 +19,9 @@ public abstract class AbstractPlotTest extends TestCase {
     protected IAnalysisFactory analysisFactory;
     protected IPlotterFactory plotterFactory;
     protected IHistogramFactory histogramFactory;
+    protected ITreeFactory treeFactory;
+    protected IFitFactory fitFactory;
+    protected ITree tree;
     protected IPlotter plotter;
     protected IPlotterStyle style;
     protected String outputFormat = "png";
@@ -27,7 +32,10 @@ public abstract class AbstractPlotTest extends TestCase {
         analysisFactory = IAnalysisFactory.create();
         plotterFactory = analysisFactory.createPlotterFactory();
         histogramFactory = analysisFactory.createHistogramFactory(null);
+        treeFactory = analysisFactory.createTreeFactory();
+        tree = treeFactory.createTree(this.getClass().getSimpleName());
         plotter = plotterFactory.create();
+        fitFactory = analysisFactory.createFitFactory();
         //((Plotter)plotter).setEmbedded(false);
         style = plotter.style();
     }

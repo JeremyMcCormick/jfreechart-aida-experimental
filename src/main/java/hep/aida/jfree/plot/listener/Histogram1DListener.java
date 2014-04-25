@@ -14,13 +14,18 @@ import org.jfree.chart.JFreeChart;
  */
 public class Histogram1DListener extends PlotListener<IHistogram1D> {
 
-    IHistogram1D h1d;
+    IHistogram1D histogram;
 
-    Histogram1DListener(IHistogram1D hist, JFreeChart chart, int[] datasetIndices) {
-        super(hist, chart, datasetIndices);
-        if (!(hist instanceof IHistogram1D)) {
-            throw new IllegalArgumentException("hist is not an instance of IHistogram1D.");
+    Histogram1DListener(IHistogram1D histogram, JFreeChart chart, int[] datasetIndices) {
+        super(histogram, chart, datasetIndices);
+        if (!(histogram instanceof IHistogram1D)) {
+            throw new IllegalArgumentException("histogram is not an instance of IHistogram1D.");
         }
-        h1d = (Histogram1D) hist;
+        this.histogram = (Histogram1D) histogram;
+    }
+    
+    public synchronized void update() {
+        chart.getXYPlot().getRangeAxis().configure();
+        super.update();
     }
 }

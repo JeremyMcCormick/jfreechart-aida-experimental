@@ -17,6 +17,8 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
+// FIXME: The shape color is always the same as the line.  This is probably because there is one paint object.
+// This can be fixed by adding 2 series in the adapter, one for the line and the other for the shapes.
 public class FunctionStyleConverter extends AbstractStyleConverter {
     
     public void applyStyle() {

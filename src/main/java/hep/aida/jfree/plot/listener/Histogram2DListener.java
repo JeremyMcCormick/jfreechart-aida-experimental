@@ -22,16 +22,16 @@ import org.jfree.data.Range;
  */
 public class Histogram2DListener extends PlotListener<IHistogram2D> {
 
-    private IHistogram2D h2d;
+    private IHistogram2D histogram;
     
     static private int updateInterval = 1000;
 
-    Histogram2DListener(IHistogram2D hist, JFreeChart chart, int[] datasetIndices) {
-        super(hist, chart, datasetIndices, updateInterval);
-        if (!(hist instanceof IHistogram2D)) {
-            throw new IllegalArgumentException("hist is not an instance of IHistogram2D.");
+    Histogram2DListener(IHistogram2D histogram, JFreeChart chart, int[] datasetIndices) {
+        super(histogram, chart, datasetIndices, updateInterval);
+        if (!(histogram instanceof IHistogram2D)) {
+            throw new IllegalArgumentException("histogram is not an instance of IHistogram2D.");
         }
-        h2d = (IHistogram2D) hist;
+        this.histogram = (IHistogram2D) histogram;
     }
 
     public synchronized void update() {
@@ -62,7 +62,8 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
         // Set the new Z bounds on the PaintScale.        
         PaintScale scale = ((XYBlockRenderer) plot.getRenderer()).getPaintScale();
         if (scale instanceof AbstractPaintScale) {
-            ((AbstractPaintScale) scale).setBounds(zBounds.getMinimum(), zBounds.getMaximum());
+            //((AbstractPaintScale) scale).setBounds(zBounds.getMinimum(), zBounds.getMaximum());
+            ((AbstractPaintScale) scale).setBounds(0., zBounds.getMaximum());
         }
         
         // Rebuild the plot's legend.

@@ -39,9 +39,12 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
     public static final int COLOR_SCALE_LEGEND = 1;
     
     // copied from JASHist2DHistogramStyle
-    public static final String COLORMAP_RAINBOW = "COLORMAP_RAINBOW";
-    public static final String COLORMAP_GRAYSCALE = "COLORMAP_GRAYSCALE";
-    public static final String COLORMAP_USERDEFINED = "COLORMAP_USERDEFINED";
+    //public static final String COLORMAP_RAINBOW = "COLORMAP_RAINBOW";
+    //public static final String COLORMAP_GRAYSCALE = "COLORMAP_GRAYSCALE";
+    //public static final String COLORMAP_USERDEFINED = "COLORMAP_USERDEFINED";
+    public static final String COLORMAP_RAINBOW = "rainbow";
+    public static final String COLORMAP_GRAYSCALE = "grayscale";
+    public static final String COLORMAP_USERDEFINED = "userdefined";
 
     public Class<IHistogram2D> convertsType() {
         return IHistogram2D.class;
@@ -58,13 +61,14 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         // Create the Dataset adapter.
         Histogram2DAdapter adapter = new Histogram2DAdapter(histogram);
         
-        // Get display style.
-        String hist2DStyle = "colorMap";
+        // Get display style with default as color map.
+        String hist2DStyle = null;
         try {
             hist2DStyle = style.parameterValue("hist2DStyle");
-        } catch (Exception e) {
-            
-        }
+        } catch (Exception e) {            
+        }        
+        if (hist2DStyle == null)
+            hist2DStyle = "colorMap";
         
         JFreeChart chart = null;
                 
@@ -73,10 +77,10 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
             chart = createColorMap(adapter, style);
         } else if (hist2DStyle.equals("box")) {
             // box plot
-            chart = this.createBoxPlot(adapter, style);
+            chart = createBoxPlot(adapter, style);
         } else if (hist2DStyle.equals("ellipse")) {
-            // ellipse => not implemented!
-            throw new IllegalArgumentException("The ellipse style is not implemented yet.");
+            // ellipse style is not implemented yet!
+            throw new IllegalArgumentException("The ellipse style is not implemented yet!");
         } else {
             throw new IllegalArgumentException("Unknown hist2DStyle: " + hist2DStyle);
         }
@@ -144,7 +148,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         double minimum = 0.0;
         double maximum = 1.0;
         if (bounds.isValid()) {
-            minimum = bounds.getMinimum();
+            //minimum = bounds.getMinimum();
             maximum = bounds.getMaximum();
         }
         
@@ -167,10 +171,12 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
             try {
                 Color startColor = ColorConverter.get(style.dataStyle().fillStyle().parameterValue("startColor"));
                 Color endColor = ColorConverter.get(style.dataStyle().fillStyle().parameterValue("endColor"));
-                paintScale = new CustomPaintScale(startColor, endColor, minimum, maximum);
+                paintScale = new CustomPaintScale(startColor, endColor, 0, maximum);
             } catch (Exception e) {                
                 throw new RuntimeException(e);
             }
+        } else {
+            throw new RuntimeException("Unknown color map scheme: " + colorMapScheme);
         }
         
         // Set log scale if selected.q
@@ -270,10 +276,24 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         String[] labels = ConverterUtil.getAxisLabels(h2d);
         
         NumberAxis xAxis = new NumberAxis(labels[0]);
-        NumberAxis yAxis = new NumberAxis(labels[1]);
+        xAxis.setLowerBound(h2d.xAxis().binLowerEdge(0));
+        xAxis.setUpperBound(h2d.xAxis().binUpperEdge(h2d.xAxis().bins() - 1));
+        //xAxis.setAutoRange(false);
+        //System.out.println("x lower bound = " + h2d.xAxis().binLowerEdge(0));
+        //System.out.println("x upper bound = " + h2d.xAxis().binUpperEdge(h2d.xAxis().bins() - 1));
         
+        NumberAxis yAxis = new NumberAxis(labels[1]);
+        yAxis.setLowerBound(h2d.yAxis().binLowerEdge(0));
+        yAxis.setUpperBound(h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
+        //yAxis.setAutoRange(false);
+        //System.out.println("y lower bound = " + h2d.yAxis().binLowerEdge(0));
+        //System.out.println("y upper bound = " + h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
+                
         chart.getXYPlot().setDomainAxis(xAxis);
+        chart.getXYPlot().configureDomainAxes();
+        
         chart.getXYPlot().setRangeAxis(yAxis);
+        chart.getXYPlot().configureRangeAxes();        
     }
 
 }

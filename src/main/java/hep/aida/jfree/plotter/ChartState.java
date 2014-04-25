@@ -8,9 +8,11 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 
 /**
- * This class represents combined chart information between AIDA and JFreeChart, as created and/or used by the plotter regions.  
- * This information is used primarily to apply styles from IPlotterStyle to JFreeChart objects.  It simplifies the external
- * API of the style converter classes, which can get their information from this state object.
+ * This class represents combined chart information between AIDA and JFreeChart, 
+ * as created and/or used by the plotter regions.  This information is used 
+ * primarily to apply styles from IPlotterStyle to JFreeChart objects.  It 
+ * simplifies the external API of the style converter classes, which can get 
+ * their information from this state object.
  *  
  * @author jeremym
  *

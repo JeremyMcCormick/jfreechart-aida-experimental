@@ -96,7 +96,6 @@ public abstract class PlotListener<T> implements AIDAListener {
      * Sub-classes should override this method with specific implementations.
      */
     public synchronized void update() {
-        // Force redraw of the datasets.
-        chart.fireChartChanged(); 
+        chart.fireChartChanged();
     }
 }

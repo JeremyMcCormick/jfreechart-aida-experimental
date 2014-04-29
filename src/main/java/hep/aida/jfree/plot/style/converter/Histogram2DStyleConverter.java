@@ -5,6 +5,7 @@ import hep.aida.ILineStyle;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.plot.style.util.ColorUtil;
 import hep.aida.jfree.plot.style.util.StrokeUtil;
+import hep.aida.jfree.renderer.AbstractPaintScale;
 import hep.aida.jfree.renderer.XYBoxRenderer;
 
 import java.awt.Color;
@@ -12,6 +13,7 @@ import java.awt.Stroke;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 
 /**
@@ -21,7 +23,7 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 public class Histogram2DStyleConverter extends AbstractStyleConverter implements StyleConverter {
     
     void applyStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
-        
+
         // Apply styles to the chart, NOT directly having to do with the data.
         applyNonDataStyle(chart, hist, style);
 
@@ -33,21 +35,41 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
             makeDataInvisible(chart);
         }
     }
-   
+
     protected void applyDataFillStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
         
         XYItemRenderer renderer = chart.getXYPlot().getRenderer();
+        
+        // Set the default Paint to the chart background.
+        //System.out.println("setting base paint: " + chart.getBackgroundPaint().toString());
+        //renderer.setBasePaint(chart.getBackgroundPaint());
 
-        // Set fill style for box plot.
-        if (renderer instanceof XYBoxRenderer) {
+        // Set data fill style for box plot.
+        if (isBoxPlotRenderer(renderer)) {            
             if (style.dataStyle().fillStyle().isVisible()) {
                 Color color = ColorUtil.toColor(style.dataStyle().fillStyle(), null);
                 if (color != null) {
-                    ((XYBoxRenderer) renderer).setSeriesFillPaint(0, color);
+                    getBoxPlotRenderer(renderer).setSeriesFillPaint(0, color);
                 }
             } else {
-                ((XYBoxRenderer) renderer).setSeriesFillPaint(0, null);
+                getBoxPlotRenderer(renderer).setSeriesFillPaint(0, null);
             }
+        // Set data fill style for color map.
+        } else if (isColorMapRenderer(renderer)) {     
+            
+            // By default zero height bins are drawn using the lowest color value.
+            boolean showZeroHeightBins = true;
+            
+            try {
+                // Set whether bins of height 0 are not drawn so that the background show
+                // or whether they use the lowest color value.
+                showZeroHeightBins = getShowZeroHeightBinsSetting(style);
+                getAbstractPaintScale(renderer).setShowZeroHeightBins(showZeroHeightBins);                
+            } catch (Exception e) {
+                // Not sure what Exceptions are actually thrown from the try block 
+                // but catch everything here just in case.
+                e.printStackTrace(System.err);
+            }                        
         }
     }
 
@@ -61,7 +83,7 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
 
         // These styles only apply if the plot is being rendered as boxes and
         // not a color map, in which case they are ignored.
-        if (renderer instanceof XYBoxRenderer) {
+        if (isBoxPlotRenderer(renderer)) {
 
             // Color of the data lines.
             Color color = ColorUtil.toColor(lineStyle, DEFAULT_LINE_COLOR);
@@ -82,5 +104,32 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
     protected void makeDataInvisible(JFreeChart chart) {
         chart.getXYPlot().getRenderer().setSeriesVisible(0, false);
         chart.getSubtitle(1).setVisible(false);
+    }
+    
+    private boolean isColorMapRenderer(XYItemRenderer renderer) {
+        return renderer instanceof XYBlockRenderer;
+    }
+    
+    private boolean isBoxPlotRenderer(XYItemRenderer renderer) {
+        return renderer instanceof XYBoxRenderer;
+    }
+    
+    private XYBlockRenderer getColorMapRenderer(XYItemRenderer renderer) {
+        return (XYBlockRenderer)renderer;
+    }
+    
+    private XYBoxRenderer getBoxPlotRenderer(XYItemRenderer renderer) {
+        return (XYBoxRenderer)renderer;
+    }
+    
+    private AbstractPaintScale getAbstractPaintScale(XYItemRenderer renderer) {
+        if (!isColorMapRenderer(renderer)) {
+            throw new IllegalArgumentException("The renderer has the wrong type.");
+        }
+        return (AbstractPaintScale)getColorMapRenderer(renderer).getPaintScale();
+    }   
+    
+    private boolean getShowZeroHeightBinsSetting(IPlotterStyle style) {
+        return Boolean.parseBoolean(style.dataStyle().fillStyle().parameterValue("showZeroHeightBins"));
     }
 }

@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class ChartStyleTest extends AbstractPlotTest {
         
-    protected void plot() {
+    public void test() {
          
         IHistogram1D hist = histogramFactory.createHistogram1D("h1d", 50, 0, 50.0);
         Random rand = new Random();
@@ -63,6 +63,8 @@ public class ChartStyleTest extends AbstractPlotTest {
         //dataBoxStyle.setX(arg0);
         //dataBoxStyle.setY(arg0);
         //dataBoxStyle.setVisible(arg0);
+        
+        mode();
         
     }
 }

@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class Histogram1DStyleTest extends AbstractPlotTest {
 
-    protected void plot() {
+    public void test() {
 
         IHistogram1D h = histogramFactory.createHistogram1D("h1d", 50, 0, 50.0);
         Random rand = new Random();
@@ -121,5 +121,7 @@ public class Histogram1DStyleTest extends AbstractPlotTest {
 
         plotter.region(8).plot(h, pstyle);
         plotter.region(8).setTitle("8) lines between points");
+        
+        mode();
     }
 }

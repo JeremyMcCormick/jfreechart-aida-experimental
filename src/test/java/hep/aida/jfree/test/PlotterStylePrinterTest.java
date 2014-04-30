@@ -24,8 +24,5 @@ public class PlotterStylePrinterTest extends AbstractPlotTest {
         PlotterStylePrinter printer = new PlotterStylePrinter(style, ps);
         printer.print();
         System.out.println("Wrote test output to " + outputFile.getPath());
-    }    
-    
-    public void plot() {
     }
 }

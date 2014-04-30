@@ -2,9 +2,6 @@ package hep.aida.jfree.test;
 
 import hep.aida.IHistogram1D;
 import hep.aida.IStatisticsBoxStyle;
-import hep.aida.jfree.test.AbstractPlotTest;
-
-import java.util.Random;
 
 
 /**
@@ -13,7 +10,7 @@ import java.util.Random;
  */
 public class StatisticsBoxTest extends AbstractPlotTest {
     
-    public void plot() {
+    public void testStatisticsBox() {
         
         IHistogram1D hist = histogramFactory.createHistogram1D("histogram", 10, 0., 10.);
         for (int i=0; i<10; i++) {
@@ -33,6 +30,6 @@ public class StatisticsBoxTest extends AbstractPlotTest {
         plotter.createRegion();
         plotter.region(0).plot(hist);
         
-        //plotter.show();        
+        mode();
     }
 }

@@ -13,7 +13,7 @@ import java.util.Random;
  */
 public class MarkerTest extends AbstractPlotTest {
 
-    protected void plot() {
+    public void test() {
 
         // Create a test histogram which will be used to show various style
         // options.
@@ -44,5 +44,7 @@ public class MarkerTest extends AbstractPlotTest {
             plotter.region(i).plot(h1d, pstyle);
             plotter.region(i).setTitle(MarkerUtil.availableShapes[i]);
         }
+        
+        mode();
     }
 }

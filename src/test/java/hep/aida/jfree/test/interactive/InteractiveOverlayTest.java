@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class InteractiveOverlayTest extends AbstractPlotTest {
 
-    protected void plot() {
+    public void testOverlay() {
 
         // Create a list with various types of histograms
         IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, -5.0, 5.0);
@@ -41,9 +41,7 @@ public class InteractiveOverlayTest extends AbstractPlotTest {
 
         // Overlay histograms in real time.
         
-        if (!this.batchMode) {
-            plotter.show();
-        }
+        plotter.show();        
         
         Random rand = new Random();
         for (int i = 0; i < 1000000000; i++) {
@@ -54,10 +52,7 @@ public class InteractiveOverlayTest extends AbstractPlotTest {
             //} catch (InterruptedException e) {                
             //}
         }
-    }
-    
-    public void test() {
-        setBatchMode(false);
-        plot();
-    }
+        
+        mode();
+    }    
 }

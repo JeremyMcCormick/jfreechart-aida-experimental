@@ -8,9 +8,11 @@ import hep.aida.jfree.test.StatisticsBoxTest;
  * @version $Id: $
  */
 public class InteractiveStatisticsBoxTest extends StatisticsBoxTest {
-    public void test() {
+    
+    public void testInteractiveStatisticsBox() {
         setBatchMode(false);
-        plot();
+        super.testStatisticsBox();
         mode();
     }
+    
 }

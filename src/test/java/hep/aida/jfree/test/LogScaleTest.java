@@ -15,7 +15,7 @@ import java.util.Random;
  */
 public class LogScaleTest extends AbstractPlotTest {
 
-    public void plot() {
+    public void test() {
 
         IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, 0.0, 5.0);
         Random rand = new Random();
@@ -76,5 +76,7 @@ public class LogScaleTest extends AbstractPlotTest {
         pstyle.yAxisStyle().setScaling("log");
 
         plotter.region(0).plot(h1d, pstyle);
+        
+        mode();
     }
 }

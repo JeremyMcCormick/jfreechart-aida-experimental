@@ -8,9 +8,10 @@ import hep.aida.jfree.test.Histogram1DStyleTest;
  * @version $Id: $
  */
 public class InteractiveHistogram1DStyleTest extends Histogram1DStyleTest {
+    
     public void test() {
         setBatchMode(false);
-        plot();
+        super.test();
         mode();
     }
 

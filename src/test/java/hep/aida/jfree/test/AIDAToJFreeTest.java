@@ -62,7 +62,7 @@ public class AIDAToJFreeTest extends AbstractPlotTest {
         return h2d;
     }
 
-    protected void plot() {
+    public void test() {
 
         // Create a list with various types of histograms
         List<IBaseHistogram> histos = new ArrayList<IBaseHistogram>();
@@ -126,5 +126,7 @@ public class AIDAToJFreeTest extends AbstractPlotTest {
         for (int i = 0; i < histos.size(); i++) {
             plotter.region(i).plot(histos.get(i), pstyle);
         }
+        
+        mode();
     }
 }

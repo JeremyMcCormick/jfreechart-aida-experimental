@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class Histogram2DTest extends AbstractPlotTest {
 
-    protected void plot() {
+    public void test() {
 
         // Create a 2D histogram.
         IHistogram2D h2d = histogramFactory.createHistogram2D("h2d", 50, 0., 500., 50, 0., 500.);
@@ -47,10 +47,12 @@ public class Histogram2DTest extends AbstractPlotTest {
         pstyle.setParameter("hist2DStyle", "box");
         pstyle.dataStyle().lineStyle().setVisible(true);
         pstyle.dataStyle().lineStyle().setColor("blue");
-        pstyle.dataStyle().fillStyle().setVisible(true);
+        pstyle.dataStyle().fillStyle().setVisible(false);
         pstyle.dataStyle().fillStyle().setColor("blue");
                  
         plotter.createRegion();
         plotter.region(0).plot(h2d, pstyle);
+        
+        mode();
     }
 }

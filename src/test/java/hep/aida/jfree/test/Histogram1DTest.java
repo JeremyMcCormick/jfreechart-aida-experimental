@@ -12,7 +12,7 @@ import java.util.Random;
  */
 public class Histogram1DTest extends AbstractPlotTest {
 
-    protected void plot() {
+    public void test() {
 
         // Create a simple histogram.
         IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, -3, 6);
@@ -30,34 +30,10 @@ public class Histogram1DTest extends AbstractPlotTest {
         plotter.createRegion();
         plotter.region(0).plot(h1d, pstyle);
         
+        mode();
+        
         //pstyle.dataBoxStyle().backgroundStyle().setColor("gray");
         //plotter.region(1).plot(h1d, pstyle);
-    }
-    
-    /*
-    protected void plot() {
-
-        // Create a simple histogram.
-        IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 11, 0., 11.0);
-        Random rand = new Random();
-        for (int i = 0; i < 1000; i++) {
-            int value = rand.nextInt(10);
-            if (value % 2 == 0 || value == 3)
-                h1d.fill(value);
-        }
-
-        h1d.annotation().addItem("xAxisLabel", h1d.title() + " X");
-        h1d.annotation().addItem("yAxisLabel", h1d.title() + " Y");
-        
-        IPlotterStyle pstyle = new DefaultHistogram1DStyle();
-        
-        plotter.createRegions(1, 2, 0);
-        
-        plotter.region(0).plot(h1d, pstyle);
-        
-        pstyle.dataBoxStyle().backgroundStyle().setColor("gray");
-        plotter.region(1).plot(h1d, pstyle);
-    }
-    */
+    }    
 }
 

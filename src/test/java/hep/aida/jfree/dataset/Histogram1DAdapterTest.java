@@ -180,10 +180,7 @@ public class Histogram1DAdapterTest extends TestCase {
         frame.setContentPane(panel);
         frame.pack();
         RefineryUtilities.centerFrameOnScreen(frame);
-        frame.setVisible(true);
-        
-        while (true) {
-        }        
+        frame.setVisible(true);               
     }
 
 }

@@ -6,7 +6,7 @@ public class InteractiveCloud1DTest extends Cloud1DTest {
 
     public void test() {
         setBatchMode(false);
-        plot();
+        super.test();
         mode();
     }
     

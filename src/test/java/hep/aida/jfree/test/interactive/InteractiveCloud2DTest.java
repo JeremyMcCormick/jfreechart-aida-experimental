@@ -2,13 +2,9 @@ package hep.aida.jfree.test.interactive;
 
 import hep.aida.ICloud2D;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.plotter.PlotterRegion;
 import hep.aida.jfree.test.AbstractPlotTest;
 
-import java.awt.geom.Rectangle2D;
 import java.util.Random;
-
-import org.jfree.chart.ChartPanel;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -38,22 +34,18 @@ public class InteractiveCloud2DTest extends AbstractPlotTest {
         plotter.show();
 
         Random rand = new Random();
-        for (int i = 0; i < 1000; i++) {
-            //try {
-            //    Thread.sleep(100);
-            //} catch (InterruptedException x) {    
-            //}
-            c2d.fill(Math.abs(rand.nextDouble()) * 100, Math.abs(rand.nextDouble()) * 100);
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            Object object = new Boolean(true);
+            synchronized(object) {
+                try {
+                    object.wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            c2d.fill(Math.abs(rand.nextDouble()) * 1000000, Math.abs(rand.nextDouble()) * 1000000);
         }
-        ((PlotterRegion)plotter.region(0)).update();
-    }
-    
-    public void test() {
-        setBatchMode(false);
-        plot();
+        
         mode();
-    }
+    }    
 }
-
-//Rectangle2D plotArea = ((ChartPanel)regionPanel).getChartRenderingInfo().getPlotInfo().getDataArea();
-//System.out.println("region " + i + " has height " + plotArea.getHeight() + " and width " + plotArea.getWidth());

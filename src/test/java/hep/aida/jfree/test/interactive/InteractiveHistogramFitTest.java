@@ -31,7 +31,9 @@ public class InteractiveHistogramFitTest extends AbstractPlotTest{
         "p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9" };
     */
     
-    public void plot() {
+    public void testFitting() {
+        
+        setBatchMode(false);
              
        // Create 1D histogram
        IHistogram1D h1d = histogramFactory.createHistogram1D("Gaussian Distribution",100,-5,5);
@@ -61,6 +63,8 @@ public class InteractiveHistogramFitTest extends AbstractPlotTest{
            IFunction fit = doFit(fitTypes[i], h1d);
            plotter.region(i).plot(fit, functionStyle);
        }              
+       
+       mode();
     }
     
     private IFunction doFit(String fitType, IHistogram1D h) {
@@ -69,12 +73,5 @@ public class InteractiveHistogramFitTest extends AbstractPlotTest{
             throw new RuntimeException("failed to create fitter with type " + fitType);
         IFitResult fitResult = fitter.fit(h, "g");
         return fitResult.fittedFunction();
-    }
-    
-    public void test() {
-        setBatchMode(false);
-        plot();
-        mode();
-    }
-
+    }    
 }

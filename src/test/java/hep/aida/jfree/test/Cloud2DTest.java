@@ -15,7 +15,7 @@ import java.util.Random;
  */
 public class Cloud2DTest extends AbstractPlotTest {
 
-    protected void plot() {
+    public void test() {
 
         ICloud2D c2d = histogramFactory.createCloud2D("c2d");
         Random rand = new Random();
@@ -38,5 +38,7 @@ public class Cloud2DTest extends AbstractPlotTest {
 
         // Plot histograms into regions
         plotter.region(0).plot(c2d);
+        
+        mode();
     }
 }

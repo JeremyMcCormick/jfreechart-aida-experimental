@@ -15,7 +15,7 @@ import java.util.Random;
  */
 public class AxisPositionTest extends AbstractPlotTest {
 
-    protected void plot() {
+    public void test() {
 
         // Create 1D histogram.
         IHistogram1D h1d = histogramFactory.createHistogram1D("h1d", 50, 0.0, 5.0);
@@ -78,5 +78,7 @@ public class AxisPositionTest extends AbstractPlotTest {
         pstyle.yAxisStyle().setParameter("yAxis", "Y1");
 
         plotter.region(0).plot(h1d, pstyle);
+        
+        mode();
     }
 }

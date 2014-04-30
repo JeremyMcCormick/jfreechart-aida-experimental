@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class Profile1DTest extends AbstractPlotTest {
 
-    protected void plot() {
+    public void test() {
 
         // Create 1D and 2D IProfile with fixed bin width
         IProfile1D prof1DFixedBinWidth = histogramFactory.createProfile1D("prof1DFixedBinWidth", "Fixed bin width 1D", 10, 0, 1);
@@ -32,5 +32,7 @@ public class Profile1DTest extends AbstractPlotTest {
         plotter.createRegions(2, 1);
         plotter.region(0).plot(prof1DFixedBinWidth);
         plotter.region(1).plot(prof1DVariableBinWidth);
+        
+        mode();
     }
 }

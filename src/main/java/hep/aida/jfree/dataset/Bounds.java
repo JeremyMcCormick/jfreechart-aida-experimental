@@ -50,7 +50,9 @@ public class Bounds {
     }
     
     public boolean isValid() {
-        return minimum < maximum;
+        return minimum <= maximum 
+                && minimum != Double.POSITIVE_INFINITY 
+                && maximum != Double.NEGATIVE_INFINITY;
     }
     
     private void reset() {

@@ -42,10 +42,12 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
         Histogram2DAdapter adapter = (Histogram2DAdapter)plot.getDataset();                 
         Bounds zBounds = adapter.recomputeZBounds();
         
-        if (plot.getRenderer() instanceof XYBlockRenderer) {
-            updateColorMap(plot, zBounds);
-        } else if (plot.getRenderer() instanceof XYBoxRenderer) {
-            updateBoxPlot(plot, zBounds);
+        if (zBounds.isValid()) {        
+            if (plot.getRenderer() instanceof XYBlockRenderer) {
+                updateColorMap(plot, zBounds);
+            } else if (plot.getRenderer() instanceof XYBoxRenderer) {
+                updateBoxPlot(plot, zBounds);
+            }
         }
         
         chart.setNotify(true);

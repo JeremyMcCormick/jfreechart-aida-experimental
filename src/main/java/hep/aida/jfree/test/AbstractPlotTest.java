@@ -10,6 +10,7 @@ import hep.aida.ITree;
 import hep.aida.ITreeFactory;
 import hep.aida.jfree.AnalysisFactory;
 
+import java.io.File;
 import java.io.IOException;
 
 import junit.framework.TestCase;
@@ -26,6 +27,7 @@ public abstract class AbstractPlotTest extends TestCase {
     protected IPlotterStyle style;
     protected String outputFormat = "png";
     protected boolean batchMode = true;
+    protected static int WAIT_TIME = 5000;
     
     protected void setUp() {
         AnalysisFactory.register();
@@ -42,46 +44,50 @@ public abstract class AbstractPlotTest extends TestCase {
     
     protected void mode() {        
         if (batchMode) {
-            batch();
+            writeToFile();
         } else {
-            interactive();
+            show();
+            pause();
         }
     }
     
-    protected void batch() {
+    protected void writeToFile() {
+        File outputFile = new File("./target/test-output/" + this.getClass().getSimpleName() + "." + outputFormat);
+        outputFile.getParentFile().mkdirs();
         try {
-            plotter.writeToFile("./target/" + this.getClass().getSimpleName() + "." + outputFormat);
+            plotter.writeToFile(outputFile.getPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
     
-    protected void interactive() {
+    protected void show() {
         plotter.show();
     }
     
-    public void setBatchMode(boolean batchMode) {
+    protected void setBatchMode(boolean batchMode) {
         this.batchMode = batchMode;
     }
     
-    public void test() {
-        plot();
-        mode();
-    }
-    
-    public void tearDown() {
-        if (!batchMode) {
-            System.out.println("Test is running in interactive mode.");
-            System.out.println("Hit Ctrl + C to exit.");
-            while (true) {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    protected void pause() {
+        Boolean object = new Boolean(true);
+        synchronized(object) {
+            try {
+                object.wait(WAIT_TIME);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }    
     
-    protected abstract void plot();
+    protected void pause(int waitTime) {
+        Boolean object = new Boolean(true);
+        synchronized(object) {
+            try {
+                object.wait(waitTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }    
 }

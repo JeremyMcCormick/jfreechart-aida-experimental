@@ -43,6 +43,11 @@
             <version>3.4.9-SNAPSHOT</version>
             <type>pom</type>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+        </dependency>
     </dependencies>
     <build>
         <defaultGoal>install</defaultGoal>

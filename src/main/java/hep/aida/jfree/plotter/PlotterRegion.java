@@ -14,6 +14,7 @@ import hep.aida.jfree.plot.style.converter.StyleConverter;
 import hep.aida.jfree.plot.style.converter.StyleConverterFactory;
 import hep.aida.ref.event.IsObservable;
 import hep.aida.ref.plotter.DummyPlotterRegion;
+import jas.util.layout.PercentLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.jfree.chart.plot.XYPlot;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
+// FIXME: The region should have a default JFreeChart object instead of requiring it to be set externally.
 public class PlotterRegion extends DummyPlotterRegion {
 
     double x, y, w, h;
@@ -112,7 +114,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
 
     public void plot(IBaseHistogram hist, IPlotterStyle style) {
-
+        
         // Find the appropriate converter for this AIDA data type.
         Converter<?> converter = HistogramConverterFactory.instance().getConverter(hist);
 
@@ -152,16 +154,43 @@ public class PlotterRegion extends DummyPlotterRegion {
         styleConverter.setChartState(new ChartState(chartPanel, chart, function, chart.getXYPlot().getDatasetCount() - 1));
         styleConverter.applyStyle();
 
+        // FIXME: Add this back once figure out how to connect with object it is fitting.
         //addFunctionListener(function, chart, new int[] { chart.getXYPlot().getDatasetCount() - 1 });
     }
+    
+    /**
+     * Clear the region's contents, which will set the underlying JFreeChart to null.
+     * The chart will be rebuilt if the plot methods are called again.
+     */
+    public void clear() { 
+        
+        // Clear the current base chart.
+        chart = null;
+        
+        // Clear reference to chart in panel.
+        chartPanel.setChart(null);
+        
+        // Clear the list of listeners.
+        listeners.clear();
+    }
 
-    private void setBaseChart(IBaseHistogram hist, JFreeChart newChart) {
-
+    /**
+     * Set the base JFreeChart of the region.
+     * @param histogram The histogram to plot into the chart.
+     * @param newChart The JFreeChart object.
+     */
+    // FIXME: This should not conflate adding a histogram with creating the backing chart for the region.
+    private void setBaseChart(IBaseHistogram histogram, JFreeChart newChart) {
+               
         // The new chart becomes the base chart for this region.
         chart = newChart;
 
-        // Create the JPanel for the region.
-        chartPanel = new ChartPanel(chart);
+        if (chartPanel == null)
+            // Create the JPanel for the region.
+            chartPanel = new ChartPanel(chart);
+        else 
+            // Reset the chart on the existing panel.
+            chartPanel.setChart(chart);
 
         // Apply region styles to the new panel. Only the base chart has its own JPanel.
         if (styleConverter != null) {
@@ -172,7 +201,7 @@ public class PlotterRegion extends DummyPlotterRegion {
         // Add a listener for receiving callbacks when the underlying histogram is updated,
         // so that it can be redrawn.
         int[] datasetIndices = getDatasetIndices(chart.getXYPlot(), 0);
-        addHistogramListener(hist, datasetIndices);
+        addHistogramListener(histogram, datasetIndices);
     }
 
     private JFreeChart createChart(IBaseHistogram hist, IPlotterStyle style, Converter converter) {
@@ -203,7 +232,7 @@ public class PlotterRegion extends DummyPlotterRegion {
             ((IsObservable) hist).addListener(listener);
             this.listeners.add(listener);
         } else
-            System.out.println("WARNING: No listener defined for plot " + hist.title() + " with type " + hist.getClass().getCanonicalName());
+            System.out.println("WARNING: No listener defined for plot " + hist.title() + " with type " + hist.getClass().getCanonicalName());               
     }
 
     private void addFunctionListener(IFunction function, JFreeChart chart, int[] datasetIndices) {
@@ -261,4 +290,17 @@ public class PlotterRegion extends DummyPlotterRegion {
             listener.update();
         }
     }
+        
+    void addToParentPanel(JPanel parentPanel) {
+        if (parentPanel != null)
+            parentPanel.add(
+                    chartPanel, 
+                    new PercentLayout.Constraint(
+                            x() * 100,
+                            y() * 100,
+                            width() * 100,
+                            height() * 100));
+        else
+            throw new RuntimeException("The parent JPanel points to null.");
+    }    
 }

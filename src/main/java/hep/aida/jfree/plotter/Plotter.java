@@ -25,8 +25,9 @@ public class Plotter extends DummyPlotter {
     List<PlotterRegion> regions = new ArrayList<PlotterRegion>();
     JPanel rootPanel;
     JFrame frame;
-    boolean embedded = false;
-    boolean setup = false;
+    boolean isEmbedded = false;
+    boolean isSetup = false;
+    boolean isVisible = false;
 
     /**
      * Class constructor.
@@ -49,12 +50,12 @@ public class Plotter extends DummyPlotter {
      * the root component.
      */
     private void setupRegions() {
-        if (!setup) {
+        if (!isSetup) {
             createFrame();
             plotRegions();
             configureFrame();
             redraw();         
-            setup = true;
+            isSetup = true;
         }
     }
 
@@ -63,7 +64,7 @@ public class Plotter extends DummyPlotter {
      * This will only have an effect if the plotter is not embedded.
      */
     private void configureFrame() {
-        if (!embedded) {
+        if (!isEmbedded) {
             frame.setContentPane(rootPanel);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.pack();
@@ -75,7 +76,7 @@ public class Plotter extends DummyPlotter {
      * This will only have an effect if the plotter is not embedded.
      */
     private void createFrame() {
-        if (!embedded) {
+        if (!isEmbedded) {
             frame = new JFrame();
         }
     }
@@ -107,8 +108,8 @@ public class Plotter extends DummyPlotter {
      * embed it into their application by calling {@link #panel()} to get the <tt>JPanel</tt>.
      * @param embedded Set to true to run in embedded mode without a JFrame.  
      */
-    public void setEmbedded(boolean embedded) {
-        this.embedded = embedded;
+    public void setIsEmbedded(boolean isEmbedded) {
+        this.isEmbedded = isEmbedded;
     }
 
     /**
@@ -116,8 +117,13 @@ public class Plotter extends DummyPlotter {
      */
     public void show() {
         setupRegions();
-        if (!embedded) {
-            frame.setVisible(true);
+        if (!isVisible) {
+            if (!isEmbedded) {
+                frame.setVisible(true);
+            }
+            isVisible = true;
+        } else {
+            System.err.println("Ignoring call to show() as Plotter is already visible!");
         }
     }
 
@@ -130,7 +136,8 @@ public class Plotter extends DummyPlotter {
             frame.setVisible(false);
             frame = null;
         }
-        setup = false;
+        isSetup = false;
+        isVisible = false;
     }
 
     /**
@@ -169,7 +176,7 @@ public class Plotter extends DummyPlotter {
      * @param type The file type (such as "PNG").
      */
     public void writeToFile(String file, String type) throws IOException {
-        if (!setup) { // used to check frame == null
+        if (!isSetup) { // used to check frame == null
             setupRegions();
         }
         if (!file.endsWith(type))
@@ -189,12 +196,7 @@ public class Plotter extends DummyPlotter {
                 System.out.println("WARNING: Skipping region " + i + " with null JPanel!");
                 continue;
             }
-            rootPanel.add(regionPanel, 
-                    new PercentLayout.Constraint(
-                            region.x() * 100, 
-                            region.y() * 100, 
-                            region.width() * 100, 
-                            region.height() * 100));
+            region.addToParentPanel(rootPanel);
         }
     }
 

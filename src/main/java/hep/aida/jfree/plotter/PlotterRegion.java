@@ -43,6 +43,7 @@ public class PlotterRegion extends DummyPlotterRegion {
 
     double x, y, w, h;
     IPlotterStyle style;
+    String title;
 
     ChartPanel chartPanel;
     JFreeChart chart;
@@ -281,8 +282,13 @@ public class PlotterRegion extends DummyPlotterRegion {
         if (chart != null) {
             chart.setTitle(title);
         } else {
-            System.err.println("Cannot set title.  No chart exists for this region yet.");
+            System.err.println("WARNING: Cannot set title.  No chart exists for this region yet!");
         }
+        this.title = title;
+    }
+    
+    public String title() {
+        return title;
     }
 
     public synchronized void update() {

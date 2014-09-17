@@ -10,6 +10,10 @@ import java.util.Random;
  */
 public class InteractiveColorMapTest extends AbstractPlotTest {
     
+    public InteractiveColorMapTest() {
+        setBatchMode(false);
+    }
+    
     public void testNoData() {
 
         // Create a 2D histogram.
@@ -143,4 +147,30 @@ public class InteractiveColorMapTest extends AbstractPlotTest {
                 System.out.println("fill #" + i);
         }
     }    
+    
+    public void testVariableBinWidth() {
+        
+        setWaitTime(20000);
+        
+        double[] binEdgesX = { 0.0, 0.5, 1.5, 3.0, 5.0 };
+        double[] binEdgesY = { 0.0, 1.0, 3.0, 6.0, 10.0 };
+        
+        IHistogram2D histogram = histogramFactory.createHistogram2D("/variableBinWidth", "variableBinWidth", binEdgesX, binEdgesY);
+                
+        style.dataStyle().fillStyle().setParameter("colorMapScheme", "rainbow");
+        
+        style.dataStyle().fillStyle().setParameter("showZeroHeightBins", Boolean.FALSE.toString());
+        
+        // Plot histogram into region.
+        plotter.createRegion();
+        plotter.region(0).plot(histogram);
+        plotter.show();
+        
+        Random random = new Random();
+        for (int i = 0; i < 1000; i++) {
+            histogram.fill(random.nextDouble() * 5.0, random.nextDouble() * 10.0);
+        }
+        
+        mode();
+    }
 }

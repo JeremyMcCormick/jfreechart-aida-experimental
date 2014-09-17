@@ -27,7 +27,7 @@ public abstract class AbstractPlotTest extends TestCase {
     protected IPlotterStyle style;
     protected String outputFormat = "png";
     protected boolean batchMode = true;
-    protected static int WAIT_TIME = 5000;
+    protected int waitTime = 5000;
     
     protected void setUp() {
         AnalysisFactory.register();
@@ -56,6 +56,7 @@ public abstract class AbstractPlotTest extends TestCase {
         outputFile.getParentFile().mkdirs();
         try {
             plotter.writeToFile(outputFile.getPath());
+            System.out.println(this.getClass().getSimpleName() + " - saved plots to " + outputFile.getPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -63,6 +64,10 @@ public abstract class AbstractPlotTest extends TestCase {
     
     protected void show() {
         plotter.show();
+    }
+    
+    protected void setWaitTime(int waitTime) {
+        this.waitTime = waitTime;
     }
     
     protected void setBatchMode(boolean batchMode) {
@@ -73,7 +78,7 @@ public abstract class AbstractPlotTest extends TestCase {
         Boolean object = new Boolean(true);
         synchronized(object) {
             try {
-                object.wait(WAIT_TIME);
+                object.wait(waitTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

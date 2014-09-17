@@ -48,7 +48,7 @@ public class XYBoxRenderer extends AbstractXYItemRenderer {
 
         if (!this.isSeriesVisible(series))
             return;
-        
+                        
         double x = dataset.getXValue(series, item);
         double y = dataset.getYValue(series, item);
         double z = 0.0;

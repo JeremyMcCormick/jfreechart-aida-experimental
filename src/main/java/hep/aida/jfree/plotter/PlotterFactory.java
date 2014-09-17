@@ -1,6 +1,8 @@
 package hep.aida.jfree.plotter;
 
 import hep.aida.IPlotter;
+import hep.aida.IPlotterStyle;
+import hep.aida.ref.plotter.PlotterStyle;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -21,7 +23,7 @@ public class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory {
 
     public IPlotter create(String plotterName) {
         Plotter plotter = new Plotter();
-        plotter.setEmbedded(embedded);
+        plotter.setIsEmbedded(embedded);
         return plotter;
     }
 
@@ -31,5 +33,13 @@ public class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory {
     
     protected void setEmbedded(boolean embedded) {
         this.embedded = embedded;
+    }
+    
+    public IPlotterStyle createPlotterStyle(IPlotterStyle style) {
+        return new DefaultPlotterStyle((PlotterStyle)style);
+    }
+    
+    public IPlotterStyle createDefaultHistogram1DStyle() {
+        return new DefaultHistogram1DStyle();
     }
 }

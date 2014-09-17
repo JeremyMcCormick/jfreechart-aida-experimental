@@ -6,8 +6,8 @@ import org.jfree.data.xy.AbstractIntervalXYDataset;
 
 /**
  * <p>
- * This class adapts an <code>IHistogram1D</code> to a <code>AbstractIntervalXYDataset</code>
- * and provides four data series for different types of plot display, which include:
+ * This class adapts an <code>IHistogram1D</code> to an <code>AbstractIntervalXYDataset</code>
+ * and provides access to four data series for different types of display, which include:
  * </p>
  * <ul> 
  * <li>values like an <code>XYIntervalSeries</code> for an <code>XYBarRenderer</code></li>

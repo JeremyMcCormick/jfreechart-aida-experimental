@@ -2,8 +2,7 @@ package hep.aida.jfree.test;
 
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.plot.style.DefaultHistogram1DStyle;
-import hep.aida.jfree.test.AbstractPlotTest;
+import hep.aida.jfree.plotter.PlotterFactory;
 
 import java.util.Random;
 
@@ -24,16 +23,12 @@ public class Histogram1DTest extends AbstractPlotTest {
         h1d.annotation().addItem("xAxisLabel", "Value");
         h1d.annotation().addItem("yAxisLabel", "Entries");
         
-        IPlotterStyle pstyle = new DefaultHistogram1DStyle();
+        IPlotterStyle pstyle = ((PlotterFactory)plotterFactory).createDefaultHistogram1DStyle();
         
-        //plotter.createRegions(1, 2, 0);
         plotter.createRegion();
         plotter.region(0).plot(h1d, pstyle);
         
-        mode();
-        
-        //pstyle.dataBoxStyle().backgroundStyle().setColor("gray");
-        //plotter.region(1).plot(h1d, pstyle);
+        mode();        
     }    
 }
 

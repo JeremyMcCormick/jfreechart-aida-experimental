@@ -22,6 +22,7 @@ import java.util.List;
  * -IDatapointSet (w/ dim > 2) 
  * -IHistogram2D (as 3D lego plot)
  */
+// FIXME: This is more like ObjectConverterFactory because it should handle all AIDA objects, not just histograms.
 public class HistogramConverterFactory {
 
     List<Converter<?>> converters = new ArrayList<Converter<?>>();

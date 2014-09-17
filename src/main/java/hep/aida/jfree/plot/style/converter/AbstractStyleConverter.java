@@ -135,43 +135,43 @@ public abstract class AbstractStyleConverter implements StyleConverter {
         // Check if the plot is visible before continuing.
         if (style.isVisible()) {
 
+                       
             // Set the data styling or turn it off if invisible.
             if (isDataVisible(style)) {
-
-                // data fill style
+                
+                // Apply data fill style which fills histograms.
                 applyDataFillStyle(chart, hist, style);
 
-                // data line style (histogram bars)
+                // Apply data line style which draws histogram bars. 
                 applyDataLineStyle(chart, hist, style);
 
+                // Apply marker style which draws markers such as circles at data points.                
+                applyDataMarkerStyle(chart, hist, style);
+                
+                // Apply data outline style which draws lines between data points.
+                applyDataOutlineStyle(chart, hist, style);                
+                                
+                // Are errors visible?
+                if (areErrorsVisible(style)) {
+                    // Apply error bar style, which will only show if the data itself is set to visible.
+                    applyErrorBarStyle(chart, style);
+                } else {
+                    // Turn off display of error values.
+                    makeErrorsInvisible(chart);
+                }
+                                
             } else {
+                
                 // Turn off display of histogram data.
                 makeDataInvisible(chart);
-            }
-
-            // Set marker and line styling which may still be visible even if
-            // data style is off.
-            if (style.isVisible()) {
-                applyDataMarkerStyle(chart, hist, style);
-                applyDataOutlineStyle(chart, hist, style);
-            }
-
-            // Set error style.
-            if (areErrorsVisible(style)) {
-                applyErrorBarStyle(chart, style);
-            // Turn off display of error values.
-            } else {
+                
+                // Turn off display of errors.
                 makeErrorsInvisible(chart);
-            }
-        
-            // Draw the statistics box.
-            drawStatisticsBox();
-
-        // Turn off both data and errors as style is set to invisible.
-        } else {
-            makeDataInvisible(chart);
-            makeErrorsInvisible(chart);
-        }
+            }       
+            
+            // Draw the statistics box, which only really makes sense if data is visible.
+            drawStatisticsBox();                
+        } 
     }
 
     /**

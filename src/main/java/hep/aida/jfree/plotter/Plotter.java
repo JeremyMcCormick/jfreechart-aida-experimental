@@ -2,6 +2,7 @@ package hep.aida.jfree.plotter;
 
 import hep.aida.IPlotterRegion;
 import hep.aida.ref.plotter.DummyPlotter;
+import hep.aida.ref.plotter.PlotterStyle;
 import jas.util.layout.PercentLayout;
 
 import java.awt.Component;
@@ -181,7 +182,7 @@ public class Plotter extends DummyPlotter {
         }
         if (!file.endsWith(type))
             file = file + "." + type;
-        System.out.println("Saving to " + file + " with type " + type);
+        System.out.println("Saving plots to " + file);
         super.writeToFile(file, type, null);
     }
 
@@ -191,11 +192,11 @@ public class Plotter extends DummyPlotter {
     private void plotRegions() {
         for (int i = 0; i < numberOfRegions(); i++) {
             PlotterRegion region = (PlotterRegion) region(i);
-            JPanel regionPanel = region.getPanel();
-            if (regionPanel == null) {
-                System.out.println("WARNING: Skipping region " + i + " with null JPanel!");
-                continue;
-            }
+            //JPanel regionPanel = region.getPanel();            
+            //if (regionPanel == null) {
+            //    System.out.println("WARNING: Skipping region " + i + " with null JPanel!");
+            //    continue;
+            //}
             region.addToParentPanel(rootPanel);
         }
     }
@@ -204,8 +205,23 @@ public class Plotter extends DummyPlotter {
      * Overridden from DummyPlotter to use the JFree implementation of IPlotterRegion.
      */
     protected IPlotterRegion justCreateRegion(double x, double y, double width, double height) {
+                
+        if (width <= 0)
+            throw new IllegalArgumentException("The width parameter must be > 0.");
+        
+        if (height <= 0)
+            throw new IllegalArgumentException("The height parameter must be > 0.");
+        
+        // Create a new region with full width, height, x position and y position parameters.
         PlotterRegion region = new PlotterRegion(this.style(), x, y, width, height);
+        
+        // This makes sure the region by default has a style object that chains back to the plotter 
+        // as its parent.  It can be overridden by setting a custom style on the region.
+        region.setStyle(new DefaultPlotterStyle("region", (PlotterStyle)style()));
+        
+        // Add the region to the list of regions.       
         regions.add(region);
+        
         return region;
     }
 

@@ -8,7 +8,8 @@ import hep.aida.jfree.renderer.AbstractPaintScale;
 import hep.aida.jfree.renderer.CustomPaintScale;
 import hep.aida.jfree.renderer.GreyPaintScale;
 import hep.aida.jfree.renderer.RainbowPaintScale;
-import hep.aida.jfree.renderer.XYBoxRenderer;
+import hep.aida.jfree.renderer.XYVariableBinWidthBlockRenderer;
+import hep.aida.jfree.renderer.XYVariableBinWidthBoxRenderer;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -22,7 +23,6 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
-import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.title.PaintScaleLegend;
 import org.jfree.data.Range;
 import org.jfree.ui.RectangleEdge;
@@ -35,13 +35,15 @@ import org.jfree.ui.RectangleInsets;
 // FIXME: This class does not support variable bin sizes.
 public class Histogram2DConverter implements Converter<IHistogram2D> {
 
-    public static final int COLOR_DATA = 0;
+    //public static final int COLOR_DATA = 0;
     public static final int COLOR_SCALE_LEGEND = 1;
     
-    // copied from JASHist2DHistogramStyle
+    // for reference from JASHist2DHistogramStyle
     //public static final String COLORMAP_RAINBOW = "COLORMAP_RAINBOW";
     //public static final String COLORMAP_GRAYSCALE = "COLORMAP_GRAYSCALE";
     //public static final String COLORMAP_USERDEFINED = "COLORMAP_USERDEFINED";
+    
+    // These are changed from the AIDA values to be more user friendly. 
     public static final String COLORMAP_RAINBOW = "rainbow";
     public static final String COLORMAP_GRAYSCALE = "grayscale";
     public static final String COLORMAP_USERDEFINED = "userdefined";
@@ -104,7 +106,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         }
 
         // Setup the renderer.
-        XYBlockRenderer renderer = createColorMapRenderer(adapter, style);
+        XYVariableBinWidthBlockRenderer renderer = createColorMapRenderer(adapter, style);
 
         // Create the plot.
         XYPlot plot = new XYPlot(adapter, null, null, renderer);
@@ -133,14 +135,14 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @param style
      * @return The renderer for the color map.
      */
-    static XYBlockRenderer createColorMapRenderer(Histogram2DAdapter adapter, IPlotterStyle style) {
+    static XYVariableBinWidthBlockRenderer createColorMapRenderer(Histogram2DAdapter adapter, IPlotterStyle style) {
         
         IHistogram2D histogram = adapter.getHistogram();
         
         // Setup the Renderer.
-        XYBlockRenderer renderer = new XYBlockRenderer();
-        renderer.setBlockHeight(histogram.yAxis().binWidth(0));
-        renderer.setBlockWidth(histogram.xAxis().binWidth(0));
+        XYVariableBinWidthBlockRenderer renderer = new XYVariableBinWidthBlockRenderer();
+        //renderer.setBlockHeight(histogram.yAxis().binWidth(0));
+        //renderer.setBlockWidth(histogram.xAxis().binWidth(0));
         
         // Calculate the lower and upper Z value bounds for the Dataset.
         Bounds bounds = adapter.recomputeZBounds();
@@ -249,13 +251,19 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @return
      */
     public JFreeChart createBoxPlot(Histogram2DAdapter adapter, IPlotterStyle style) {
-                
+        
+        System.out.println("createBoxPlot");
+        
         IHistogram2D histogram = adapter.getHistogram();
+        System.out.println("# entries = " + histogram.entries());
 
         // Setup the renderer.
-        XYBoxRenderer renderer = new XYBoxRenderer(histogram.xAxis().binWidth(0), histogram.yAxis().binWidth(0));
-        if (histogram.entries() > 0)
+        //XYBoxRenderer renderer = new XYBoxRenderer(histogram.xAxis().binWidth(0), histogram.yAxis().binWidth(0));
+        XYVariableBinWidthBoxRenderer renderer = new XYVariableBinWidthBoxRenderer();
+        if (histogram.entries() > 0) {
+            System.out.println("set renderer max Z = " + adapter.getZBounds(0).getMaximum());
             renderer.setMaximumValue(adapter.getZBounds(0).getMaximum());
+        }
 
         // Create the plot.
         XYPlot plot = new XYPlot(adapter, null, null, renderer);        
@@ -279,15 +287,15 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         xAxis.setLowerBound(h2d.xAxis().binLowerEdge(0));
         xAxis.setUpperBound(h2d.xAxis().binUpperEdge(h2d.xAxis().bins() - 1));
         //xAxis.setAutoRange(false);
-        //System.out.println("x lower bound = " + h2d.xAxis().binLowerEdge(0));
-        //System.out.println("x upper bound = " + h2d.xAxis().binUpperEdge(h2d.xAxis().bins() - 1));
+        System.out.println("x lower bound = " + h2d.xAxis().binLowerEdge(0));
+        System.out.println("x upper bound = " + h2d.xAxis().binUpperEdge(h2d.xAxis().bins() - 1));
         
         NumberAxis yAxis = new NumberAxis(labels[1]);
         yAxis.setLowerBound(h2d.yAxis().binLowerEdge(0));
         yAxis.setUpperBound(h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
         //yAxis.setAutoRange(false);
-        //System.out.println("y lower bound = " + h2d.yAxis().binLowerEdge(0));
-        //System.out.println("y upper bound = " + h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
+        System.out.println("y lower bound = " + h2d.yAxis().binLowerEdge(0));
+        System.out.println("y upper bound = " + h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
                 
         chart.getXYPlot().setDomainAxis(xAxis);
         chart.getXYPlot().configureDomainAxes();

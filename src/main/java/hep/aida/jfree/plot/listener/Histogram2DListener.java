@@ -5,7 +5,8 @@ import hep.aida.jfree.converter.Histogram2DConverter;
 import hep.aida.jfree.dataset.Bounds;
 import hep.aida.jfree.dataset.Histogram2DAdapter;
 import hep.aida.jfree.renderer.AbstractPaintScale;
-import hep.aida.jfree.renderer.XYBoxRenderer;
+import hep.aida.jfree.renderer.XYVariableBinWidthBlockRenderer;
+import hep.aida.jfree.renderer.XYVariableBinWidthBoxRenderer;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
@@ -43,9 +44,9 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
         Bounds zBounds = adapter.recomputeZBounds();
         
         if (zBounds.isValid()) {        
-            if (plot.getRenderer() instanceof XYBlockRenderer) {
+            if (plot.getRenderer() instanceof XYVariableBinWidthBlockRenderer) {
                 updateColorMap(plot, zBounds);
-            } else if (plot.getRenderer() instanceof XYBoxRenderer) {
+            } else if (plot.getRenderer() instanceof XYVariableBinWidthBoxRenderer) {
                 updateBoxPlot(plot, zBounds);
             }
         }
@@ -56,13 +57,13 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
 
     private void updateBoxPlot(XYPlot plot, Bounds zBounds) {
         // Update box plot bounds.
-        ((XYBoxRenderer)plot.getRenderer()).setMaximumValue(zBounds.getMaximum());
+        ((XYVariableBinWidthBoxRenderer)plot.getRenderer()).setMaximumValue(zBounds.getMaximum());
     }
 
     private void updateColorMap(XYPlot plot, Bounds zBounds) {
                         
         // Set the new Z bounds on the PaintScale.        
-        PaintScale scale = ((XYBlockRenderer) plot.getRenderer()).getPaintScale();
+        PaintScale scale = ((XYVariableBinWidthBlockRenderer) plot.getRenderer()).getPaintScale();
         if (scale instanceof AbstractPaintScale) {
             //((AbstractPaintScale) scale).setBounds(zBounds.getMinimum(), zBounds.getMaximum());
             ((AbstractPaintScale) scale).setBounds(0., zBounds.getMaximum());

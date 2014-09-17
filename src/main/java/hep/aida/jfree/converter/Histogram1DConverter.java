@@ -1,9 +1,12 @@
 package hep.aida.jfree.converter;
 
+import static hep.aida.jfree.dataset.Histogram1DAdapter.ERRORS;
+import static hep.aida.jfree.dataset.Histogram1DAdapter.POINTS;
+import static hep.aida.jfree.dataset.Histogram1DAdapter.STEPS;
+import static hep.aida.jfree.dataset.Histogram1DAdapter.VALUES;
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.dataset.Histogram1DAdapter;
-import static hep.aida.jfree.dataset.Histogram1DAdapter.*;
 
 import java.awt.Color;
 
@@ -17,27 +20,25 @@ import org.jfree.chart.renderer.xy.XYErrorRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
+import org.jfree.data.Range;
 import org.jfree.data.RangeType;
 import org.jfree.data.xy.XYDataset;
 
 /**
+ * Convert an AIDA <code>IHistogram1D</code> to a <code>JFreeChart</code> object.
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
 public class Histogram1DConverter implements Converter<IHistogram1D> {
 
-    public static final int STEP_DATA = 0;
-    public static final int BAR_DATA = 1;
-    public static final int POINT_DATA = 2;
-    public static final int ERROR_DATA = 3;
-
+    static double DEFAULT_Y_AXIS_MARGIN = 0.1;
+    
     public Class<IHistogram1D> convertsType() {
         return IHistogram1D.class;
     }
 
     public JFreeChart convert(IHistogram1D histogram, IPlotterStyle style) {
         
-        // Create the backing datasets which are just 
-        // adapters to the AIDA 1D histogram type.
+        // Create the backing datasets, which are actually adapters.
         XYDataset[] datasets = createDatasets(histogram);
 
         // Create array for the renderers.
@@ -75,14 +76,14 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         
         // Configure X axis.
         NumberAxis xAxis = new NumberAxis(labels[0]);
-        xAxis.setLowerBound(histogram.axis().binLowerEdge(0));
-        xAxis.setUpperBound(histogram.axis().binUpperEdge(histogram.axis().bins() - 1));
-        xAxis.setAutoRange(false);
+        xAxis.setAutoRange(true);
+        xAxis.setDefaultAutoRange(new Range(histogram.axis().lowerEdge(), histogram.axis().upperEdge()));
         
         // Configure Y axis.
         NumberAxis yAxis = new NumberAxis(labels[1]);
         yAxis.setAutoRange(true);
         yAxis.setAutoRangeIncludesZero(true);
+        yAxis.setAutoRangeMinimumSize(histogram.maxBinHeight() + (histogram.maxBinHeight() * DEFAULT_Y_AXIS_MARGIN));
         yAxis.setRangeType(RangeType.POSITIVE);
 
         // Create the plot without any data.
@@ -102,6 +103,8 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
 
         // Apply the default theme.
         ChartFactory.getChartTheme().apply(chart);
+        
+        //chart.fireChartChanged();
 
         return chart;
     }

@@ -25,5 +25,6 @@ public interface Converter<T> {
      * @param style The style settings.
      * @return The chart.
      */
+    // FIXME: This should return an XYPlot and not a JFreeChart object.
     JFreeChart convert(T object, IPlotterStyle style);
 }

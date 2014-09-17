@@ -2,9 +2,7 @@ package hep.aida.jfree.plot.style.converter;
 
 import static hep.aida.jfree.dataset.Histogram1DAdapter.ERRORS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.POINTS;
-import static hep.aida.jfree.dataset.Histogram1DAdapter.STEPS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.VALUES;
-import static hep.aida.ref.plotter.Style.ERRORBAR_DECORATION;
 import hep.aida.IBaseHistogram;
 import hep.aida.IDataStyle;
 import hep.aida.IFillStyle;
@@ -15,6 +13,7 @@ import hep.aida.IPlotterStyle;
 import hep.aida.jfree.plot.style.util.ColorUtil;
 import hep.aida.jfree.plot.style.util.MarkerUtil;
 import hep.aida.jfree.plot.style.util.StrokeUtil;
+import hep.aida.ref.plotter.Style;
 
 import java.awt.Color;
 import java.awt.Shape;
@@ -102,7 +101,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
         
         if (hist instanceof IHistogram1D) {
             if (lineStyle.isVisible()) {
-                // Set the outline color of the bars.
+                // Set the outline color of the bars in the renderer.
                 XYItemRenderer barRenderer = plot.getRenderer(VALUES);
                 barRenderer.setSeriesVisible(VALUES, true);
                 barRenderer.setSeriesOutlineStroke(VALUES, stroke);
@@ -110,14 +109,15 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
             } else {
                 if (!style.dataStyle().fillStyle().isVisible()) {
 
-                    // If lines nor fill are visible, then turn off the bar chart renderer.
+                    // If lines and fill are both turned off, then turn off the bar chart renderer entirely.
                     plot.getRenderer(VALUES).setSeriesVisible(VALUES, false);
 
-                    // Turn on the step renderer.
-                    XYItemRenderer stepRenderer = plot.getRenderer(STEPS);
-                    stepRenderer.setSeriesVisible(STEPS, true);
-                    stepRenderer.setSeriesPaint(STEPS, color);
-                    stepRenderer.setSeriesStroke(STEPS, stroke);
+                    // FIXME: Determine if this should actually happen here!!!
+                    // Turn on the step renderer by default. 
+                    //XYItemRenderer stepRenderer = plot.getRenderer(STEPS);
+                    //stepRenderer.setSeriesVisible(STEPS, true);
+                    //stepRenderer.setSeriesPaint(STEPS, color);
+                    //stepRenderer.setSeriesStroke(STEPS, stroke);
                 }
             }
         }
@@ -152,7 +152,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param style
      */
     protected void applyErrorBarStyle(JFreeChart chart, IPlotterStyle style) {
-
+                        
         // Get the error renderer.
         XYErrorRenderer renderer = (XYErrorRenderer) chart.getXYPlot().getRenderer(ERRORS);
 
@@ -160,14 +160,16 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
         ILineStyle errorStyle = style.dataStyle().errorBarStyle();
 
         // Set invisible if selected.
-        if (errorStyle.isVisible()) {
-
+        if (errorStyle.isVisible()) {               
+            
+            // Turn on display of errors in the renderer.
             renderer.setSeriesVisible(ERRORS, true);
             
-            // Set the line color.
+            // Set the renderer's line color.
             Color errorColor = ColorUtil.toColor(errorStyle, DEFAULT_LINE_COLOR);
-            if (errorColor != null)
+            if (errorColor != null) {
                 renderer.setSeriesPaint(ERRORS, errorColor);
+            }
 
             // Create the stroke from the error line style.
             Stroke stroke = StrokeUtil.toStroke(errorStyle);
@@ -175,10 +177,14 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
             // Set the stroke on the renderer.
             renderer.setSeriesStroke(ERRORS, stroke);
 
+            //
+            // FIXME: Need to make sure cap length is handled correctly here...
+            //
+            
             // Default cap length.
             // renderer.setCapLength(4.0f);
             // Error bar decoration.
-            String decoration = errorStyle.parameterValue(ERRORBAR_DECORATION);
+            String decoration = errorStyle.parameterValue(Style.ERRORBAR_DECORATION);
             if (decoration != null) {
                 float capLength = Float.parseFloat(decoration);
                 if (capLength == 0.f) {

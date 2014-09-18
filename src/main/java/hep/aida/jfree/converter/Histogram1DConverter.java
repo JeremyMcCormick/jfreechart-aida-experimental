@@ -30,7 +30,8 @@ import org.jfree.data.xy.XYDataset;
  */
 public class Histogram1DConverter implements Converter<IHistogram1D> {
 
-    static double DEFAULT_Y_AXIS_MARGIN = 0.1;
+    static final double DEFAULT_X_AXIS_MARGIN = 0.05;
+    static final double DEFAULT_Y_AXIS_MARGIN = 0.1;
     
     public Class<IHistogram1D> convertsType() {
         return IHistogram1D.class;
@@ -78,12 +79,15 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         NumberAxis xAxis = new NumberAxis(labels[0]);
         xAxis.setAutoRange(true);
         xAxis.setDefaultAutoRange(new Range(histogram.axis().lowerEdge(), histogram.axis().upperEdge()));
+        xAxis.setUpperMargin(DEFAULT_X_AXIS_MARGIN);
         
         // Configure Y axis.
         NumberAxis yAxis = new NumberAxis(labels[1]);
         yAxis.setAutoRange(true);
         yAxis.setAutoRangeIncludesZero(true);
-        yAxis.setAutoRangeMinimumSize(histogram.maxBinHeight() + (histogram.maxBinHeight() * DEFAULT_Y_AXIS_MARGIN));
+        yAxis.setUpperMargin(DEFAULT_Y_AXIS_MARGIN);
+        if (histogram.maxBinHeight() > 0.0)
+            yAxis.setAutoRangeMinimumSize(histogram.maxBinHeight());
         yAxis.setRangeType(RangeType.POSITIVE);
 
         // Create the plot without any data.

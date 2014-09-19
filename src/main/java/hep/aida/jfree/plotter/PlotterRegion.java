@@ -189,20 +189,17 @@ public class PlotterRegion extends DummyPlotterRegion {
      * based on height, width, x and y. 
      * @param parentPanel
      */
-    // FIXME: It might be better to have the PlotterRegion take a parent JPanel when it is constructed.
     void addToParentPanel(JPanel parentPanel) {
-        if (parentPanel != null)
-            parentPanel.add(
-                    chartPanel, 
-                    new PercentLayout.Constraint(
-                            x() * 100,
-                            y() * 100,
-                            width() * 100,
-                            height() * 100));
-        else
-            throw new RuntimeException("The parent JPanel points to null.");
-    }    
-            
+        if (parentPanel != null) {
+            if (chartPanel != null) {
+                parentPanel.add(chartPanel, 
+                        new PercentLayout.Constraint(x() * 100, y() * 100, width() * 100, height() * 100));
+            }
+        } else {
+            throw new RuntimeException("The parent JPanel is null.");
+        }
+    }
+
     /**
      * Add a new histogram to the chart, which will either create the chart for the 
      * entire region or overlay the histogram onto an existing chart.

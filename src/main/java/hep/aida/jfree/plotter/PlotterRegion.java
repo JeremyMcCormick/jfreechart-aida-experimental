@@ -16,6 +16,8 @@ import hep.aida.ref.plotter.BaseStyle;
 import hep.aida.ref.plotter.DummyPlotterRegion;
 import jas.util.layout.PercentLayout;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -300,13 +302,25 @@ public class PlotterRegion extends DummyPlotterRegion {
         // The new chart becomes the base chart for this region.
         chart = newChart;
 
-        if (chartPanel == null)
+        if (chartPanel == null) {
             // Create the JPanel for the region.
             chartPanel = new ChartPanel(chart);
-        else 
+            ChartPanelMouseListener mouseListener = new ChartPanelMouseListener(chartPanel, this);
+            
+            // Just a test.  Should add PlotterRegionListener here.
+            mouseListener.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    System.out.println("actionPerformed");
+                    System.out.println("  " + evt.getSource().getClass().getCanonicalName());
+                    System.out.println("  " + evt.getActionCommand());
+                }
+            });
+            chartPanel.addMouseListener(mouseListener);
+        } else { 
             // Reset the chart on the existing panel.
             chartPanel.setChart(chart);
-
+        }
+        
         // Apply region styles to the new panel. Only the base chart has its own JPanel.
         if (styleConverter != null) {
             styleConverter.getChartState().setPanel(chartPanel);

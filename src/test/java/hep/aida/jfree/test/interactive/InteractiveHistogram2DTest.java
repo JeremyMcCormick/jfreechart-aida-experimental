@@ -12,11 +12,15 @@ import java.util.Random;
  */
 public class InteractiveHistogram2DTest extends AbstractPlotTest {
 
+    public InteractiveHistogram2DTest() {
+        setBatchMode(false);
+        setWaitTime(30000);
+    }
 
-    public void test() {
-
+    public void testBoxPlot() {
+        
         // Create a 2D histogram.
-        IHistogram2D h2d = histogramFactory.createHistogram2D("h2d", 50, 0., 500., 50, 0., 500.);
+        IHistogram2D h2d = histogramFactory.createHistogram2D("h2d", 2, 0., 2., 2, 0., 2.);
 
         // Set labels for the axes.
         h2d.annotation().addItem("xAxisLabel", h2d.title() + " X");
@@ -55,8 +59,8 @@ public class InteractiveHistogram2DTest extends AbstractPlotTest {
         // Fill the histogram with random data.
         
         Random rand = new Random();
-        for (int i = 0; i < 100000; i++) {
-            h2d.fill(rand.nextInt(500), rand.nextInt(500));            
+        for (int i = 0; i < 1000; i++) {
+            h2d.fill(rand.nextDouble() * 2.0, rand.nextDouble() * 2.0);            
         }
         
         mode();

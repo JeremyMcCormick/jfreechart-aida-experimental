@@ -19,6 +19,7 @@ import jas.util.layout.PercentLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -49,8 +50,9 @@ public class PlotterRegion extends DummyPlotterRegion {
     ChartPanel chartPanel;
     JFreeChart chart;
             
-    List<PlotListener<?>> listeners = new ArrayList<PlotListener<?>>();
+    List<PlotListener<?>> plotListeners = new ArrayList<PlotListener<?>>();
     List<ObjectStyle> objectStyles = new ArrayList<ObjectStyle>();
+    List<PlotterRegionListener> plotterRegionListeners = new ArrayList<PlotterRegionListener>();
     
     // FIXME: Can this be initialized when the region is created?  Or can a static object be used?
     AbstractStyleConverter styleConverter;
@@ -69,6 +71,10 @@ public class PlotterRegion extends DummyPlotterRegion {
         this.y = y;
         this.w = w;
         this.h = h;
+    }
+    
+    public void addListener(PlotterRegionListener listener) {
+        plotterRegionListeners.add(listener);
     }
 
     /**
@@ -148,7 +154,7 @@ public class PlotterRegion extends DummyPlotterRegion {
         chartPanel.setChart(null);
         
         // Clear the list of listeners.
-        listeners.clear();
+        plotListeners.clear();
     }
     
     public void setTitle(String title) {
@@ -163,7 +169,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
 
     public synchronized void update() {
-        for (PlotListener<?> listener : listeners) {
+        for (PlotListener<?> listener : plotListeners) {
             listener.update();
         }
     }
@@ -182,6 +188,10 @@ public class PlotterRegion extends DummyPlotterRegion {
             }
         }
         return foundObjectStyles;
+    }
+    
+    public List<ObjectStyle> getObjectStyles() {
+        return Collections.unmodifiableList(objectStyles);
     }
     
     /* ---------------------------------------------------------------------------- */
@@ -305,16 +315,8 @@ public class PlotterRegion extends DummyPlotterRegion {
         if (chartPanel == null) {
             // Create the JPanel for the region.
             chartPanel = new ChartPanel(chart);
-            ChartPanelMouseListener mouseListener = new ChartPanelMouseListener(chartPanel, this);
-            
-            // Just a test.  Should add PlotterRegionListener here.
-            mouseListener.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    System.out.println("actionPerformed");
-                    System.out.println("  " + evt.getSource().getClass().getCanonicalName());
-                    System.out.println("  " + evt.getActionCommand());
-                }
-            });
+            ChartPanelMouseListener mouseListener = new ChartPanelMouseListener(this);            
+            mouseListener.addListeners(this.plotterRegionListeners);
             chartPanel.addMouseListener(mouseListener);
         } else { 
             // Reset the chart on the existing panel.
@@ -359,7 +361,7 @@ public class PlotterRegion extends DummyPlotterRegion {
         PlotListener<?> listener = PlotListenerFactory.createListener(hist, chart, datasetIndices);
         if (listener != null) {
             ((IsObservable) hist).addListener(listener);
-            this.listeners.add(listener);
+            this.plotListeners.add(listener);
         } else
             System.out.println("WARNING: No listener defined for plot " + hist.title() + " with type " + hist.getClass().getCanonicalName());               
     }

@@ -7,6 +7,7 @@ import static hep.aida.jfree.dataset.Histogram1DAdapter.VALUES;
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.dataset.Histogram1DAdapter;
+import hep.aida.jfree.renderer.Histogram1DErrorRenderer;
 
 import java.awt.Color;
 
@@ -51,7 +52,8 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         renderers[VALUES] = barRenderer;
 
         // Add error renderer that draws error bars and caps.
-        XYErrorRenderer errorRenderer = new XYErrorRenderer();
+        //XYErrorRenderer errorRenderer = new XYErrorRenderer();
+        XYErrorRenderer errorRenderer = new Histogram1DErrorRenderer();
         errorRenderer.setBaseShapesVisible(false);
         errorRenderer.setSeriesPaint(ERRORS, Color.black);
         renderers[ERRORS] = errorRenderer;

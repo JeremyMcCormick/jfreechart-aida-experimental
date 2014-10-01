@@ -16,38 +16,29 @@ import java.util.Random;
 public class Cloud1DTest extends AbstractPlotTest {
 
     public void test() {
-
-        Random rand = new Random();
-        ICloud1D c1d = histogramFactory.createCloud1D("c1d");
-        for (int i = 0; i < 100000; i++) {
-            c1d.fill(rand.nextDouble() * 100.);
-        }
+        
+        //ICloud1D c1d = histogramFactory.createCloud1D("c1d");
+        ICloud1D cloud = histogramFactory.createCloud1D("cloud", "cloud", 1000);
         
         // Set labels for axes automatically based on title
-        c1d.annotation().addItem("xAxisLabel", c1d.title() + " X");
-        c1d.annotation().addItem("yAxisLabel", c1d.title() + " Y");
+        cloud.annotation().addItem("xAxisLabel", cloud.title() + " X");
+        cloud.annotation().addItem("yAxisLabel", cloud.title() + " Y");
 
-        // Create 3x3 regions for showing plots
+        // Create region for showing plots
         plotter.createRegion();
 
         IPlotterStyle pstyle = plotter.style();
 
         // data fill color
-        // pstyle.dataStyle().fillStyle().setColor("white");
         pstyle.dataStyle().fillStyle().setVisible(false);
-
         pstyle.dataStyle().outlineStyle().setVisible(false);
-        // pstyle.dataStyle().outlineStyle().setColor("black");
-        // pstyle.dataStyle().outlineStyle().setVisible(false);
-
         pstyle.dataStyle().lineStyle().setVisible(false);
-        
+                
         pstyle.gridStyle().setVisible(false);
 
         // title style
         ITextStyle titleStyle = pstyle.titleStyle().textStyle();
         titleStyle.setBold(true);
-        // titleStyle.setItalic(true);
         titleStyle.setFontSize(30.);
         titleStyle.setFont("Arial");
         titleStyle.setColor("black");
@@ -58,7 +49,6 @@ public class Cloud1DTest extends AbstractPlotTest {
         axes.add(pstyle.yAxisStyle());
         for (IAxisStyle axisStyle : axes) {
             axisStyle.labelStyle().setBold(true);
-            // axisStyle.labelStyle().setItalic(true);
             axisStyle.labelStyle().setFont("Helvetica");
             axisStyle.labelStyle().setFontSize(15);
             axisStyle.labelStyle().setColor("black");
@@ -72,10 +62,25 @@ public class Cloud1DTest extends AbstractPlotTest {
 
         // background color
         // pstyle.regionBoxStyle().backgroundStyle().setColor("white");
-
-        // Plot histograms into regions
-        plotter.region(0).plot(c1d);
+                
+        // Plot histograms into region.
         
-        mode();
+        plotter.region(0).plot(cloud);
+        plotter.show();
+        
+        Random rand = new Random();
+        for (int i = 0; i < 10000; i++) {
+            cloud.fill(rand.nextDouble() * 100.);
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }
+        }
+        
+        while (true) {
+            
+        }
+        //mode();
     }
 }

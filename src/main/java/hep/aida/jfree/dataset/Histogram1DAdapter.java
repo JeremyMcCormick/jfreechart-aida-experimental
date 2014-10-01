@@ -38,7 +38,7 @@ public class Histogram1DAdapter extends AbstractIntervalXYDataset {
         "points"
     };
     
-    IHistogram1D histogram;
+    protected IHistogram1D histogram;
     
     public Histogram1DAdapter(IHistogram1D histogram) {
         this.histogram = histogram;

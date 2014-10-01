@@ -6,7 +6,6 @@ import hep.aida.IPlotterStyle;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.data.RangeType;
 import org.jfree.data.xy.XYDataset;
 
 /**
@@ -33,19 +32,12 @@ public class Cloud1DConverter implements Converter<ICloud1D> {
         // Set the axis labels.
         String[] labels = ConverterUtil.getAxisLabels(cloud);
         
-        // Configure X axis.
-        NumberAxis xAxis = new NumberAxis(labels[0]);
-        xAxis.setAutoRange(true);
-        xAxis.setUpperMargin(DEFAULT_X_AXIS_MARGIN);
-        
-        // Configure Y axis.
-        NumberAxis yAxis = new NumberAxis(labels[1]);
-        yAxis.setAutoRange(true);
-        yAxis.setAutoRangeIncludesZero(true);
-        yAxis.setUpperMargin(DEFAULT_Y_AXIS_MARGIN);
-        yAxis.setRangeType(RangeType.POSITIVE);
-
-        // Create the chart with the histogram data.
-        return ConverterUtil.createHistogramChart(cloud.title(), xAxis, yAxis, datasets, renderers);        
+        // Create the chart with the data.
+        return ConverterUtil.createHistogramChart(
+                cloud.title(), 
+                new NumberAxis(labels[0]), 
+                new NumberAxis(labels[1]), 
+                datasets, 
+                renderers);        
     }
 }

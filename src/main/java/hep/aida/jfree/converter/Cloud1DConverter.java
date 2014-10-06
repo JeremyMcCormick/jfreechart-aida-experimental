@@ -2,6 +2,7 @@ package hep.aida.jfree.converter;
 
 import hep.aida.ICloud1D;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.dataset.Cloud1DAdapter;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -25,10 +26,10 @@ public class Cloud1DConverter implements Converter<ICloud1D> {
     public JFreeChart convert(ICloud1D cloud, IPlotterStyle style) {
         
         // Create the backing datasets, which are actually adapters.
-        XYDataset[] datasets = ConverterUtil.createDatasets(cloud);
+        XYDataset[] datasets = createDatasets(cloud);
         
         // Create the renderers.
-        XYItemRenderer[] renderers = ConverterUtil.createHistogramRenderers(datasets);
+        XYItemRenderer[] renderers = Histogram1DConverter.createHistogramRenderers(datasets);
                        
         // Set the axis labels.
         String[] labels = ConverterUtil.getAxisLabels(cloud);
@@ -47,11 +48,20 @@ public class Cloud1DConverter implements Converter<ICloud1D> {
         yAxis.setUpperMargin(0.1);
         
         // Create the chart with the data.
-        return ConverterUtil.createHistogramChart(
+        return Histogram1DConverter.createHistogramChart(
                 cloud.title(), 
                 xAxis, 
                 yAxis, 
                 datasets, 
                 renderers);        
     }
+    
+    static XYDataset[] createDatasets(ICloud1D cloud) {
+        XYDataset[] datasets = new XYDataset[4];
+        Cloud1DAdapter adapter = new Cloud1DAdapter(cloud);
+        for (int i=0; i<=3; i++) {
+            datasets[i] = adapter;
+        }
+        return datasets;
+    }    
 }

@@ -15,9 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
- * This class implements a JFreeChart <tt>IPlotter</tt> by extending AIDA's
- * <tt>DummyPlotter</tt> class.  It can be run in standalone mode (the default)
- * or embedded in another Swing component.
+ * This class implements a JFreeChart <code>IPlotter</code> by extending AIDA's <code>DummyPlotter</code> class.  
+ * It can be run in standalone mode (the default) or embedded in another Swing component.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
@@ -39,6 +38,10 @@ public class Plotter extends DummyPlotter {
         configureRootPanel();
     }
     
+    /**
+     * Add a PlotterRegionListener which will be registered with all regions created by this plotter.
+     * @param listener The PlotterRegionListener to register with created regions.
+     */
     public void addPlotterRegionListener(PlotterRegionListener listener) {
         plotterRegionListeners.add(listener);
     }
@@ -152,9 +155,8 @@ public class Plotter extends DummyPlotter {
         // Create a new region with full width, height, x position and y position parameters.
         PlotterRegion region = new PlotterRegion(this.style(), x, y, width, height);
         
-        for (PlotterRegionListener listener : this.plotterRegionListeners) {
-            //System.out.println("adding listener " + listener.getClass().getCanonicalName() + " to region " + region.title());
-            region.addListener(listener);
+        for (PlotterRegionListener listener : this.plotterRegionListeners) {            
+            region.state.addRegionListener(listener);
         }                  
         
         // This makes sure the region by default has a style object that chains back to the plotter 

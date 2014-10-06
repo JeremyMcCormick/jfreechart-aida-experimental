@@ -58,4 +58,9 @@ class PlotterRegionState {
         return Collections.unmodifiableList(objects);
     }
     
+    void clear() {
+        plotListeners.clear();
+        objectStyles.clear();
+        regionListeners.clear();
+    }
 }

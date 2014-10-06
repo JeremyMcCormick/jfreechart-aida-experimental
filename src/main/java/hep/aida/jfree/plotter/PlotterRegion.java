@@ -12,12 +12,9 @@ import hep.aida.jfree.plot.style.converter.AbstractStyleConverter;
 import hep.aida.jfree.plot.style.converter.StyleConverter;
 import hep.aida.jfree.plot.style.converter.StyleConverterFactory;
 import hep.aida.ref.event.IsObservable;
-import hep.aida.ref.plotter.BaseStyle;
 import hep.aida.ref.plotter.DummyPlotterRegion;
 import jas.util.layout.PercentLayout;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,8 +37,6 @@ import org.jfree.chart.plot.XYPlot;
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-// TODO: Add implementations for remaining plot methods from IPlotterRegion interface.
-// TODO: Add connection between functions and data they are fitting for dynamic updating (code may not belong here).
 public class PlotterRegion extends DummyPlotterRegion {
 
     double x, y, w, h;
@@ -221,7 +216,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      * @return
      */
     private JFreeChart add(IBaseHistogram histogram, IPlotterStyle style, Converter<?> converter) {
-        
+               
         // Create a new chart object.
         JFreeChart chart = createChart(histogram, style, converter);
         
@@ -263,7 +258,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      */
     // TODO: Handle options string.
     private void plotObject(Object object, IPlotterStyle userStyle, String options) {
-
+        
         // Is this an AIDA base histogram?
         if (object instanceof IBaseHistogram) {
 
@@ -277,12 +272,12 @@ public class PlotterRegion extends DummyPlotterRegion {
                 objectStyles.add(new ObjectStyle(object, userStyle));
 
                 // Does the user style not have a parent set?
-                if (((BaseStyle) userStyle).parentList().size() == 0) {
+                //if (((BaseStyle) userStyle).parentList().size() == 0) {
                     // Is the user style the same as the region style?
-                    if (userStyle != regionStyle)
+                //    if (userStyle != regionStyle)
                         // Set the parent style to the region so that cascading occurs.
-                        ((BaseStyle) userStyle).setParent(regionStyle);
-                }
+                //        ((BaseStyle) userStyle).setParent(regionStyle);
+                //}
 
                 // Create a new chart, or overlay a histogram onto the existing chart.
                 add((IBaseHistogram) object, userStyle, converter);
@@ -331,8 +326,7 @@ public class PlotterRegion extends DummyPlotterRegion {
 
         // Add a listener for receiving callbacks when the underlying histogram is updated,
         // so that it can be redrawn on the fly.
-        int[] datasetIndices = getDatasetIndices(chart.getXYPlot(), 0);
-        addHistogramListener(histogram, datasetIndices);
+        addHistogramListener(histogram);        
     }
 
     private JFreeChart createChart(IBaseHistogram hist, IPlotterStyle style, Converter converter) {
@@ -357,8 +351,8 @@ public class PlotterRegion extends DummyPlotterRegion {
         return newChart;
     }
 
-    private void addHistogramListener(IBaseHistogram hist, int[] datasetIndices) {
-        PlotListener<?> listener = PlotListenerFactory.createListener(hist, chart, datasetIndices);
+    private void addHistogramListener(IBaseHistogram hist) {
+        PlotListener<?> listener = PlotListenerFactory.createListener(hist, chart);
         if (listener != null) {
             ((IsObservable) hist).addListener(listener);
             this.plotListeners.add(listener);
@@ -382,26 +376,23 @@ public class PlotterRegion extends DummyPlotterRegion {
         return datasetIndices;
     }
 
-    private void overlay(IBaseHistogram hist, XYPlot overlayPlot) {
-
-        // Get array containing indices of datasets which will be used by the listener.
-        int[] datasetIndices = getDatasetIndices(overlayPlot, chart.getXYPlot().getDatasetCount());
-
+    private void overlay(IBaseHistogram histogram, XYPlot overlayPlot) {
+        
         // The overlay plot's datasets will be appended to the current chart starting at this index.
         int datasetIndex = chart.getXYPlot().getDatasetCount();
 
         // Loop over all the datasets within the overlay plot.
         for (int i = 0, n = overlayPlot.getDatasetCount(); i < n; i++) {
 
-            // Set the dataset and renderer for the overlay plot using the .
+            // Set the dataset and renderer for the overlay plot in the new chart.
             chart.getXYPlot().setDataset(datasetIndex, overlayPlot.getDataset(i));
             chart.getXYPlot().setRenderer(datasetIndex, overlayPlot.getRenderer(i));
-
+            
             // Increment the index for the next dataset and renderer pair.
             ++datasetIndex;
         }
 
         // Add a listener which will handle updates to the overlay histogram.
-        addHistogramListener(hist, datasetIndices);
+        addHistogramListener(histogram);
     }
 }

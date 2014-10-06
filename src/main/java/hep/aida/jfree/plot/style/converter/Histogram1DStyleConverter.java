@@ -93,32 +93,30 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param style
      */
     protected void applyDataLineStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
-        
+                
         XYPlot plot = chart.getXYPlot();
         ILineStyle lineStyle = style.dataStyle().lineStyle();
         Color color = ColorUtil.toColor(lineStyle, DEFAULT_LINE_COLOR);
         Stroke stroke = StrokeUtil.toStroke(lineStyle);
-        
-        if (hist instanceof IHistogram1D) {
-            if (lineStyle.isVisible()) {
-                // Set the outline color of the bars in the renderer.
-                XYItemRenderer barRenderer = plot.getRenderer(VALUES);
-                barRenderer.setSeriesVisible(VALUES, true);
-                barRenderer.setSeriesOutlineStroke(VALUES, stroke);
-                barRenderer.setSeriesOutlinePaint(VALUES, color);
-            } else {
-                if (!style.dataStyle().fillStyle().isVisible()) {
 
-                    // If lines and fill are both turned off, then turn off the bar chart renderer entirely.
-                    plot.getRenderer(VALUES).setSeriesVisible(VALUES, false);
+        if (lineStyle.isVisible()) {
+            // Set the outline color of the bars in the renderer.
+            XYItemRenderer barRenderer = plot.getRenderer(VALUES);
+            barRenderer.setSeriesVisible(VALUES, true);
+            barRenderer.setSeriesOutlineStroke(VALUES, stroke);
+            barRenderer.setSeriesOutlinePaint(VALUES, color);
+        } else {
+            if (!style.dataStyle().fillStyle().isVisible()) {
 
-                    // FIXME: Determine if this should actually happen here!!!
-                    // Turn on the step renderer by default. 
-                    //XYItemRenderer stepRenderer = plot.getRenderer(STEPS);
-                    //stepRenderer.setSeriesVisible(STEPS, true);
-                    //stepRenderer.setSeriesPaint(STEPS, color);
-                    //stepRenderer.setSeriesStroke(STEPS, stroke);
-                }
+                // If lines and fill are both turned off, then turn off the bar chart renderer entirely.
+                plot.getRenderer(VALUES).setSeriesVisible(VALUES, false);
+
+                // FIXME: Determine if this should actually happen here!           
+                // Turn on the step renderer by default.
+                // XYItemRenderer stepRenderer = plot.getRenderer(STEPS);
+                // stepRenderer.setSeriesVisible(STEPS, true);
+                // stepRenderer.setSeriesPaint(STEPS, color);
+                // stepRenderer.setSeriesStroke(STEPS, stroke);
             }
         }
     }
@@ -129,13 +127,11 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param hist
      * @param style
      */
-    protected void applyDataFillStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    protected void applyDataFillStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {                        
         XYPlot plot = chart.getXYPlot();
         IDataStyle dataStyle = style.dataStyle();
         IFillStyle dataFillStyle = dataStyle.fillStyle();
-
         XYItemRenderer renderer = plot.getRenderer(VALUES);
-
         if (dataFillStyle.isVisible()) {
             Color color = ColorUtil.toColor(dataFillStyle, DEFAULT_FILL_COLOR);
             renderer.setSeriesVisible(VALUES, true);

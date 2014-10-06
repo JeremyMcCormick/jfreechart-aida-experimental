@@ -6,10 +6,11 @@ import hep.aida.IPlotterStyle;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.RangeType;
 import org.jfree.data.xy.XYDataset;
 
 /**
- * Convert an AIDA <code>IHistogram1D</code> to a <code>JFreeChart</code> object.
+ * Convert an AIDA <code>ICloud1D</code> to a <code>JFreeChart</code> object.
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
 public class Cloud1DConverter implements Converter<ICloud1D> {
@@ -32,11 +33,24 @@ public class Cloud1DConverter implements Converter<ICloud1D> {
         // Set the axis labels.
         String[] labels = ConverterUtil.getAxisLabels(cloud);
         
+        // Configure the X axis.
+        NumberAxis xAxis = new NumberAxis(labels[0]);
+        xAxis.setAutoRange(true);
+        xAxis.setUpperMargin(0.05);
+        xAxis.setLowerMargin(0.05);
+        
+        // Configure the Y axis.
+        NumberAxis yAxis = new NumberAxis(labels[1]);
+        yAxis.setRangeType(RangeType.POSITIVE);
+        yAxis.setAutoRange(true);
+        yAxis.setAutoRangeIncludesZero(true);
+        yAxis.setUpperMargin(0.1);
+        
         // Create the chart with the data.
         return ConverterUtil.createHistogramChart(
                 cloud.title(), 
-                new NumberAxis(labels[0]), 
-                new NumberAxis(labels[1]), 
+                xAxis, 
+                yAxis, 
                 datasets, 
                 renderers);        
     }

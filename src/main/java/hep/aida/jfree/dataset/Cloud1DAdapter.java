@@ -11,15 +11,7 @@ public class Cloud1DAdapter extends Histogram1DAdapter {
         this.cloud = cloud;      
         checkConverted();
     }
-    
-    public int getSeriesCount() {
-        if (checkConverted()) {
-            return super.getSeriesCount();
-        } else {
-            return 0;
-        }
-    }
-    
+        
     public int getItemCount(int series) {
         if (checkConverted()) {
             return super.getItemCount(series);

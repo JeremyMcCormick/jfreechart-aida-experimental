@@ -12,8 +12,8 @@ public class Cloud2DListener extends PlotListener<ICloud2D> {
 
     ICloud2D cloud;
 
-    Cloud2DListener(ICloud2D cloud, JFreeChart chart, int[] datasetIndices) {
-        super(cloud, chart, datasetIndices);
+    Cloud2DListener(ICloud2D cloud, JFreeChart chart) {
+        super(cloud, chart);
         this.cloud = (ICloud2D) cloud;
     }
     

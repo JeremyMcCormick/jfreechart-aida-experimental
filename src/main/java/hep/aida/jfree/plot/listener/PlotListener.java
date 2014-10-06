@@ -10,8 +10,8 @@ import java.util.TimerTask;
 import org.jfree.chart.JFreeChart;
 
 /**
- * This listener class is assigned to histograms so that the JFreeChart backend
- * can update the plot graphics when fill methods are called through the AIDA API.
+ * This listener class is used to update the JFreeChart backend 
+ * on the fly as AIDA objects are changed.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
@@ -22,7 +22,6 @@ public abstract class PlotListener<T> implements AIDAListener {
     T plot;
     private final int DEFAULT_INTERVAL = 500; // in ms
     int updateInterval = DEFAULT_INTERVAL;
-    int[] datasetIndices;
     Timer updateTimer = new Timer();
 
     /**
@@ -31,12 +30,11 @@ public abstract class PlotListener<T> implements AIDAListener {
      * @param chart The corresponding chart for the histogram.
      * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
-    PlotListener(T plot, JFreeChart chart, int[] datasetIndices) {
+    PlotListener(T plot, JFreeChart chart) {
         if (!(plot instanceof AIDAObservable))
             throw new IllegalArgumentException("The plot object is not an instance of AIDAObservable.");
         this.chart = chart;
         this.plot = plot;
-        this.datasetIndices = datasetIndices;
     }
 
     /**
@@ -45,12 +43,11 @@ public abstract class PlotListener<T> implements AIDAListener {
      * @param chart The corresponding chart for the histogram.
      * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
-    PlotListener(T plot, JFreeChart chart, int[] datasetIndices, int updateInterval) {
+    PlotListener(T plot, JFreeChart chart, int updateInterval) {
         if (!(plot instanceof AIDAObservable))
             throw new IllegalArgumentException("The plot object is not an instance of AIDAObservable.");
         this.chart = chart;
         this.plot = plot;
-        this.datasetIndices = datasetIndices;
         this.updateInterval = updateInterval;
     }
 
@@ -80,9 +77,7 @@ public abstract class PlotListener<T> implements AIDAListener {
         }
 
         public void run() {
-            
-            //System.out.println("UpdateTask on thread " + Thread.currentThread().getId() + " for plot type " + plot.getClass().getCanonicalName());
-            
+                        
             // Update the plot.
             update();
 

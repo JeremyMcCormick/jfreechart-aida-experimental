@@ -15,15 +15,15 @@ import org.jfree.chart.JFreeChart;
  */
 public class PlotListenerFactory {
 
-    public static PlotListener createListener(Object plot, JFreeChart chart, int[] datasetIndices) {
+    public static PlotListener createListener(Object plot, JFreeChart chart) {
         if (plot instanceof IHistogram1D) {
-            return new Histogram1DListener((IHistogram1D)plot, chart, datasetIndices);
+            return new Histogram1DListener((IHistogram1D)plot, chart);
         } else if (plot instanceof ICloud1D) {
-            return new Cloud1DListener((ICloud1D)plot, chart, datasetIndices);
+            return new Cloud1DListener((ICloud1D)plot, chart);
         } else if (plot instanceof ICloud2D) {
-            return new Cloud2DListener((ICloud2D)plot, chart, datasetIndices);
+            return new Cloud2DListener((ICloud2D)plot, chart);
         } else if (plot instanceof IHistogram2D) {
-            return new Histogram2DListener((IHistogram2D)plot, chart, datasetIndices);
+            return new Histogram2DListener((IHistogram2D)plot, chart);
         } else {
             return null;
         }

@@ -11,7 +11,6 @@ import hep.aida.jfree.renderer.XYVariableBinWidthBoxRenderer;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.PaintScale;
-import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.title.PaintScaleLegend;
 import org.jfree.data.Range;
 
@@ -27,11 +26,8 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
     
     static private int updateInterval = 1000;
 
-    Histogram2DListener(IHistogram2D histogram, JFreeChart chart, int[] datasetIndices) {
-        super(histogram, chart, datasetIndices, updateInterval);
-        if (!(histogram instanceof IHistogram2D)) {
-            throw new IllegalArgumentException("histogram is not an instance of IHistogram2D.");
-        }
+    Histogram2DListener(IHistogram2D histogram, JFreeChart chart) {
+        super(histogram, chart, updateInterval); 
         this.histogram = (IHistogram2D) histogram;
     }
 

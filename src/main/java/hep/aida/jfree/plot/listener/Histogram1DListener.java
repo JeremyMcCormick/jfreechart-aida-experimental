@@ -16,11 +16,8 @@ public class Histogram1DListener extends PlotListener<IHistogram1D> {
 
     IHistogram1D histogram;
 
-    Histogram1DListener(IHistogram1D histogram, JFreeChart chart, int[] datasetIndices) {
-        super(histogram, chart, datasetIndices);
-        if (!(histogram instanceof IHistogram1D)) {
-            throw new IllegalArgumentException("histogram is not an instance of IHistogram1D.");
-        }
+    Histogram1DListener(IHistogram1D histogram, JFreeChart chart) {
+        super(histogram, chart);
         this.histogram = (Histogram1D) histogram;
     }
     

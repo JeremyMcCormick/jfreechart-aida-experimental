@@ -9,12 +9,12 @@ public class FunctionListener extends PlotListener<IFunction> {
 
     IFunction function;
     
-    public FunctionListener(IFunction function, JFreeChart chart, int[] datasetIndices) {
-        super(function, chart, datasetIndices);
+    public FunctionListener(IFunction function, JFreeChart chart) {
+        super(function, chart);
         this.function = function;
     }
     
     public synchronized void update() {
-        chart.fireChartChanged();
+        super.update();
     }    
 }

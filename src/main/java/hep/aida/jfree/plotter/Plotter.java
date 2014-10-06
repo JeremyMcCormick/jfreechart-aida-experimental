@@ -15,7 +15,7 @@ import javax.swing.JPanel;
  * <p>
  * This class implements a JFreeChart <code>IPlotter</code> by extending AIDA's <code>DummyPlotter</code> class.
  * <p>
- * By default, it has behavior which is suitable for embedding into external Swing components. 
+ * By default, it has behavior which is suitable for embedding into external Swing components such as JPanels. 
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
@@ -47,9 +47,8 @@ public class Plotter extends DummyPlotter {
     /**
      * Show the regions of this plotter, first setting them up if necessary.
      */
-    public void show() {        
+    public void show() {
         plotRegions();
-        //redraw();
     }
 
     /**
@@ -160,28 +159,5 @@ public class Plotter extends DummyPlotter {
             }
             isSetup = true;
         }
-    }
-           
-    /**
-     * This will redraw the frame in which the the plotter's regions are embedded,
-     * whether or not it is being run embedded or standalone.
-     */
-    /*
-    void redraw() {
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                public void run() {
-                    Component c = SwingUtilities.getRoot(rootPanel);
-                    if (c != null) {
-                        c.invalidate();
-                        c.validate();
-                        c.repaint();
-                    }
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    */
+    }           
 }

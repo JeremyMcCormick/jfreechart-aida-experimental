@@ -14,7 +14,7 @@ import org.jfree.chart.plot.XYPlot;
  * simplifies the external API of the style converter classes, which can get 
  * their information from this state object.
  *  
- * @author jeremym
+ * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  *
  */
 public final class ChartState {

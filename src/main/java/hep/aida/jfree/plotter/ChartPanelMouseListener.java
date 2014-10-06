@@ -6,6 +6,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * A <code>MouseListener</code> that will activate the {@link PlotterRegionListener}s
+ * for a JFreeChart <code>ChartPanel</code>.
+ * 
+ * @author Jeremy McCormick <jeremym@slac.stanford.edu>
+ */
 public class ChartPanelMouseListener implements MouseListener {
 
     PlotterRegion plotterRegion;
@@ -27,9 +33,7 @@ public class ChartPanelMouseListener implements MouseListener {
     
     @Override
     public void mouseClicked(MouseEvent e) {
-        //System.out.println("ChartPanelMouseListener.mouseClicked");
         for (PlotterRegionListener listener : listeners) {
-            //System.out.println("activating listener " + listener.getClass().getCanonicalName() + " on region " + plotterRegion.title());
             listener.regionSelected(plotterRegion);
         }
     }

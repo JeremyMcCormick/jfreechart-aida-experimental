@@ -19,10 +19,10 @@ public class StandalonePlotter extends Plotter {
     }
         
     /**
-     * Show the regions of this plotter, first setting them up if necessary.
+     * Show the regions of this plotter in a standalone JFrame.
      */
     public void show() {
-        plotRegions();
+        super.show();
         if (this.frame == null)
             createFrame();     
         if (!frame.isVisible())

@@ -2,7 +2,10 @@ package hep.aida.jfree.plotter;
 
 import hep.aida.IPlotterStyle;
 
-
+/**
+ * A class for associating a plotter object with its style, as a pair.
+ * @author Jeremy McCormick <jeremym@slac.stanford.edu>
+ */
 public class ObjectStyle {
     
     Object object;

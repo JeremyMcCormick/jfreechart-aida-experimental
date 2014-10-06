@@ -16,7 +16,6 @@ import hep.aida.ref.plotter.DummyPlotterRegion;
 import jas.util.layout.PercentLayout;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -44,11 +43,9 @@ public class PlotterRegion extends DummyPlotterRegion {
     String title;       
     ChartPanel chartPanel;
     JFreeChart chart;
-            
-    List<PlotListener<?>> plotListeners = new ArrayList<PlotListener<?>>();
-    List<ObjectStyle> objectStyles = new ArrayList<ObjectStyle>();
-    List<PlotterRegionListener> plotterRegionListeners = new ArrayList<PlotterRegionListener>();
-    
+        
+    PlotterRegionState state = new PlotterRegionState();
+                
     // FIXME: Can this be initialized when the region is created?  Or can a static object be used?
     AbstractStyleConverter styleConverter;
 
@@ -69,7 +66,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
     
     public void addListener(PlotterRegionListener listener) {
-        plotterRegionListeners.add(listener);
+        state.addRegionListener(listener);
     }
 
     /**
@@ -149,7 +146,7 @@ public class PlotterRegion extends DummyPlotterRegion {
         chartPanel.setChart(null);
         
         // Clear the list of listeners.
-        plotListeners.clear();
+        state.getPlotListeners().clear();
     }
     
     public void setTitle(String title) {
@@ -164,7 +161,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
 
     public synchronized void update() {
-        for (PlotListener<?> listener : plotListeners) {
+        for (PlotListener<?> listener : state.getPlotListeners()) {
             listener.update();
         }
     }
@@ -177,18 +174,14 @@ public class PlotterRegion extends DummyPlotterRegion {
      */
     public List<ObjectStyle> getObjectStyles(Object object) {
         List<ObjectStyle> foundObjectStyles = new ArrayList<ObjectStyle>();
-        for (ObjectStyle objectStyle : objectStyles) {
+        for (ObjectStyle objectStyle : state.getObjectStyles()) {
             if (objectStyle.object == object) {
                 foundObjectStyles.add(objectStyle);
             }
         }
         return foundObjectStyles;
     }
-    
-    public List<ObjectStyle> getObjectStyles() {
-        return Collections.unmodifiableList(objectStyles);
-    }
-    
+      
     /* ---------------------------------------------------------------------------- */
     
     /**
@@ -269,7 +262,7 @@ public class PlotterRegion extends DummyPlotterRegion {
             if (converter != null) {
 
                 // Create a reference between the user style and its object.
-                objectStyles.add(new ObjectStyle(object, userStyle));
+                state.addObjectStyle(new ObjectStyle(object, userStyle));
 
                 // Does the user style not have a parent set?
                 //if (((BaseStyle) userStyle).parentList().size() == 0) {
@@ -311,7 +304,7 @@ public class PlotterRegion extends DummyPlotterRegion {
             // Create the JPanel for the region.
             chartPanel = new ChartPanel(chart);
             ChartPanelMouseListener mouseListener = new ChartPanelMouseListener(this);            
-            mouseListener.addListeners(this.plotterRegionListeners);
+            mouseListener.addListeners(state.getRegionListeners());
             chartPanel.addMouseListener(mouseListener);
         } else { 
             // Reset the chart on the existing panel.
@@ -355,7 +348,7 @@ public class PlotterRegion extends DummyPlotterRegion {
         PlotListener<?> listener = PlotListenerFactory.createListener(hist, chart);
         if (listener != null) {
             ((IsObservable) hist).addListener(listener);
-            this.plotListeners.add(listener);
+            state.addPlotListener(listener);
         } else
             System.out.println("WARNING: No listener defined for plot " + hist.title() + " with type " + hist.getClass().getCanonicalName());               
     }
@@ -394,5 +387,9 @@ public class PlotterRegion extends DummyPlotterRegion {
 
         // Add a listener which will handle updates to the overlay histogram.
         addHistogramListener(histogram);
+    }
+    
+    public List<Object> getPlottedObjects() {
+        return state.getObjects();
     }
 }

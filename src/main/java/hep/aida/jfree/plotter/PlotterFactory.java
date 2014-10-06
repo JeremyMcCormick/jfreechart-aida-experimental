@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * The implementation of <code>IPlotterFactory</code> for the JFreeChart backend.
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
 public class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory {
 
     String name;
-    boolean embedded = false;
-    List<PlotterRegionListener> listeners = new ArrayList<PlotterRegionListener>();
+    boolean isEmbedded = false;
+    List<PlotterRegionListener> regionListeners = new ArrayList<PlotterRegionListener>();
 
     public PlotterFactory() {
         super();
@@ -26,16 +27,29 @@ public class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory {
     }
     
     public void addPlotterRegionListener(PlotterRegionListener listener) {
-        listeners.add(listener);
+        regionListeners.add(listener);
     }
 
     public IPlotter create(String plotterName) {
-        Plotter plotter = new Plotter();
-        plotter.setIsEmbedded(embedded);
-        for (PlotterRegionListener listener : listeners) {
-            //System.out.println("adding listener " + listener.getClass().getCanonicalName() + " to plotter " + plotterName);
+        
+        Plotter plotter;
+        
+        // Create a plotter based on whether embedded behavior is enabled.
+        if (isEmbedded)
+            // This is the default embeddable plotter.
+            plotter = new Plotter();        
+        else
+            // This is a standalone plotter that will use its own JFrame.
+            plotter = new StandalonePlotter();
+        
+        // Set the name of the plotter, which is the same as its title.
+        plotter.setTitle(plotterName);
+        
+        // Add region listeners. 
+        for (PlotterRegionListener listener : regionListeners) {
             plotter.addPlotterRegionListener(listener);
         }
+        
         return plotter;
     }
 
@@ -43,8 +57,8 @@ public class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory {
         return create((String) null);
     }
     
-    protected void setEmbedded(boolean embedded) {
-        this.embedded = embedded;
+    protected void setIsEmbedded(boolean embedded) {
+        this.isEmbedded = embedded;
     }
     
     public IPlotterStyle createPlotterStyle(IPlotterStyle style) {

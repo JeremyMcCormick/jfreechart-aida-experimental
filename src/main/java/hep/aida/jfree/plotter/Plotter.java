@@ -5,18 +5,17 @@ import hep.aida.ref.plotter.DummyPlotter;
 import hep.aida.ref.plotter.PlotterStyle;
 import jas.util.layout.PercentLayout;
 
-import java.awt.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 /**
- * This class implements a JFreeChart <code>IPlotter</code> by extending AIDA's <code>DummyPlotter</code> class.  
- * It can be run in standalone mode (the default) or embedded in another Swing component.
+ * <p>
+ * This class implements a JFreeChart <code>IPlotter</code> by extending AIDA's <code>DummyPlotter</code> class.
+ * <p>
+ * By default, it has behavior which is suitable for embedding into external Swing components. 
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
@@ -24,10 +23,7 @@ public class Plotter extends DummyPlotter {
 
     List<PlotterRegion> regions = new ArrayList<PlotterRegion>();
     JPanel rootPanel;
-    JFrame frame;
-    boolean isEmbedded = false;
     boolean isSetup = false;
-    boolean isVisible = false;
     
     List<PlotterRegionListener> plotterRegionListeners = new ArrayList<PlotterRegionListener>();
 
@@ -35,7 +31,9 @@ public class Plotter extends DummyPlotter {
      * Class constructor.
      */
     Plotter() {
-        configureRootPanel();
+        rootPanel = new JPanel();
+        rootPanel.setLayout(new PercentLayout());
+        rootPanel.setOpaque(false);
     }
     
     /**
@@ -45,43 +43,20 @@ public class Plotter extends DummyPlotter {
     public void addPlotterRegionListener(PlotterRegionListener listener) {
         plotterRegionListeners.add(listener);
     }
-    
-    /**
-     * Set whether or not to use a standalone JFrame to display this plotter's regions.
-     * If <tt>embedded</tt> is set to true, then the user framework will need to manually
-     * embed it into their application by calling {@link #panel()} to get the <tt>JPanel</tt>.
-     * @param embedded Set to true to run in embedded mode without a JFrame.  
-     */
-    public void setIsEmbedded(boolean isEmbedded) {
-        this.isEmbedded = isEmbedded;
-    }
-
+        
     /**
      * Show the regions of this plotter, first setting them up if necessary.
      */
-    public void show() {
-        setupRegions();
-        if (!isVisible) {
-            if (!isEmbedded) {
-                frame.setVisible(true);
-            }
-            isVisible = true;
-        } else {
-            System.err.println("Ignoring call to show() as Plotter is already visible!");
-        }
+    public void show() {        
+        plotRegions();
+        //redraw();
     }
 
     /**
-     * This will hide the plotter's regions and set its frame to null, 
-     * but only if it is being run standalone and not embedded. 
+     * This will set the Plotter's JPanel to invisible. 
      */
     public void hide() {
-        if (frame != null) {
-            frame.setVisible(false);
-            frame = null;
-        }
-        isSetup = false;
-        isVisible = false;
+        rootPanel.setVisible(false);
     }
 
     /**
@@ -89,6 +64,7 @@ public class Plotter extends DummyPlotter {
      */
     public void destroyRegions() {
         regions.clear();
+        this.isSetup = false;
     }
 
     /**
@@ -120,8 +96,8 @@ public class Plotter extends DummyPlotter {
      * @param type The file type (such as "PNG").
      */
     public void writeToFile(String file, String type) throws IOException {
-        if (!isSetup) { // used to check frame == null
-            setupRegions();
+        if (!isSetup) { 
+            plotRegions();
         }
         if (!file.endsWith(type))
             file = file + "." + type;
@@ -172,68 +148,26 @@ public class Plotter extends DummyPlotter {
     /**
      * Plot all the regions into the root panel.
      */
-    private void plotRegions() {
-        for (int i = 0; i < numberOfRegions(); i++) {
-            PlotterRegion region = (PlotterRegion) region(i);
-            //JPanel regionPanel = region.getPanel();            
-            //if (regionPanel == null) {
-            //    System.out.println("WARNING: Skipping region " + i + " with null JPanel!");
-            //    continue;
-            //}
-            region.addToParentPanel(rootPanel);
-        }
-    }
-    
-    /**
-     * Configure the root panel by creating a new JPanel and settings its layout.
-     */
-    private void configureRootPanel() {
-        rootPanel = new JPanel();
-        rootPanel.setLayout(new PercentLayout());
-        rootPanel.setOpaque(false);
-    }
-
-    /**
-     * Setup the regions, which includes JFrame configuration and redrawing
-     * the root component.
-     */
-    private void setupRegions() {
+    void plotRegions() {
         if (!isSetup) {
-            createFrame();
-            plotRegions();
-            configureFrame();
-            redraw();         
+            for (int i = 0; i < numberOfRegions(); i++) {
+                
+                // Get a region by index.
+                PlotterRegion region = (PlotterRegion) region(i);
+                
+                // Add the region's panel to the root panel.
+                region.addToParentPanel(rootPanel);
+            }
             isSetup = true;
         }
     }
-
-    /**
-     * Configure the <tt>JFrame</tt> for the plotter.
-     * This will only have an effect if the plotter is not embedded.
-     */
-    private void configureFrame() {
-        if (!isEmbedded) {
-            frame.setContentPane(rootPanel);
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.pack();
-        }
-    }
-
-    /**
-     * Create the <tt>JFrame</tt> for the plotter.
-     * This will only have an effect if the plotter is not embedded.
-     */
-    private void createFrame() {
-        if (!isEmbedded) {
-            frame = new JFrame();
-        }
-    }
-    
+           
     /**
      * This will redraw the frame in which the the plotter's regions are embedded,
      * whether or not it is being run embedded or standalone.
      */
-    private void redraw() {
+    /*
+    void redraw() {
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
                 public void run() {
@@ -249,4 +183,5 @@ public class Plotter extends DummyPlotter {
             e.printStackTrace();
         }
     }
+    */
 }

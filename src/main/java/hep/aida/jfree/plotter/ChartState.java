@@ -6,7 +6,6 @@ import hep.aida.IPlotterStyle;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.XYPlot;
 
 /**
  * This class represents combined chart information between AIDA and JFreeChart, 
@@ -16,20 +15,18 @@ import org.jfree.chart.plot.XYPlot;
  * their information from this state object.
  *  
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
- *
  */
+// TODO: Move to hep.aida.jfree.plot.style.converter.StyleConverterState and make only package accessible.
 public final class ChartState {
 
     private ChartPanel panel;
-    //private XYPlot plot;
     private JFreeChart chart;
-    private IBaseHistogram histogram;    
-    private IFunction function;
-    private int datasetIndex = 0; /* FIXME: This should be an array of indices. */
+    private Object plotObject;    
+    private int[] datasetIndices;
     private IPlotterStyle style;
     
-    public void setHistogram(IBaseHistogram histogram) {
-        this.histogram = histogram;
+    public void setPlotObject(Object plotObject) {
+        this.plotObject = plotObject;
     }
     
     public void setPlotterStyle(IPlotterStyle style) {
@@ -40,20 +37,16 @@ public final class ChartState {
         this.chart = chart;
     }
     
-    public void setDatasetIndex(int datasetIndex) {
-        this.datasetIndex = datasetIndex;
+    public void setDatasetIndices(int[] datasetIndices) {
+        this.datasetIndices = datasetIndices;
     }
                 
-    public int getDatasetIndex() {
-        return datasetIndex;
+    public int[] getDatasetIndices() {
+        return datasetIndices;
     }
 
     public void setPanel(ChartPanel panel) {
         this.panel = panel;
-    }
-
-    public void setFunction(IFunction function) {
-        this.function = function;
     }
     
     public ChartPanel getPanel() {
@@ -63,12 +56,20 @@ public final class ChartState {
     public JFreeChart getChart() {
         return chart;
     }
+    
+    public Object getPlotObject() {
+        return plotObject;
+    }
 
     public IBaseHistogram getHistogram() {
-        return histogram;
+        return (IBaseHistogram)plotObject;
     }
     
     public IFunction getFunction() {
-       return function; 
+       return (IFunction)plotObject; 
+    }
+    
+    public IPlotterStyle getPlotterStyle() {
+        return style;
     }
 }

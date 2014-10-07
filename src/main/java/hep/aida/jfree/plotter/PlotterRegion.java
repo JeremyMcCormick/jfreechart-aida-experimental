@@ -54,7 +54,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     JFreeChart chart;
     
     // The converter for applying IPlotterStyle to the created JFreeCharts.
-    AbstractStyleConverter styleConverter;    
+    StyleConverter styleConverter;    
     
     // This object contains the non-visual state of this region.
     PlotterRegionState state = new PlotterRegionState();
@@ -316,15 +316,9 @@ public class PlotterRegion extends DummyPlotterRegion {
         FunctionConverter.addFunction(chart, function);
 
         // Apply styles to function.
-        StyleConverter styleConverter = StyleConverterFactory.getStyleConverter(function);
-        styleConverter.setStyle(style);
-        ChartState state = new ChartState();
-        state.setPanel(chartPanel);
-        state.setChart(chart);
-        state.setDatasetIndex(chart.getXYPlot().getDatasetCount() - 1);
-        state.setFunction(function);
-        styleConverter.setChartState(state);
-        styleConverter.applyStyle();
+        StyleConverter styleConverter = StyleConverterFactory.create(function);
+        int[] datasetIndices = new int[] {chart.getXYPlot().getDatasetCount() - 1};
+        styleConverter.applyStyle(chart, function, style, datasetIndices);
         
         // FIXME: Add this back once figure out how to connect with the object it is fitting.
         //addFunctionListener(function, chart, new int[] { chart.getXYPlot().getDatasetCount() - 1 });
@@ -350,6 +344,7 @@ public class PlotterRegion extends DummyPlotterRegion {
             throw new IllegalArgumentException("The object type " + object.getClass().getCanonicalName() + " is not supported.");
         }        
         
+        // Rebuild the chart's legend after the object has been added.
         LegendUtil.rebuildChartLegend(this.chart, state.getObjectStyles());
     }
     
@@ -363,9 +358,12 @@ public class PlotterRegion extends DummyPlotterRegion {
         // The new chart becomes the base chart for this region.
         chart = newChart;
 
+        // Is the current ChartPanel null?
         if (chartPanel == null) {
             // Create the JPanel for the region.
             chartPanel = new ChartPanel(chart);
+            
+            // Add a listener to activate callbacks when region is clicked.
             ChartPanelMouseListener mouseListener = new ChartPanelMouseListener(this);            
             mouseListener.addListeners(state.getRegionListeners());
             chartPanel.addMouseListener(mouseListener);
@@ -376,53 +374,37 @@ public class PlotterRegion extends DummyPlotterRegion {
         
         // Apply region styles to the new panel. Only the base chart has its own JPanel.
         if (styleConverter != null) {
-            styleConverter.getChartState().setPanel(chartPanel);
-            styleConverter.applyPanelStyle();
+            styleConverter.applyStyle(chartPanel);
         }
     }
 
     /**
      * Create a JFreeChart from an IBaseHistogram and the given style.
-     * @param hist The IBaseHistogram to be converted.
+     * @param histogram The IBaseHistogram to be converted.
      * @param style The IPlotterStyle to apply to the chart.
      * @param converter The object converter to use.
      * @return The new JFreeChart that was created.
      */
-    private JFreeChart createChart(IBaseHistogram hist, IPlotterStyle style, Converter converter) {
+    private JFreeChart createChart(IBaseHistogram histogram, IPlotterStyle style, Converter converter) {
 
         // Create a new chart.
-        JFreeChart newChart = converter.convert(hist, style);
+        JFreeChart newChart = converter.convert(histogram, style);
 
         // Is the style object set?
         if (style != null) {
             // Get a style converter for this object type.
-            styleConverter = (AbstractStyleConverter) StyleConverterFactory.getStyleConverter(hist);
-            // Style converter was found?
+            styleConverter = (AbstractStyleConverter) StyleConverterFactory.create(histogram);
+            // Was a style converter found for the object?
             if (styleConverter != null) {
-                
-                // Setup the chart state for the converter.
-                //ChartState state = new ChartState(null, newChart, hist);
-                ChartState state = new ChartState();
-                state.setChart(newChart);
-                state.setHistogram(hist);
-                styleConverter.setChartState(state);
-                styleConverter.setStyle(style);
-                
-                // Apply the style to the object using the style converter.
-                styleConverter.applyStyle();
-            } else {
-                // Throw a fatal error because this object is probably not a valid type.
-                throw new IllegalArgumentException("No style converter found for type " + hist.getClass().getCanonicalName());
-            }
-        } else {
-            System.out.println("WARNING: The style object points to null!");
-        }
+                // Apply visual style to the chart.
+                styleConverter.applyStyle(newChart, histogram, style, null);                
+            } 
+        } 
         return newChart;
     }
 
     /**
-     * Create a PlotListener and register it on the IBaseHistogram to get
-     * callbacks when it is updated.
+     * Create a PlotListener and register it on the IBaseHistogram to get callbacks when it is updated.
      * @param hist The IBaseHistogram which will notify the listener.
      */
     private void addHistogramListener(IBaseHistogram hist) {
@@ -435,7 +417,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
 
     /**
-     * Overlay an IBaseHistogram onto an existing JFreeChart via its XYPlot.
+     * Overlay an IBaseHistogram onto an existing XYPlot.
      * @param histogram The IBaseHistogram to overlay.
      * @param overlayPlot The target XYPlot. 
      */

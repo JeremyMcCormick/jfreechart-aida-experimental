@@ -94,7 +94,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * as the panel is not always immediately available.
      */
     public void applyStyle() {
-        applyStyle(state.chart(), state.histogram(), style);
+        applyStyle(state.getChart(), state.getHistogram(), style);
     }
     
     /**
@@ -356,7 +356,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      */
     public void applyPanelStyle() 
     {
-        applyPanelStyle(state.panel(), style);
+        applyPanelStyle(state.getPanel(), style);
     }
 
     /**
@@ -579,10 +579,10 @@ public abstract class AbstractStyleConverter implements StyleConverter {
     protected void drawStatisticsBox() {
         IStatisticsBoxStyle statStyle = style.statisticsBoxStyle();
         if (statStyle.isVisible()) {
-            if (state.histogram() instanceof IHistogram1D) {
+            if (state.getHistogram() instanceof IHistogram1D) {
                 
-                XYPlot plot = state.plot();
-                IHistogram1D hist = (IHistogram1D)state.histogram();
+                XYPlot plot = state.getChart().getXYPlot();
+                IHistogram1D hist = (IHistogram1D)state.getHistogram();
                 int entries = hist.allEntries();
                 double mean = hist.mean();
                 double rms = hist.rms();

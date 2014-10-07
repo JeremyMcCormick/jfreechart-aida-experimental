@@ -230,7 +230,8 @@ public class PlotterRegion extends DummyPlotterRegion {
       
     /**
      * This is a convenience method for users to get the styles that are associated
-     * with the objects being plotted within this region.
+     * with an object being plotted within this region.  This returns a list because 
+     * the same object could be plotted more than once.
      * @param object
      * @return
      */
@@ -317,7 +318,12 @@ public class PlotterRegion extends DummyPlotterRegion {
         // Apply styles to function.
         StyleConverter styleConverter = StyleConverterFactory.getStyleConverter(function);
         styleConverter.setStyle(style);
-        styleConverter.setChartState(new ChartState(chartPanel, chart, function, chart.getXYPlot().getDatasetCount() - 1));
+        ChartState state = new ChartState();
+        state.setPanel(chartPanel);
+        state.setChart(chart);
+        state.setDatasetIndex(chart.getXYPlot().getDatasetCount() - 1);
+        state.setFunction(function);
+        styleConverter.setChartState(state);
         styleConverter.applyStyle();
         
         // FIXME: Add this back once figure out how to connect with the object it is fitting.
@@ -395,7 +401,10 @@ public class PlotterRegion extends DummyPlotterRegion {
             if (styleConverter != null) {
                 
                 // Setup the chart state for the converter.
-                ChartState state = new ChartState(null, newChart, hist);                               
+                //ChartState state = new ChartState(null, newChart, hist);
+                ChartState state = new ChartState();
+                state.setChart(newChart);
+                state.setHistogram(hist);
                 styleConverter.setChartState(state);
                 styleConverter.setStyle(style);
                 

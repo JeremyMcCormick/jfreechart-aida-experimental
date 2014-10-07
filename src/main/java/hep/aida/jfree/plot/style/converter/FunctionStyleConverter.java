@@ -24,7 +24,7 @@ public class FunctionStyleConverter extends AbstractStyleConverter {
     public void applyStyle() {
         IPlotterStyle style = getStyle();
         int datasetIndex = this.getChartState().getDatasetIndex();
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)this.getChartState().plot().getRenderer(datasetIndex);
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)this.getChartState().getChart().getXYPlot().getRenderer(datasetIndex);
         if (style.isVisible()) { 
             // Apply line style.
             ILineStyle lineStyle = style.dataStyle().lineStyle();

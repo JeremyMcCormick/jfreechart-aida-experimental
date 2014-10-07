@@ -2,6 +2,7 @@ package hep.aida.jfree.plotter;
 
 import hep.aida.IBaseHistogram;
 import hep.aida.IFunction;
+import hep.aida.IPlotterStyle;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -20,52 +21,29 @@ import org.jfree.chart.plot.XYPlot;
 public final class ChartState {
 
     private ChartPanel panel;
-    private XYPlot plot;
+    //private XYPlot plot;
     private JFreeChart chart;
     private IBaseHistogram histogram;    
     private IFunction function;
-    private int datasetIndex = 0;
-
-    ChartState(ChartPanel panel, JFreeChart chart, IBaseHistogram histogram, IFunction function, int datasetIndex) {
-        this.panel = panel;
-        this.chart = chart;
-        this.plot = chart.getXYPlot();
+    private int datasetIndex = 0; /* FIXME: This should be an array of indices. */
+    private IPlotterStyle style;
+    
+    public void setHistogram(IBaseHistogram histogram) {
         this.histogram = histogram;
-        this.function = function;   
+    }
+    
+    public void setPlotterStyle(IPlotterStyle style) {
+        this.style = style;
+    }
+    
+    public void setChart(JFreeChart chart) {
+        this.chart = chart;
+    }
+    
+    public void setDatasetIndex(int datasetIndex) {
         this.datasetIndex = datasetIndex;
     }
-    
-    ChartState(ChartPanel panel, JFreeChart chart, IBaseHistogram histogram, IFunction function) {
-        this.panel = panel;
-        this.chart = chart;
-        this.plot = chart.getXYPlot();
-        this.histogram = histogram;
-        this.function = function;   
-    }
-    
-    ChartState(ChartPanel panel, JFreeChart chart, IFunction function, int datasetIndex) {
-        this.panel = panel;
-        this.chart = chart;
-        this.plot = chart.getXYPlot();
-        this.function = function;
-        this.datasetIndex = datasetIndex;
-    }
-    
-    ChartState(ChartPanel panel, JFreeChart chart, IBaseHistogram histogram, int datasetIndex) {
-        this.panel = panel;
-        this.chart = chart;
-        this.plot = chart.getXYPlot();
-        this.histogram = histogram;
-        this.datasetIndex = datasetIndex;
-    }
-    
-    ChartState(ChartPanel panel, JFreeChart chart, IBaseHistogram histogram) {
-        this.panel = panel;
-        this.chart = chart;
-        this.plot = chart.getXYPlot();
-        this.histogram = histogram;
-    }               
-    
+                
     public int getDatasetIndex() {
         return datasetIndex;
     }
@@ -74,23 +52,23 @@ public final class ChartState {
         this.panel = panel;
     }
 
-    public ChartPanel panel() {
+    public void setFunction(IFunction function) {
+        this.function = function;
+    }
+    
+    public ChartPanel getPanel() {
         return panel;
     }
 
-    public XYPlot plot() {
-        return plot;
-    }
-
-    public JFreeChart chart() {
+    public JFreeChart getChart() {
         return chart;
     }
 
-    public IBaseHistogram histogram() {
+    public IBaseHistogram getHistogram() {
         return histogram;
     }
     
-    public IFunction function() {
+    public IFunction getFunction() {
        return function; 
     }
 }

@@ -13,7 +13,7 @@ import hep.aida.IProfile1D;
  */
 public class StyleConverterFactory {
 
-    public static StyleConverter getStyleConverter(Object object) {
+    public static StyleConverter create(Object object) {
         if (object instanceof IHistogram1D || object instanceof ICloud1D || object instanceof IProfile1D) {
             return new Histogram1DStyleConverter();
         } else if (object instanceof ICloud2D) {

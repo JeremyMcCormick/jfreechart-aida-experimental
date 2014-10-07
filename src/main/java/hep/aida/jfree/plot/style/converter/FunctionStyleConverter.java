@@ -22,9 +22,9 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 public class FunctionStyleConverter extends AbstractStyleConverter {
     
     public void applyStyle() {
-        IPlotterStyle style = getStyle();
-        int datasetIndex = this.getChartState().getDatasetIndex();
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)this.getChartState().getChart().getXYPlot().getRenderer(datasetIndex);
+        IPlotterStyle style = state.getPlotterStyle();
+        int datasetIndex = state.getDatasetIndices()[0];
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)state.getChart().getXYPlot().getRenderer(datasetIndex);
         if (style.isVisible()) { 
             // Apply line style.
             ILineStyle lineStyle = style.dataStyle().lineStyle();

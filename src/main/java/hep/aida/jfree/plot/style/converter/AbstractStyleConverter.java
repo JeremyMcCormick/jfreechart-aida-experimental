@@ -1,7 +1,6 @@
 package hep.aida.jfree.plot.style.converter;
 
 import hep.aida.IAxisStyle;
-import hep.aida.IBaseHistogram;
 import hep.aida.IBoxStyle;
 import hep.aida.IGridStyle;
 import hep.aida.IHistogram1D;
@@ -31,8 +30,6 @@ import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.title.LegendTitle;
 import org.jfree.ui.TextAnchor;
 
 /**
@@ -45,58 +42,23 @@ import org.jfree.ui.TextAnchor;
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-
-//
-// TODO:
-//
-// Some remaining style tasks:
-//
-// -foreground color
-//   -What is this supposed to paint? Which components? Overrides other styles?  See freehep-jaida for details.
-// -data area border type
-//   -Borders are difficult to draw generically in JFreeChart because plots are not built with internal Swing JComponents.
-// -2D histograms (see JAIDA code)
-//   -different color map types
-// -functions
 public abstract class AbstractStyleConverter implements StyleConverter {
-
-    private static final boolean DEBUG = false;
     
-    ChartState state = null;
-    private IPlotterStyle style = null;
+    protected ChartState state = null;
     
-    protected AbstractStyleConverter() {
+    AbstractStyleConverter() {
+    }
+            
+    public void applyStyle(JFreeChart chart, Object plotObject, IPlotterStyle style, int[] datasetIndices) {
+        state = new ChartState();
+        state.setChart(chart);
+        state.setPlotObject(plotObject);
+        state.setPlotterStyle(style);
+        state.setDatasetIndices(datasetIndices);
+        applyStyle();
     }
     
-    protected AbstractStyleConverter(ChartState state) {
-        this.state = state;
-    }
-    
-    public void setChartState(ChartState state) {
-        this.state = state;
-    }
-    
-    public ChartState getChartState() {
-        return this.state;
-    }
-    
-    public void setStyle(IPlotterStyle style) {
-        this.style = style;
-    }
-    
-    public IPlotterStyle getStyle() {
-        return this.style;
-    }
-    
-    /**
-     * This method will apply styles to the objects from the current ChartState,
-     * but will not apply panel styles, which much be done in a separate call,
-     * as the panel is not always immediately available.
-     */
-    public void applyStyle() {
-        applyStyle(state.getChart(), state.getHistogram(), style);
-    }
-    
+        
     /**
      * This is the primary method for modifying a JFreeChart plot based on AIDA
      * styles.
@@ -105,68 +67,59 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param hist The backing histogram for the chart.
      * @param style The styles to apply.
      */
-    void applyStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
-        if (DEBUG) {
-            System.out.println("applying style to chart: " + chart.getTitle().getText());
-            System.out.println("chart type: " + chart.getXYPlot().getClass().getCanonicalName());
-            for (int i = 0; i < chart.getXYPlot().getRendererCount(); i++) {
-                System.out.println("renderer[" + i + "]: " + chart.getXYPlot().getRenderer(i).getClass().getCanonicalName());
-            }
-        }
+    void applyStyle() {
+        // Apply styles to the chart, NOT directly having to do with data, 
+        // e.g. title, background colors, etc.
+        applyNonDataStyle();
 
-        // Apply styles to the chart, NOT directly having to do with data, e.g.
-        // title, background colors, etc.
-        applyNonDataStyle(chart, hist, style);
-
-        // Apply styles to chart having to do with data visibility and
-        // appearance.
-        applyDataStyle(chart, hist, style);
+        // Apply styles to chart having to do with data visibility and appearance.
+        applyDataStyle();
     }
 
     /**
      * This is the default implementation to apply all styles to data and
-     * non-data elements of the chart. Implementations of styles for specific
+     * non-data elements of the chart. Implementations of this method for specific
      * types should probably override this to avoid strange default behavior and
-     * implement the most efficient way of applying the styles to that type.
+     * implement the most efficient way of applying the styles.
      * 
      * @param chart The chart to which styles should be applied.
      * @param hist The backing histogram.
      * @param style The plotter style.
      */
-    protected void applyDataStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
-        // Check if the plot is visible before continuing.
-        if (style.isVisible()) {
+    void applyDataStyle() {
+        // Is plot visible?
+        if (state.getPlotterStyle().isVisible()) {
                        
             // Set the data styling or turn it off if invisible.
-            if (isDataVisible(style)) {
+            if (isDataVisible()) {
                 
                 // Apply data fill style which fills histograms.
-                applyDataFillStyle(chart, hist, style);
+                applyDataFillStyle();
 
                 // Apply data line style which draws histogram bars. 
-                applyDataLineStyle(chart, hist, style);
+                applyDataLineStyle();
 
                 // Apply marker style which draws markers such as circles at data points.                
-                applyDataMarkerStyle(chart, hist, style);
+                applyDataMarkerStyle();
                 
                 // Apply data outline style which draws lines between data points.
-                applyDataOutlineStyle(chart, hist, style);                
+                applyDataOutlineStyle();                
                                 
                 // Are errors visible?
-                if (areErrorsVisible(style)) {
+                if (areErrorsVisible()) {
                     // Apply error bar style, which will only show if the data itself is set to visible.
-                    applyErrorBarStyle(chart, style);
+                    applyErrorBarStyle();
                 } else {
                     // Turn off display of error values.
-                    makeErrorsInvisible(chart);
+                    makeErrorsInvisible();
                 }                                               
             } else {
                 
                 // Turn off display of histogram data.
-                makeDataInvisible(chart);
+                makeDataInvisible();
                 
                 // Turn off display of errors.
-                makeErrorsInvisible(chart);
+                makeErrorsInvisible();
             }       
             
             // Draw the statistics box, which only really makes sense if data is visible.
@@ -182,21 +135,21 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param hist The backing histogram.
      * @param style The plotter style.
      */
-    protected void applyNonDataStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    void applyNonDataStyle() {
         // Set the title style.
-        applyTitleStyle(chart, style);
+        applyTitleStyle();
 
         // Set the region's background color.
-        applyRegionStyle(chart, style);
+        applyRegionStyle();
 
         // Set the plot's background color.
-        applyDataBoxStyle(chart, style);
+        applyDataBoxStyle();
 
         // Set the grid style.
-        applyGridStyle(chart, style);
+        applyGridStyle();
 
         // Apply all axis styles.
-        applyAllAxisStyles(chart, hist, style);
+        applyAxisStyles();
     }
 
     /**
@@ -207,27 +160,27 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param hist
      * @param style
      */
-    private void applyAllAxisStyles(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    void applyAxisStyles() {
         // Set log scale on axes.
-        applyLogAxis(chart, style);
+        applyLogAxis();
 
         // Set position of axes.
-        applyAxisLocation(chart, style);
+        applyAxisLocation();
 
         // Set axis labels.
-        applyAxisLabels(chart, hist);
+        applyAxisLabels();
 
         // Set the X axis drawing style, such as label fonts.
-        applyAxisStyle(chart.getXYPlot().getDomainAxis(), style.xAxisStyle());
+        applyAxisStyle(state.getChart().getXYPlot().getDomainAxis(), state.getPlotterStyle().xAxisStyle());
 
         // Set the Y axis drawing style, such as label fonts.
-        applyAxisStyle(chart.getXYPlot().getRangeAxis(), style.yAxisStyle());
+        applyAxisStyle(state.getChart().getXYPlot().getRangeAxis(), state.getPlotterStyle().yAxisStyle());
 
         // Set the X axis limits.
-        applyAxisLimits(chart.getXYPlot().getDomainAxis(), style.xAxisStyle());
+        applyAxisLimits(state.getChart().getXYPlot().getDomainAxis(), state.getPlotterStyle().xAxisStyle());
 
         // Set the Y axis limits.
-        applyAxisLimits(chart.getXYPlot().getRangeAxis(), style.yAxisStyle());
+        applyAxisLimits(state.getChart().getXYPlot().getRangeAxis(), state.getPlotterStyle().yAxisStyle());
     }
 
     /**
@@ -235,12 +188,12 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param chart
      * @param hist
      */
-    private static void applyAxisLabels(JFreeChart chart, IBaseHistogram hist) {
-        if (hist.annotation().hasKey("xAxisLabel")) {
-            chart.getXYPlot().getDomainAxis().setLabel(hist.annotation().value("xAxisLabel"));
+    void applyAxisLabels() {
+        if (state.getHistogram().annotation().hasKey("xAxisLabel")) {
+            state.getChart().getXYPlot().getDomainAxis().setLabel(state.getHistogram().annotation().value("xAxisLabel"));
         }
-        if (hist.annotation().hasKey("yAxisLabel")) {
-            chart.getXYPlot().getRangeAxis().setLabel(hist.annotation().value("yAxisLabel"));
+        if (state.getHistogram().annotation().hasKey("yAxisLabel")) {
+            state.getChart().getXYPlot().getRangeAxis().setLabel(state.getHistogram().annotation().value("yAxisLabel"));
         }
     }
 
@@ -251,9 +204,9 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param chart The chart to style.
      * @param style The AIDA plotter style.
      */
-    private static void applyLogAxis(JFreeChart chart, IPlotterStyle style) {
-        applyLogAxis(chart.getXYPlot(), style.xAxisStyle(), true);
-        applyLogAxis(chart.getXYPlot(), style.yAxisStyle(), false);
+    void applyLogAxis() {
+        applyLogAxis(state.getPlotterStyle().xAxisStyle(), true);
+        applyLogAxis(state.getPlotterStyle().yAxisStyle(), false);
     }
 
     /**
@@ -264,13 +217,13 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param chart The chart to set axis location.
      * @param style The AIDA plot style.
      */
-    private static void applyAxisLocation(JFreeChart chart, IPlotterStyle style) {
-        IAxisStyle yAxisStyle = style.yAxisStyle();
+    void applyAxisLocation() {
+        IAxisStyle yAxisStyle = state.getPlotterStyle().yAxisStyle();
         String yAxisValue = yAxisStyle.parameterValue("yAxis");
         if (yAxisValue != null) {
             try {
                 AxisLocation axisLocation = (yAxisValue.equalsIgnoreCase("Y1")) ? AxisLocation.BOTTOM_OR_RIGHT : AxisLocation.BOTTOM_OR_LEFT;
-                chart.getXYPlot().setDomainAxisLocation(axisLocation);
+                state.getChart().getXYPlot().setDomainAxisLocation(axisLocation);
             } catch (Exception cce) {
                 throw new RuntimeException(cce);
             }
@@ -283,7 +236,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param axisStyle The AIDA axis style settings.
      * @param domain True if axis is domain; false if range.
      */
-    private static void applyLogAxis(XYPlot plot, IAxisStyle axisStyle, boolean domain) {
+    void applyLogAxis(IAxisStyle axisStyle, boolean domain) {
         String scale = axisStyle.scaling();
         if (scale != null) {
             if (scale.startsWith("log")) {
@@ -291,9 +244,9 @@ public abstract class AbstractStyleConverter implements StyleConverter {
                 axis.setBase(10);
                 axis.setSmallestValue(0.01);
                 if (domain) {
-                    plot.setDomainAxis(axis);
+                    state.getChart().getXYPlot().setDomainAxis(axis);
                 } else {
-                    plot.setRangeAxis(axis);
+                    state.getChart().getXYPlot().setRangeAxis(axis);
                 }
             }
         }
@@ -304,19 +257,19 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param chart
      * @param style
      */
-    private static void applyDataBoxStyle(JFreeChart chart, IPlotterStyle style) {        
-        IBoxStyle boxStyle = style.dataBoxStyle();        
+    void applyDataBoxStyle() {        
+        IBoxStyle boxStyle = state.getPlotterStyle().dataBoxStyle();        
         if (boxStyle.isVisible()) {            
             if (boxStyle.backgroundStyle().isVisible()) {
-                Color color = ColorUtil.toColor(style.dataBoxStyle().backgroundStyle(), Color.white);
-                chart.getXYPlot().setBackgroundPaint(color);
+                Color color = ColorUtil.toColor(state.getPlotterStyle().dataBoxStyle().backgroundStyle(), Color.white);
+                state.getChart().getXYPlot().setBackgroundPaint(color);
             }
             if (boxStyle.borderStyle().isVisible()) {
-                chart.getXYPlot().setOutlineVisible(true);
+                state.getChart().getXYPlot().setOutlineVisible(true);
                 Stroke stroke = StrokeUtil.toStroke(boxStyle.borderStyle());
-                chart.getXYPlot().setOutlineStroke(stroke);
+                state.getChart().getXYPlot().setOutlineStroke(stroke);
                 Color color = ColorUtil.toColor(boxStyle.borderStyle(), Color.black);
-                chart.getXYPlot().setOutlinePaint(color);
+                state.getChart().getXYPlot().setOutlinePaint(color);
                 
             }
         }
@@ -327,9 +280,9 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param chart
      * @param style
      */
-    private static void applyRegionStyle(JFreeChart chart, IPlotterStyle style) {
-        Color color = ColorUtil.toColor(style.regionBoxStyle().backgroundStyle(), Color.white);
-        chart.setBackgroundPaint(color);
+    void applyRegionStyle() {
+        Color color = ColorUtil.toColor(state.getPlotterStyle().regionBoxStyle().backgroundStyle(), Color.white);
+        state.getChart().setBackgroundPaint(color);
         
         //Border border = BorderUtil.toBorder(style.regionBoxStyle().borderStyle());
         //if (border != null)
@@ -339,40 +292,37 @@ public abstract class AbstractStyleConverter implements StyleConverter {
         //style.regionBoxStyle().borderStyle().borderType();
     }
 
+    public void applyStyle(ChartPanel panel) {
+        if (this.state == null)
+            throw new RuntimeException("The ChartState was never set.");
+        this.state.setPanel(panel);
+        applyPanelStyle();
+    }
+    
     /**
      * Apply panel style.
      * @param panel The ChartPanel.
      * @param style The plotter style.
      */
-    private static void applyPanelStyle(ChartPanel panel, IPlotterStyle style) {
-        Border border = BorderUtil.toBorder(style.regionBoxStyle().borderStyle());
-        //if (border != null)
-        //    System.out.println("created border: " + border.getClass().getCanonicalName());
-        panel.setBorder(border);
+    void applyPanelStyle() {
+        Border border = BorderUtil.toBorder(state.getPlotterStyle().regionBoxStyle().borderStyle());
+        state.getPanel().setBorder(border);
     }
     
-    /**
-     * Apply panel style to current chart state.
-     */
-    public void applyPanelStyle() 
-    {
-        applyPanelStyle(state.getPanel(), style);
-    }
-
     /**
      * 
      * @param chart
      * @param style
      */
-    private static void applyTitleStyle(JFreeChart chart, IPlotterStyle style) {
-        Font titleFont = PlotterFontUtil.getFont(style.titleStyle().textStyle());
-        chart.getTitle().setFont(titleFont);
+    void applyTitleStyle() {
+        Font titleFont = PlotterFontUtil.getFont(state.getPlotterStyle().titleStyle().textStyle());
+        state.getChart().getTitle().setFont(titleFont);
 
-        String colorStr = style.titleStyle().textStyle().color();
+        String colorStr = state.getPlotterStyle().titleStyle().textStyle().color();
         if (colorStr != null) {
             try {
-                Color titleColor = ColorUtil.toColor(style.titleStyle().textStyle());
-                chart.getTitle().setPaint(titleColor);
+                Color titleColor = ColorUtil.toColor(state.getPlotterStyle().titleStyle().textStyle());
+                state.getChart().getTitle().setPaint(titleColor);
             } catch (Exception x) {
                 throw new RuntimeException(x);
             }
@@ -384,7 +334,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param axis
      * @param axisStyle
      */
-    private static void applyAxisLimits(ValueAxis axis, IAxisStyle axisStyle) {
+    void applyAxisLimits(ValueAxis axis, IAxisStyle axisStyle) {
         if (axisStyle.parameterValue(Style.AXIS_LOWER_LIMIT) != null) {
             double lowerLimit = Double.parseDouble(axisStyle.parameterValue(Style.AXIS_LOWER_LIMIT));
             axis.setLowerBound(lowerLimit);
@@ -409,7 +359,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param axis The JFreeChart axis.
      * @param axisStyle The AIDA axis style settings.
      */
-    private static void applyAxisStyle(ValueAxis axis, IAxisStyle axisStyle) {
+    void applyAxisStyle(ValueAxis axis, IAxisStyle axisStyle) {
         // Axis label.
         String axisLabel = axisStyle.label();
         boolean setlabel = axisLabel != null && ((BaseStyle) axisStyle).isParameterSet(hep.aida.ref.plotter.Style.AXIS_LABEL);
@@ -498,16 +448,16 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param chart
      * @param style
      */
-    private static void applyGridStyle(JFreeChart chart, IPlotterStyle style) {
+    void applyGridStyle() {
 
         // System.out.println("applyGridStyle - " + chart.getTitle().getText());
 
-        IGridStyle gridStyle = style.gridStyle();
+        IGridStyle gridStyle = state.getPlotterStyle().gridStyle();
         boolean visible = gridStyle.isVisible();
 
         if (visible) {
 
-            XYPlot plot = chart.getXYPlot();
+            XYPlot plot = state.getChart().getXYPlot();
 
             // System.out.println("grid is visible");
 
@@ -525,9 +475,9 @@ public abstract class AbstractStyleConverter implements StyleConverter {
             Stroke stroke = StrokeUtil.toStroke(gridStyle);
             if (stroke != null) {
                 // System.out.println("setting grid stroke");
-                chart.getXYPlot().setDomainGridlineStroke(stroke);
+                state.getChart().getXYPlot().setDomainGridlineStroke(stroke);
                 // chart.getXYPlot().setDomainMinorGridlineStroke(stroke);
-                chart.getXYPlot().setRangeGridlineStroke(stroke);
+                state.getChart().getXYPlot().setRangeGridlineStroke(stroke);
                 // chart.getXYPlot().setRangeMinorGridlineStroke(stroke);
             } /*
                * else { System.out.println("using default stroke"); }
@@ -539,9 +489,9 @@ public abstract class AbstractStyleConverter implements StyleConverter {
             // double cellSize = gridStyle.cellSize();
         } else {
             // System.out.println("grid is NOT visible");
-            chart.getXYPlot().setDomainGridlinesVisible(false);
+            state.getChart().getXYPlot().setDomainGridlinesVisible(false);
             // chart.getXYPlot().setDomainMinorGridlinesVisible(false);
-            chart.getXYPlot().setRangeGridlinesVisible(false);
+            state.getChart().getXYPlot().setRangeGridlinesVisible(false);
             // chart.getXYPlot().setRangeMinorGridlinesVisible(false);
         }
 
@@ -553,9 +503,9 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param style
      * @return True if data is visible; false if not.
      */
-    protected static boolean isDataVisible(IPlotterStyle style) {
+    boolean isDataVisible() {
         boolean visible = true;
-        if (!style.dataStyle().isVisible()) {
+        if (!state.getPlotterStyle().dataStyle().isVisible()) {
             visible = false;
         }
         return visible;
@@ -567,17 +517,17 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param style
      * @return True if data is visible; false if not.
      */
-    protected static boolean areErrorsVisible(IPlotterStyle style) {
+    boolean areErrorsVisible() {
         boolean visible = true;
-        if (!style.dataStyle().errorBarStyle().isVisible()) {
+        if (!state.getPlotterStyle().dataStyle().errorBarStyle().isVisible()) {
             visible = false;
         }
         return visible;
     }
     
     // FIXME: Only works for 1D histograms.
-    protected void drawStatisticsBox() {
-        IStatisticsBoxStyle statStyle = style.statisticsBoxStyle();
+    void drawStatisticsBox() {
+        IStatisticsBoxStyle statStyle = state.getPlotterStyle().statisticsBoxStyle();
         if (statStyle.isVisible()) {
             if (state.getHistogram() instanceof IHistogram1D) {
                 
@@ -610,7 +560,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param chart
      * @param style
      */
-    protected void applyErrorBarStyle(JFreeChart chart, IPlotterStyle style) {
+    void applyErrorBarStyle() {
     }
 
     /**
@@ -619,7 +569,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param hist
      * @param style
      */
-    protected void applyDataFillStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    void applyDataFillStyle() {
     }
 
     /**
@@ -628,7 +578,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param hist
      * @param style
      */
-    protected void applyDataLineStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    void applyDataLineStyle() {
     }
 
     /**
@@ -637,7 +587,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param hist
      * @param style
      */
-    protected void applyDataOutlineStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    void applyDataOutlineStyle() {
     }
 
     /**
@@ -646,20 +596,20 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param hist
      * @param style
      */
-    protected void applyDataMarkerStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    void applyDataMarkerStyle() {
     }
 
     /**
      * 
      * @param chart
      */
-    protected void makeDataInvisible(JFreeChart chart) {
+    void makeDataInvisible() {
     }
 
     /**
      * 
      * @param chart
      */
-    protected void makeErrorsInvisible(JFreeChart chart) {
+    void makeErrorsInvisible() {
     }    
 }

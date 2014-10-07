@@ -21,36 +21,37 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
  */
 public class Cloud2DStyleConverter extends AbstractStyleConverter {
 
-    protected void applyDataStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    void applyDataStyle() {
         // Check if the plot is visible before continuing.
-        if (style.isVisible()) {
+        if (state.getPlotterStyle().isVisible()) {
 
             // Set the data styling or turn it off if invisible.
-            if (isDataVisible(style)) {
+            if (isDataVisible()) {
 
                 // data fill style
-                applyDataFillStyle(chart, hist, style);
+                applyDataFillStyle();
 
                 // Turn off display of histogram data.
             } else {
-                makeDataInvisible(chart);
+                makeDataInvisible();
             }
 
             // Set marker and line styling which may still be visible even if
             // data style is off.
-            if (style.isVisible()) {
-                applyDataMarkerStyle(chart, hist, style);
+            if (state.getPlotterStyle().isVisible()) {
+                applyDataMarkerStyle();
             }
 
             // Turn off data.
         } else {
-            makeDataInvisible(chart);
+            makeDataInvisible();
         }
     }
 
-    protected void applyDataFillStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
-        XYPlot plot = chart.getXYPlot();
-        IDataStyle dataStyle = style.dataStyle();
+    void applyDataFillStyle() {
+        
+        XYPlot plot = state.getChart().getXYPlot();
+        IDataStyle dataStyle = state.getPlotterStyle().dataStyle();
         IFillStyle dataFillStyle = dataStyle.fillStyle();
 
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer(0);
@@ -71,9 +72,9 @@ public class Cloud2DStyleConverter extends AbstractStyleConverter {
         }
     }
 
-    protected void applyDataMarkerStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
-        IMarkerStyle markerStyle = style.dataStyle().markerStyle();
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer(0);
+    void applyDataMarkerStyle() {
+        IMarkerStyle markerStyle = state.getPlotterStyle().dataStyle().markerStyle();
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) state.getChart().getXYPlot().getRenderer(0);
         if (markerStyle.isVisible()) {
             renderer.setSeriesVisible(0, true);
             Shape shape = MarkerUtil.getMarkerShape(markerStyle.shape(), markerStyle.size());
@@ -85,7 +86,7 @@ public class Cloud2DStyleConverter extends AbstractStyleConverter {
         }
     }
 
-    protected void makeDataInvisible(JFreeChart chart) {
-        chart.getXYPlot().getRenderer(0).setSeriesVisible(0, false);
+    void makeDataInvisible() {
+        state.getChart().getXYPlot().getRenderer(0).setSeriesVisible(0, false);
     }
 }

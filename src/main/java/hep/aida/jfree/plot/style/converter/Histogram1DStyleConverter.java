@@ -3,12 +3,10 @@ package hep.aida.jfree.plot.style.converter;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.ERRORS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.POINTS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.VALUES;
-import hep.aida.IBaseHistogram;
 import hep.aida.IDataStyle;
 import hep.aida.IFillStyle;
 import hep.aida.ILineStyle;
 import hep.aida.IMarkerStyle;
-import hep.aida.IPlotterStyle;
 import hep.aida.jfree.plot.style.util.ColorUtil;
 import hep.aida.jfree.plot.style.util.MarkerUtil;
 import hep.aida.jfree.plot.style.util.StrokeUtil;
@@ -17,19 +15,11 @@ import hep.aida.ref.plotter.Style;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.LegendItem;
-import org.jfree.chart.LegendItemCollection;
-import org.jfree.chart.LegendItemSource;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYErrorRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.title.LegendTitle;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -40,16 +30,16 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * 
      * @param chart
      */
-    protected void makeDataInvisible(JFreeChart chart) {
-        chart.getXYPlot().getRenderer(VALUES).setSeriesVisible(VALUES, false);
+    void makeDataInvisible() {
+        state.getChart().getXYPlot().getRenderer(VALUES).setSeriesVisible(VALUES, false);
     }
 
     /**
      * 
      * @param chart
      */
-    protected void makeErrorsInvisible(JFreeChart chart) {
-        chart.getXYPlot().getRenderer(ERRORS).setSeriesVisible(ERRORS, false);
+    void makeErrorsInvisible() {
+        state.getChart().getXYPlot().getRenderer(ERRORS).setSeriesVisible(ERRORS, false);
     }
 
     /**
@@ -58,9 +48,9 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param hist
      * @param style
      */
-    protected void applyDataMarkerStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
-        IMarkerStyle markerStyle = style.dataStyle().markerStyle();
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer(POINTS);
+    void applyDataMarkerStyle() {
+        IMarkerStyle markerStyle = state.getPlotterStyle().dataStyle().markerStyle();
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) state.getChart().getXYPlot().getRenderer(POINTS);
         if (markerStyle.isVisible()) {
             renderer.setSeriesVisible(POINTS, true);
             Shape shape = MarkerUtil.getMarkerShape(markerStyle.shape(), markerStyle.size());
@@ -78,9 +68,9 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param hist
      * @param style
      */
-    protected void applyDataOutlineStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
-        ILineStyle outlineStyle = style.dataStyle().outlineStyle();
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer(POINTS);
+    void applyDataOutlineStyle() {
+        ILineStyle outlineStyle = state.getPlotterStyle().dataStyle().outlineStyle();
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) state.getChart().getXYPlot().getRenderer(POINTS);
         if (outlineStyle.isVisible()) {
             renderer.setSeriesVisible(POINTS, true);
             Color color = ColorUtil.toColor(outlineStyle, DEFAULT_LINE_COLOR);
@@ -98,10 +88,10 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param hist
      * @param style
      */
-    protected void applyDataLineStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
+    void applyDataLineStyle() {
                 
-        XYPlot plot = chart.getXYPlot();
-        ILineStyle lineStyle = style.dataStyle().lineStyle();
+        XYPlot plot = state.getChart().getXYPlot();
+        ILineStyle lineStyle = state.getPlotterStyle().dataStyle().lineStyle();
         Color color = ColorUtil.toColor(lineStyle, DEFAULT_LINE_COLOR);
         Stroke stroke = StrokeUtil.toStroke(lineStyle);
 
@@ -112,7 +102,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
             barRenderer.setSeriesOutlineStroke(VALUES, stroke);
             barRenderer.setSeriesOutlinePaint(VALUES, color);
         } else {
-            if (!style.dataStyle().fillStyle().isVisible()) {
+            if (!state.getPlotterStyle().dataStyle().fillStyle().isVisible()) {
 
                 // If lines and fill are both turned off, then turn off the bar chart renderer entirely.
                 plot.getRenderer(VALUES).setSeriesVisible(VALUES, false);
@@ -133,9 +123,9 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param hist
      * @param style
      */
-    protected void applyDataFillStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {                        
-        XYPlot plot = chart.getXYPlot();
-        IDataStyle dataStyle = style.dataStyle();
+    void applyDataFillStyle() {                        
+        XYPlot plot = state.getChart().getXYPlot();
+        IDataStyle dataStyle = state.getPlotterStyle().dataStyle();
         IFillStyle dataFillStyle = dataStyle.fillStyle();
         XYItemRenderer renderer = plot.getRenderer(VALUES);
         if (dataFillStyle.isVisible()) {
@@ -153,13 +143,13 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
      * @param chart
      * @param style
      */
-    protected void applyErrorBarStyle(JFreeChart chart, IPlotterStyle style) {
+    void applyErrorBarStyle() {
                         
         // Get the error renderer.
-        XYErrorRenderer renderer = (XYErrorRenderer) chart.getXYPlot().getRenderer(ERRORS);
+        XYErrorRenderer renderer = (XYErrorRenderer) state.getChart().getXYPlot().getRenderer(ERRORS);
 
         // Style for error bars.
-        ILineStyle errorStyle = style.dataStyle().errorBarStyle();
+        ILineStyle errorStyle = state.getPlotterStyle().dataStyle().errorBarStyle();
 
         // Set invisible if selected.
         if (errorStyle.isVisible()) {               

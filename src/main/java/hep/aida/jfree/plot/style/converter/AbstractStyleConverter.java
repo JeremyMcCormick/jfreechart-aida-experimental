@@ -31,6 +31,8 @@ import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.ui.TextAnchor;
 
 /**
@@ -60,7 +62,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
 
     private static final boolean DEBUG = false;
     
-    private ChartState state = null;
+    ChartState state = null;
     private IPlotterStyle style = null;
     
     protected AbstractStyleConverter() {
@@ -134,7 +136,6 @@ public abstract class AbstractStyleConverter implements StyleConverter {
     protected void applyDataStyle(JFreeChart chart, IBaseHistogram hist, IPlotterStyle style) {
         // Check if the plot is visible before continuing.
         if (style.isVisible()) {
-
                        
             // Set the data styling or turn it off if invisible.
             if (isDataVisible(style)) {
@@ -158,8 +159,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
                 } else {
                     // Turn off display of error values.
                     makeErrorsInvisible(chart);
-                }
-                                
+                }                                               
             } else {
                 
                 // Turn off display of histogram data.
@@ -604,7 +604,7 @@ public abstract class AbstractStyleConverter implements StyleConverter {
             }
         }
     }
-
+    
     /**
      * 
      * @param chart
@@ -661,5 +661,5 @@ public abstract class AbstractStyleConverter implements StyleConverter {
      * @param chart
      */
     protected void makeErrorsInvisible(JFreeChart chart) {
-    }
+    }    
 }

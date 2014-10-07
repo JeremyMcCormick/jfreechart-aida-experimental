@@ -70,6 +70,8 @@
                     <excludes>
                         <exclude>hep/aida/example/**.java</exclude>
                         <exclude>hep/aida/jfree/test/interactive/**.java</exclude>
+                        <exclude>hep/aida/jfree/dataset/Histogram1DAdapterTest.java</exclude>
+                        <exclude>hep/aida/jfree/dataset/Histogram2DAdapterTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

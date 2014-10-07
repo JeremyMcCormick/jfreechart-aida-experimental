@@ -252,16 +252,16 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      */
     public JFreeChart createBoxPlot(Histogram2DAdapter adapter, IPlotterStyle style) {
         
-        System.out.println("createBoxPlot");
+        //System.out.println("createBoxPlot");
         
         IHistogram2D histogram = adapter.getHistogram();
-        System.out.println("# entries = " + histogram.entries());
+        //System.out.println("# entries = " + histogram.entries());
 
         // Setup the renderer.
         //XYBoxRenderer renderer = new XYBoxRenderer(histogram.xAxis().binWidth(0), histogram.yAxis().binWidth(0));
         XYVariableBinWidthBoxRenderer renderer = new XYVariableBinWidthBoxRenderer();
         if (histogram.entries() > 0) {
-            System.out.println("set renderer max Z = " + adapter.getZBounds(0).getMaximum());
+            //System.out.println("set renderer max Z = " + adapter.getZBounds(0).getMaximum());
             renderer.setMaximumValue(adapter.getZBounds(0).getMaximum());
         }
 
@@ -287,15 +287,15 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         xAxis.setLowerBound(h2d.xAxis().binLowerEdge(0));
         xAxis.setUpperBound(h2d.xAxis().binUpperEdge(h2d.xAxis().bins() - 1));
         //xAxis.setAutoRange(false);
-        System.out.println("x lower bound = " + h2d.xAxis().binLowerEdge(0));
-        System.out.println("x upper bound = " + h2d.xAxis().binUpperEdge(h2d.xAxis().bins() - 1));
+        //System.out.println("x lower bound = " + h2d.xAxis().binLowerEdge(0));
+        //System.out.println("x upper bound = " + h2d.xAxis().binUpperEdge(h2d.xAxis().bins() - 1));
         
         NumberAxis yAxis = new NumberAxis(labels[1]);
         yAxis.setLowerBound(h2d.yAxis().binLowerEdge(0));
         yAxis.setUpperBound(h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
         //yAxis.setAutoRange(false);
-        System.out.println("y lower bound = " + h2d.yAxis().binLowerEdge(0));
-        System.out.println("y upper bound = " + h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
+        //System.out.println("y lower bound = " + h2d.yAxis().binLowerEdge(0));
+        //System.out.println("y upper bound = " + h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
                 
         chart.getXYPlot().setDomainAxis(xAxis);
         chart.getXYPlot().configureDomainAxes();

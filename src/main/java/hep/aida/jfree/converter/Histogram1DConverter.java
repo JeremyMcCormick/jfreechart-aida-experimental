@@ -14,6 +14,7 @@ import hep.aida.jfree.renderer.Histogram1DErrorRenderer;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItemSource;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
@@ -123,7 +124,7 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 
         // Create the chart.
-        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, false);
+        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, true);        
 
         // Apply the default theme.
         ChartFactory.getChartTheme().apply(chart);

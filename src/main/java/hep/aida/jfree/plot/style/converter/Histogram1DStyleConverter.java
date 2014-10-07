@@ -6,7 +6,6 @@ import static hep.aida.jfree.dataset.Histogram1DAdapter.VALUES;
 import hep.aida.IBaseHistogram;
 import hep.aida.IDataStyle;
 import hep.aida.IFillStyle;
-import hep.aida.IHistogram1D;
 import hep.aida.ILineStyle;
 import hep.aida.IMarkerStyle;
 import hep.aida.IPlotterStyle;
@@ -18,12 +17,19 @@ import hep.aida.ref.plotter.Style;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItem;
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.LegendItemSource;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYErrorRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.LegendTitle;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -194,5 +200,5 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
         } else {
             renderer.setSeriesVisible(ERRORS, false);
         }
-    }
+    }           
 }

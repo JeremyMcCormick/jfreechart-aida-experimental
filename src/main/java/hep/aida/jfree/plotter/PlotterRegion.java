@@ -11,6 +11,7 @@ import hep.aida.jfree.plot.listener.PlotListenerFactory;
 import hep.aida.jfree.plot.style.converter.AbstractStyleConverter;
 import hep.aida.jfree.plot.style.converter.StyleConverter;
 import hep.aida.jfree.plot.style.converter.StyleConverterFactory;
+import hep.aida.jfree.plot.style.util.LegendUtil;
 import hep.aida.ref.event.IsObservable;
 import hep.aida.ref.plotter.DummyPlotterRegion;
 import jas.util.layout.PercentLayout;
@@ -342,6 +343,8 @@ public class PlotterRegion extends DummyPlotterRegion {
         } else {
             throw new IllegalArgumentException("The object type " + object.getClass().getCanonicalName() + " is not supported.");
         }        
+        
+        LegendUtil.rebuildChartLegend(this.chart, state.getObjectStyles());
     }
     
     /**

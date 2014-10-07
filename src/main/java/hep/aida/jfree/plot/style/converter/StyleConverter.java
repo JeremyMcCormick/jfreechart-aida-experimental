@@ -16,12 +16,12 @@ import java.awt.Stroke;
  */
 public interface StyleConverter {
 
-    static final Paint TRANSPARENT = new Color(0f, 0f, 0f, 0f);
-    static final Color DEFAULT_LINE_COLOR = Color.black;
-    static final Color DEFAULT_SHAPE_COLOR = Color.blue;
-    static final Color DEFAULT_FILL_COLOR = Color.blue;
-    static final Color DEFAULT_GRID_COLOR = Color.gray;
-    static final Stroke DEFAULT_STROKE = new BasicStroke(1.0f);
+    public static final Paint TRANSPARENT = new Color(0f, 0f, 0f, 0f);
+    public static final Color DEFAULT_LINE_COLOR = Color.black;
+    public static final Color DEFAULT_SHAPE_COLOR = Color.blue;
+    public static final Color DEFAULT_FILL_COLOR = Color.blue;
+    public static final Color DEFAULT_GRID_COLOR = Color.gray;
+    public static final Stroke DEFAULT_STROKE = new BasicStroke(1.0f);
 
     /**
      * Apply styles to current chart state.

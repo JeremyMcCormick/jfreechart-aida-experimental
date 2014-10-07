@@ -16,7 +16,7 @@ import java.util.Random;
 public class Cloud1DTest extends AbstractPlotTest {
 
     public void test() {
-        
+               
         //ICloud1D c1d = histogramFactory.createCloud1D("c1d");
         ICloud1D cloud = histogramFactory.createCloud1D("cloud", "cloud", 1000);
         
@@ -66,21 +66,12 @@ public class Cloud1DTest extends AbstractPlotTest {
         // Plot histograms into region.
         
         plotter.region(0).plot(cloud);
-        plotter.show();
-        
+                
         Random rand = new Random();
         for (int i = 0; i < 10000; i++) {
             cloud.fill(rand.nextDouble() * 100.);
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException exception) {
-                exception.printStackTrace();
-            }
         }
-        
-        while (true) {
-            
-        }
-        //mode();
+                
+        mode();
     }
 }

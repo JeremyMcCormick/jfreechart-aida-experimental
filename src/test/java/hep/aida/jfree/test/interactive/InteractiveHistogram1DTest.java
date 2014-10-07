@@ -2,6 +2,7 @@ package hep.aida.jfree.test.interactive;
 
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotter;
+import hep.aida.IPlotterStyle;
 import hep.aida.jfree.test.AbstractPlotTest;
 
 import java.util.Random;
@@ -18,12 +19,11 @@ public class InteractiveHistogram1DTest extends AbstractPlotTest {
         histogram.annotation().addItem("xAxisLabel", "Value");
         histogram.annotation().addItem("yAxisLabel", "Entries");
         
-        //IPlotterStyle pstyle = new DefaultHistogram1DStyle();
+        IPlotterStyle style = plotterFactory.createPlotterStyle();
+        style.legendBoxStyle().setVisible(true);
         
-        //plotter.createRegions(1, 2, 0);
         plotter.createRegion();
-        //plotter.region(0).plot(h1d, pstyle);
-        plotter.region(0).plot(histogram);
+        plotter.region(0).plot(histogram, style);
         
         // Call show() here to see interactive updating of plot.
         plotter.show();

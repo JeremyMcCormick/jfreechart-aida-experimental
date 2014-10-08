@@ -252,16 +252,17 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      */
     public JFreeChart createBoxPlot(Histogram2DAdapter adapter, IPlotterStyle style) {
         
-        //System.out.println("createBoxPlot");
+        //System.out.println("Histogram2DConverter.createBoxPlot");
         
         IHistogram2D histogram = adapter.getHistogram();
-        //System.out.println("# entries = " + histogram.entries());
+        //System.out.println("  entries = " + histogram.entries());
 
         // Setup the renderer.
         //XYBoxRenderer renderer = new XYBoxRenderer(histogram.xAxis().binWidth(0), histogram.yAxis().binWidth(0));
         XYVariableBinWidthBoxRenderer renderer = new XYVariableBinWidthBoxRenderer();
         if (histogram.entries() > 0) {
-            //System.out.println("set renderer max Z = " + adapter.getZBounds(0).getMaximum());
+            adapter.recomputeZBounds();
+            //System.out.println("  maxZ = " + adapter.getZBounds(0).getMaximum());
             renderer.setMaximumValue(adapter.getZBounds(0).getMaximum());
         }
 

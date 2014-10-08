@@ -72,6 +72,7 @@
                         <exclude>hep/aida/jfree/test/interactive/**.java</exclude>
                         <exclude>hep/aida/jfree/dataset/Histogram1DAdapterTest.java</exclude>
                         <exclude>hep/aida/jfree/dataset/Histogram2DAdapterTest.java</exclude>
+                        <exclude>hep/aida/jfree/test/Histogram2DOverlayTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>

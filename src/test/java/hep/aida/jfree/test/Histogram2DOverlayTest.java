@@ -11,23 +11,13 @@ public class Histogram2DOverlayTest extends AbstractPlotTest {
     public void testHistogram2DOverlay() {
         
         this.setBatchMode(false);
+        this.setWaitTime(10);
         
         // Create a 2D histogram.
         IHistogram2D histogram1 = histogramFactory.createHistogram2D("Histogram2D", 10, 0., 10., 10, 0., 10.);
 
-        // Fill the histogram with random data.
-        Random rand = new Random();
-        for (int i = 0; i < 1000; i++) {
-            histogram1.fill(rand.nextInt(10), rand.nextInt(10));
-        }
-        
         // Create another 2D histogram.
         IHistogram2D histogram2 = histogramFactory.createHistogram2D("Another Histogram2D", 10, 0., 10., 10, 0., 10.);
-
-        // Fill the histogram with random data.
-        for (int i = 0; i < 2000; i++) {
-            histogram2.fill(rand.nextInt(10), rand.nextInt(10));
-        }
 
         plotter.createRegion();
         
@@ -40,9 +30,24 @@ public class Histogram2DOverlayTest extends AbstractPlotTest {
         style.setParameter("hist2DStyle", "box");
         style.dataStyle().lineStyle().setVisible(true);
         style.dataStyle().lineStyle().setColor("red");
-        //plotter.region(0).plot(histogram2, style);
+        plotter.region(0).plot(histogram2, style);
+        plotter.show();
                 
-        mode();
+        // Fill the histogram with random data.
+        Random rand = new Random();
+        for (int i = 0; i < 100000; i++) {            
+            if (i % 2 == 0)
+                histogram1.fill(rand.nextDouble() * 10, rand.nextDouble() * 10);
+            else 
+                histogram2.fill(rand.nextDouble() * 10, rand.nextDouble() * 10);
+            try {
+                synchronized (Thread.currentThread()) {
+                    Thread.currentThread().wait(10);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

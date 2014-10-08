@@ -1,17 +1,16 @@
 package hep.aida.jfree.plot.style.converter;
 
-import hep.aida.IBaseHistogram;
 import hep.aida.ILineStyle;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.plot.style.util.ColorUtil;
 import hep.aida.jfree.plot.style.util.StrokeUtil;
 import hep.aida.jfree.renderer.AbstractPaintScale;
 import hep.aida.jfree.renderer.XYBoxRenderer;
+import hep.aida.jfree.renderer.XYVariableBinWidthBoxRenderer;
 
 import java.awt.Color;
 import java.awt.Stroke;
 
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -74,6 +73,9 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
     }
 
     void applyDataLineStyle() {
+        
+        //System.out.println("Histogram2DStyleConverter.applyDataLineStyle");
+        
         ILineStyle lineStyle = state.getPlotterStyle().dataStyle().lineStyle();
 
         XYPlot plot = state.getChart().getXYPlot();
@@ -84,9 +86,12 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
         // These styles only apply if the plot is being rendered as boxes and
         // not a color map, in which case they are ignored.
         if (isBoxPlotRenderer(renderer)) {
+            
+            //System.out.println("  isBoxPlotRenderer");
 
             // Color of the data lines.
             Color color = ColorUtil.toColor(lineStyle, DEFAULT_LINE_COLOR);
+            //System.out.println("  color: " + color.toString());
             renderer.setSeriesOutlinePaint(0, color);
 
             // Stroke of the data lines.
@@ -111,7 +116,7 @@ public class Histogram2DStyleConverter extends AbstractStyleConverter implements
     }
     
     private static boolean isBoxPlotRenderer(XYItemRenderer renderer) {
-        return renderer instanceof XYBoxRenderer;
+        return renderer instanceof XYVariableBinWidthBoxRenderer || renderer instanceof XYBoxRenderer;
     }
     
     private static XYBlockRenderer getColorMapRenderer(XYItemRenderer renderer) {

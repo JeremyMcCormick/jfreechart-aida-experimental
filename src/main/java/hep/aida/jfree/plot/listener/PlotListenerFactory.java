@@ -1,6 +1,5 @@
 package hep.aida.jfree.plot.listener;
 
-//import hep.aida.IBaseHistogram;
 import hep.aida.ICloud1D;
 import hep.aida.ICloud2D;
 import hep.aida.IHistogram1D;
@@ -15,7 +14,7 @@ import org.jfree.chart.JFreeChart;
  */
 public class PlotListenerFactory {
 
-    public static PlotListener createListener(Object plot, JFreeChart chart) {
+    public static PlotListener<?> createListener(Object plot, JFreeChart chart) {
         if (plot instanceof IHistogram1D) {
             return new Histogram1DListener((IHistogram1D)plot, chart);
         } else if (plot instanceof ICloud1D) {

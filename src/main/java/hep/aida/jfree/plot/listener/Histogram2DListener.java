@@ -21,47 +21,44 @@ import org.jfree.data.Range;
  * @version $Id: $
  */
 public class Histogram2DListener extends PlotListener<IHistogram2D> {
-
-    private IHistogram2D histogram;
     
+    // Update interval is every 1 second.
     static private int updateInterval = 1000;
 
     Histogram2DListener(IHistogram2D histogram, JFreeChart chart) {
         super(histogram, chart, updateInterval); 
-        this.histogram = (IHistogram2D) histogram;
     }
 
     public synchronized void update() {
-        
-        chart.setNotify(false);
-        
-        XYPlot plot = (XYPlot)chart.getPlot();        
-        Histogram2DAdapter adapter = (Histogram2DAdapter)plot.getDataset();                 
-        Bounds zBounds = adapter.recomputeZBounds();
-        
-        if (zBounds.isValid()) {        
-            if (plot.getRenderer() instanceof XYVariableBinWidthBlockRenderer) {
-                updateColorMap(plot, zBounds);
-            } else if (plot.getRenderer() instanceof XYVariableBinWidthBoxRenderer) {
-                updateBoxPlot(plot, zBounds);
+        chart.setNotify(false);        
+        XYPlot plot = chart.getXYPlot();        
+        for (int i = 0; i < chart.getXYPlot().getDatasetCount(); i++) {         
+            if (plot.getDataset(i) instanceof Histogram2DAdapter) {
+                Histogram2DAdapter adapter = (Histogram2DAdapter)plot.getDataset(i);
+                Bounds zBounds = adapter.recomputeZBounds();
+                if (zBounds.isValid()) {        
+                    if (plot.getRenderer() instanceof XYVariableBinWidthBlockRenderer) {
+                        updateColorMap(plot, zBounds, i);
+                    } else if (plot.getRenderer() instanceof XYVariableBinWidthBoxRenderer) {
+                        updateBoxPlot(plot, zBounds, i);
+                    }
+                }    
             }
-        }
-        
+        }                       
         chart.setNotify(true);
-        chart.fireChartChanged();        
+        chart.fireChartChanged();
     }
 
-    private void updateBoxPlot(XYPlot plot, Bounds zBounds) {
-        // Update box plot bounds.
-        ((XYVariableBinWidthBoxRenderer)plot.getRenderer()).setMaximumValue(zBounds.getMaximum());
+    private void updateBoxPlot(XYPlot plot, Bounds zBounds, int datasetIndex) {
+        // Update box plot bounds for the given renderer.
+        ((XYVariableBinWidthBoxRenderer)plot.getRenderer(datasetIndex)).setMaximumValue(zBounds.getMaximum());
     }
 
-    private void updateColorMap(XYPlot plot, Bounds zBounds) {
+    private void updateColorMap(XYPlot plot, Bounds zBounds, int datasetIndex) {
                         
         // Set the new Z bounds on the PaintScale.        
-        PaintScale scale = ((XYVariableBinWidthBlockRenderer) plot.getRenderer()).getPaintScale();
+        PaintScale scale = ((XYVariableBinWidthBlockRenderer) plot.getRenderer(datasetIndex)).getPaintScale();
         if (scale instanceof AbstractPaintScale) {
-            //((AbstractPaintScale) scale).setBounds(zBounds.getMinimum(), zBounds.getMaximum());
             ((AbstractPaintScale) scale).setBounds(0., zBounds.getMaximum());
         }
         

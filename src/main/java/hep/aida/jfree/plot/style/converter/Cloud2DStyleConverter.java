@@ -1,17 +1,16 @@
 package hep.aida.jfree.plot.style.converter;
 
-import hep.aida.IBaseHistogram;
+import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_FILL_COLOR;
+import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
 import hep.aida.IDataStyle;
 import hep.aida.IFillStyle;
 import hep.aida.IMarkerStyle;
-import hep.aida.IPlotterStyle;
 import hep.aida.jfree.plot.style.util.ColorUtil;
 import hep.aida.jfree.plot.style.util.MarkerUtil;
 
 import java.awt.Color;
 import java.awt.Shape;
 
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
@@ -19,7 +18,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
  */
-public class Cloud2DStyleConverter extends AbstractStyleConverter {
+public class Cloud2DStyleConverter extends BaseStyleConverter {
 
     void applyDataStyle() {
         // Check if the plot is visible before continuing.

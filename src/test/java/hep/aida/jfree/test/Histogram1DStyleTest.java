@@ -38,6 +38,7 @@ public class Histogram1DStyleTest extends AbstractPlotTest {
         
         // 1) Filled plus outline.
         pstyle = plotterFactory.createPlotterStyle();
+        pstyle.legendBoxStyle().setVisible(true);
         pstyle.gridStyle().setVisible(false);        
         pstyle.dataStyle().lineStyle().setVisible(false);
         pstyle.dataStyle().fillStyle().setColor("purple");        
@@ -46,6 +47,7 @@ public class Histogram1DStyleTest extends AbstractPlotTest {
 
         // 2) No fill with bars drawn.
         pstyle = plotterFactory.createPlotterStyle();
+        pstyle.legendBoxStyle().setVisible(true);
         pstyle.gridStyle().setVisible(false);
         pstyle.dataStyle().lineStyle().setVisible(true);
         pstyle.dataStyle().lineStyle().setColor("green");
@@ -63,6 +65,7 @@ public class Histogram1DStyleTest extends AbstractPlotTest {
 
         // 4) Show errors only.
         pstyle = plotterFactory.createPlotterStyle();
+        pstyle.legendBoxStyle().setVisible(true);
         pstyle.gridStyle().setVisible(false);
         pstyle.dataStyle().errorBarStyle().setVisible(true);
         pstyle.dataStyle().outlineStyle().setVisible(false);
@@ -73,6 +76,7 @@ public class Histogram1DStyleTest extends AbstractPlotTest {
 
         // 5) Show data only in outline style.
         pstyle = plotterFactory.createPlotterStyle();
+        pstyle.legendBoxStyle().setVisible(true);
         pstyle.gridStyle().setVisible(false);
         pstyle.dataStyle().setVisible(true);
         pstyle.dataStyle().errorBarStyle().setVisible(false);                
@@ -81,6 +85,7 @@ public class Histogram1DStyleTest extends AbstractPlotTest {
 
         // 6) Show grid.
         pstyle = plotterFactory.createPlotterStyle();
+        pstyle.legendBoxStyle().setVisible(true);
         pstyle.dataStyle().setVisible(false);
         pstyle.gridStyle().setVisible(true);
         pstyle.gridStyle().setLineType("dashed");
@@ -90,6 +95,7 @@ public class Histogram1DStyleTest extends AbstractPlotTest {
         
         // 7) Show data marker.
         pstyle = plotterFactory.createPlotterStyle();
+        pstyle.legendBoxStyle().setVisible(true);
         pstyle.gridStyle().setVisible(false);
         pstyle.dataStyle().markerStyle().setVisible(true);
         pstyle.dataStyle().markerStyle().setShape("dot");
@@ -103,6 +109,7 @@ public class Histogram1DStyleTest extends AbstractPlotTest {
 
         // 8) Show lines between points.
         pstyle = plotterFactory.createPlotterStyle();
+        pstyle.legendBoxStyle().setVisible(true);
         pstyle.gridStyle().setVisible(false);
         pstyle.dataStyle().fillStyle().setVisible(false);
         pstyle.dataStyle().errorBarStyle().setVisible(false);

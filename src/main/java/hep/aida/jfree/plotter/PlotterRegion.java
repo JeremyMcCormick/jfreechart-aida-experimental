@@ -1,14 +1,13 @@
 package hep.aida.jfree.plotter;
 
 import hep.aida.IBaseHistogram;
+import hep.aida.IDataPointSet;
 import hep.aida.IFunction;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.converter.Converter;
-import hep.aida.jfree.converter.FunctionConverter;
-import hep.aida.jfree.converter.HistogramConverterFactory;
+import hep.aida.jfree.converter.ConverterFactory;
 import hep.aida.jfree.plot.listener.PlotListener;
 import hep.aida.jfree.plot.listener.PlotListenerFactory;
-import hep.aida.jfree.plot.style.converter.AbstractStyleConverter;
 import hep.aida.jfree.plot.style.converter.StyleConverter;
 import hep.aida.jfree.plot.style.converter.StyleConverterFactory;
 import hep.aida.jfree.plot.style.util.LegendUtil;
@@ -24,6 +23,8 @@ import javax.swing.JPanel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.general.Dataset;
+import org.jfree.data.xy.XYDataset;
 
 /**
  * This class implements the plotting of AIDA data objects using a JFreeChart backend. Most of the
@@ -51,7 +52,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     ChartPanel chartPanel;
     
     // The JFreeChart object with the visualization of the plots.
-    JFreeChart chart;
+    JFreeChart baseChart;
     
     // The converter for applying IPlotterStyle to the created JFreeCharts.
     StyleConverter styleConverter;    
@@ -136,7 +137,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      * @return The XYPlot of this region.
      */
     public XYPlot getPlot() {
-        return chart.getXYPlot();
+        return baseChart.getXYPlot();
     }
 
     /**
@@ -144,7 +145,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      * @return The JFreeChart of this region.
      */
     public JFreeChart getChart() {
-        return chart;
+        return baseChart;
     }
                 
     /**
@@ -152,7 +153,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      * @param histogram The IBaseHistogram to plot.
      */
     public void plot(IBaseHistogram histogram) {
-        plotObject(histogram, this.style(), null);
+        addObject(histogram, this.style(), null);
     }
 
     /**
@@ -161,7 +162,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      * @param style The user's IPlotterStyle.
      */
     public void plot(IBaseHistogram histogram, IPlotterStyle style) {
-        plotObject(histogram, style, null);
+        addObject(histogram, style, null);
     }
 
     /**
@@ -169,7 +170,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      * @param function The IFunction to plot.     
      */
     public void plot(IFunction function) {
-        plotObject(function, this.style(), null);
+        addObject(function, this.style(), null);
     }
 
     /**
@@ -178,7 +179,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      * @param style The user's IPlotterStyle.
      */
     public void plot(IFunction function, IPlotterStyle style) {
-        plotObject(function, style, null);
+        addObject(function, style, null);
     }
 
     /**
@@ -188,7 +189,19 @@ public class PlotterRegion extends DummyPlotterRegion {
      * @param options The string options (currently ignored!).
      */
     public void plot(IFunction function, IPlotterStyle style, String options) {
-        plotObject(function, style, options);
+        addObject(function, style, options);
+    }
+    
+    public void plot(IDataPointSet dps) {
+        addObject(dps, null, null);
+    }
+    
+    public void plot(IDataPointSet dps, IPlotterStyle style) {
+        addObject(dps, style, null);
+    }
+    
+    public void plot(IDataPointSet dps, IPlotterStyle style, String options) {
+        addObject(dps, style, options);
     }
     
     /**
@@ -199,7 +212,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     public void clear() { 
         
         // Clear the current base chart.
-        chart = null;
+        baseChart = null;
         
         // Clear reference to chart in panel.
         chartPanel.setChart(null);
@@ -214,8 +227,8 @@ public class PlotterRegion extends DummyPlotterRegion {
      * @param title The title text of the region.
      */
     public void setTitle(String title) {
-        if (chart != null) {
-            chart.setTitle(title);
+        if (baseChart != null) {
+            baseChart.setTitle(title);
         } 
         this.title = title;
     }
@@ -244,7 +257,15 @@ public class PlotterRegion extends DummyPlotterRegion {
         }
         return foundObjectStyles;
     }
-      
+    
+    /**
+     * Get a list of objects that are plotted in this region.
+     * @return The list of objects plotted in this region.
+     */
+    public List<Object> getPlottedObjects() {
+        return state.getObjects();
+    }
+       
     /* ---------------------------------------------------------------------------- */
     
     /**
@@ -266,102 +287,46 @@ public class PlotterRegion extends DummyPlotterRegion {
             throw new RuntimeException("The parent JPanel is null.");
         }
     }
-
-    /**
-     * Add a new histogram to the chart, which will either create the chart for the 
-     * entire region or overlay the histogram onto an existing chart.
-     * @param histogram
-     * @param style
-     * @param converter
-     * @return The new JFreeChart or the chart to overlay onto the base chart.
-     */
-    private JFreeChart add(IBaseHistogram histogram, IPlotterStyle style) {
         
-        // Find the appropriate converter for the histogram.
-        Converter<?> converter = HistogramConverterFactory.instance().getConverter(histogram);
-
-        // Found a converter for this histogram type?
-        if (converter == null) {
-            throw new IllegalArgumentException("The type " + histogram.getClass().getCanonicalName() + " has no converter to JFreeChart.");
-        }
-        
-        // Create a new chart object.
-        JFreeChart chart = createChart(histogram, style, converter);
-        
-        // Is the region's chart object not set?
-        if (this.chart == null) {
-            // Set the base chart, because this is the first object that was plotted.
-            setBaseChart(histogram, chart);
-        } else {
-            // Overlay the histogram onto an existing chart from its XYPlot.
-            overlay(histogram, chart.getXYPlot());
-        }
-        
-        // Add a listener which will handle updates to the histogram.
-        addHistogramListener(histogram);
-        
-        // Create a reference between the user style and its object.
-        state.addObjectStyle(new ObjectStyle(histogram, style));
-        
-        return chart;
-    }
-    
-    /**
-     * Add an AIDA function object to this region.
-     * @param function
-     * @param style
-     */
-    private void add(IFunction function, IPlotterStyle style) {
-        // Add function to JFreeChart object.
-        FunctionConverter.addFunction(chart, function);
-
-        // Apply styles to function.
-        StyleConverter styleConverter = StyleConverterFactory.create(function);
-        int[] datasetIndices = new int[] {chart.getXYPlot().getDatasetCount() - 1};
-        styleConverter.applyStyle(chart, function, style, datasetIndices);
-        
-        // FIXME: Add this back once figure out how to connect with the object it is fitting.
-        //addFunctionListener(function, chart, new int[] { chart.getXYPlot().getDatasetCount() - 1 });
-    }
-    
     /**
      * This is the primary method for converting from AIDA to JFreeChart objects.
      * @param object
      * @param userStyle
      * @param options
      */
-    private void plotObject(Object object, IPlotterStyle userStyle, String options) {        
-        // Is this an AIDA base histogram?
+    private void addObject(Object object, IPlotterStyle userStyle, String options) {     
+                
+        // Is this some kind of histogram?
         if (object instanceof IBaseHistogram) {
-            // Create a new chart, or overlay a histogram onto the existing chart.
-            add((IBaseHistogram) object, userStyle);            
+            // Add a histogram.
+            createChart(IBaseHistogram.class, object, userStyle);
+        // Is this a DataPointSet?
+        } else if (object instanceof IDataPointSet) {     
+            // Add a data point set.
+            createChart(IDataPointSet.class, object, userStyle);            
         // Is this an IFunction object?
         } else if (object instanceof IFunction) {
             // Add a function to the region.
-            // FIXME: I think this will fail if no histograms have been added to the region!
-            add((IFunction) object, userStyle);
+            createChart(IFunction.class, object, userStyle);
         } else {
             throw new IllegalArgumentException("The object type " + object.getClass().getCanonicalName() + " is not supported.");
-        }        
-        
-        // Rebuild the chart's legend after the object has been added.
-        LegendUtil.rebuildChartLegend(this.chart, state.getObjectStyles());
+        }                
     }
-    
+            
     /**
      * Set the base JFreeChart of the region.
      * @param histogram The histogram to plot into the chart.
      * @param newChart The JFreeChart object.
      */
-    private void setBaseChart(IBaseHistogram histogram, JFreeChart newChart) {
+    private void setBaseChart(JFreeChart newChart) {
                
         // The new chart becomes the base chart for this region.
-        chart = newChart;
+        baseChart = newChart;
 
         // Is the current ChartPanel null?
         if (chartPanel == null) {
             // Create the JPanel for the region.
-            chartPanel = new ChartPanel(chart);
+            chartPanel = new ChartPanel(baseChart);
             
             // Add a listener to activate callbacks when region is clicked.
             ChartPanelMouseListener mouseListener = new ChartPanelMouseListener(this);            
@@ -369,7 +334,7 @@ public class PlotterRegion extends DummyPlotterRegion {
             chartPanel.addMouseListener(mouseListener);
         } else { 
             // Reset the chart on the existing panel.
-            chartPanel.setChart(chart);
+            chartPanel.setChart(baseChart);
         }
         
         // Apply region styles to the new panel. Only the base chart has its own JPanel.
@@ -385,21 +350,58 @@ public class PlotterRegion extends DummyPlotterRegion {
      * @param converter The object converter to use.
      * @return The new JFreeChart that was created.
      */
-    private JFreeChart createChart(IBaseHistogram histogram, IPlotterStyle style, Converter converter) {
-
+    @SuppressWarnings("unchecked")
+    private <T> JFreeChart createChart(Class<T> type, Object object, IPlotterStyle style) {
+        
+        // Find the appropriate converter for the object.
+        Converter<T> converter = null;
+        if (type.equals(IBaseHistogram.class))
+            // Need to look at object's specific type for IBaseHistogram.
+            converter = ConverterFactory.instance().getConverter(object);
+        else
+            // We expect a specific class as the type argument.
+            converter = ConverterFactory.instance().getConverter(type);
+        
+        // Was a converter found?
+        if (converter == null)
+            // There is not converter for this type or object!
+            throw new RuntimeException("No converter found for type: "  + type.getCanonicalName());
+                     
         // Create a new chart.
-        JFreeChart newChart = converter.convert(histogram, style);
-
-        // Is the style object set?
-        if (style != null) {
-            // Get a style converter for this object type.
-            styleConverter = (AbstractStyleConverter) StyleConverterFactory.create(histogram);
-            // Was a style converter found for the object?
+        JFreeChart newChart = converter.convert(type.cast(object), style);
+        
+        // Is there a PlotterStyle object?
+        if (style != null) {            
+            // Get a style converter for this object.
+            styleConverter = StyleConverterFactory.create(object);
+            // Was a style converter found?
             if (styleConverter != null) {
                 // Apply visual style to the chart.
-                styleConverter.applyStyle(newChart, histogram, style, null);                
+                styleConverter.applyStyle(newChart, object, style, null);                
             } 
-        } 
+        }
+        
+        // Get reference to the dataset for the PlotListener.
+        XYDataset dataset = newChart.getXYPlot().getDataset(0);
+        
+        // Is the region's chart object not set?
+        if (this.baseChart == null) {
+            // Set the base chart, because this is the first object that was plotted.
+            setBaseChart(newChart);
+        } else {
+            // Overlay the plot onto an existing chart.
+            overlay(newChart.getXYPlot());
+        }
+        
+        // Rebuild the chart's legend after the object has been added.
+        LegendUtil.rebuildChartLegend(baseChart, state.getObjectStyles());
+        
+        // Add a listener which will handle updates to the histogram.
+        addPlotListener(object, dataset);
+        
+        // Create a reference between the user style and its object.
+        state.addObjectStyle(new ObjectStyle(object, style));        
+        
         return newChart;
     }
 
@@ -407,13 +409,12 @@ public class PlotterRegion extends DummyPlotterRegion {
      * Create a PlotListener and register it on the IBaseHistogram to get callbacks when it is updated.
      * @param hist The IBaseHistogram which will notify the listener.
      */
-    private void addHistogramListener(IBaseHistogram hist) {
-        PlotListener<?> listener = PlotListenerFactory.createListener(hist, chart);
+    private void addPlotListener(Object plot, XYDataset dataset) {
+        PlotListener<?> listener = PlotListenerFactory.createListener(plot, baseChart, dataset);
         if (listener != null) {
-            ((IsObservable) hist).addListener(listener);
+            ((IsObservable) plot).addListener(listener);
             state.addPlotListener(listener);
-        } else
-            System.out.println("WARNING: No listener defined for plot " + hist.title() + " with type " + hist.getClass().getCanonicalName());               
+        }                
     }
 
     /**
@@ -421,31 +422,25 @@ public class PlotterRegion extends DummyPlotterRegion {
      * @param histogram The IBaseHistogram to overlay.
      * @param overlayPlot The target XYPlot. 
      */
-    private void overlay(IBaseHistogram histogram, XYPlot overlayPlot) {
+    private void overlay(XYPlot overlayPlot) {
         
         // The overlay plot's datasets will be appended to the current chart starting at this index.
-        int datasetIndex = chart.getXYPlot().getDatasetCount();
+        int datasetIndex = baseChart.getXYPlot().getDatasetCount();
 
         // Loop over all the datasets within the overlay plot.
         for (int i = 0, n = overlayPlot.getDatasetCount(); i < n; i++) {
 
             // Set the dataset and renderer for the overlay plot in the new chart.
-            chart.getXYPlot().setDataset(datasetIndex, overlayPlot.getDataset(i));
-            chart.getXYPlot().setRenderer(datasetIndex, overlayPlot.getRenderer(i));
+            baseChart.getXYPlot().setDataset(datasetIndex, overlayPlot.getDataset(i));
+            baseChart.getXYPlot().setRenderer(datasetIndex, overlayPlot.getRenderer(i));
             
             // Increment the index for the next dataset and renderer pair.
             ++datasetIndex;
         }
+        
+        // TODO: Should axes be resized here, too?
     }
-    
-    /**
-     * Get a list of objects that are plotted in this region.
-     * @return The list of objects plotted in this region.
-     */
-    public List<Object> getPlottedObjects() {
-        return state.getObjects();
-    }
-    
+        
     /*
     private void addFunctionListener(IFunction function, JFreeChart chart, int[] datasetIndices) {
         PlotListener<IFunction> listener = new FunctionListener(function, chart, datasetIndices);
@@ -453,5 +448,27 @@ public class PlotterRegion extends DummyPlotterRegion {
         this.listeners.add(listener);
     }
     */
+    
+    /**
+     * Add an AIDA function object to this region.
+     * @param function
+     * @param style
+     */
+    // FIXME: I think this will fail if no histograms have been added to the region!
+    /*
+    private void createChart(IFunction function, IPlotterStyle style) {
+        // Add function to JFreeChart object.
+        FunctionConverter.addFunction(chart, function);
+
+        // Apply styles to function.
+        StyleConverter styleConverter = StyleConverterFactory.create(function);
+        int[] datasetIndices = new int[] {chart.getXYPlot().getDatasetCount() - 1};
+        styleConverter.applyStyle(chart, function, style, datasetIndices);
+        
+        // FIXME: Add this back once figure out how to connect with the object it is fitting.
+        //addFunctionListener(function, chart, new int[] { chart.getXYPlot().getDatasetCount() - 1 });
+    }
+    */
+    
 
 }

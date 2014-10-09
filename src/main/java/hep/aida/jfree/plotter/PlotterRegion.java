@@ -192,14 +192,29 @@ public class PlotterRegion extends DummyPlotterRegion {
         addObject(function, style, options);
     }
     
+    /**
+     * Plot an IDataPointSet into this region.
+     * @param dps The IDataPointSet to plot.
+     */
     public void plot(IDataPointSet dps) {
         addObject(dps, null, null);
     }
     
+    /**
+     * Plot an IDataPointSet into this region.
+     * @param dps The IDataPointSet to plot.
+     * @param style The IPlotterStyle to apply to the plot.
+     */
     public void plot(IDataPointSet dps, IPlotterStyle style) {
         addObject(dps, style, null);
     }
     
+    /**
+     * Plot an IDataPointSet into this region.
+     * @param dps The IDataPointSet to plot.
+     * @param style The IPlotterStyle to apply to the plot.
+     * @param options The user options (currently ignored).
+     */
     public void plot(IDataPointSet dps, IPlotterStyle style, String options) {
         addObject(dps, style, options);
     }
@@ -290,9 +305,9 @@ public class PlotterRegion extends DummyPlotterRegion {
         
     /**
      * This is the primary method for converting from AIDA to JFreeChart objects.
-     * @param object
-     * @param userStyle
-     * @param options
+     * @param object The AIDA object to converter (e.g. an IHistogram1D etc.).
+     * @param userStyle The PlotterStyle to apply to the plot.
+     * @param options User options (currently ignored).
      */
     private void addObject(Object object, IPlotterStyle userStyle, String options) {     
                 

@@ -1,6 +1,7 @@
 package hep.aida.jfree.converter;
 
 import hep.aida.IBaseHistogram;
+import hep.aida.IDataPointSet;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -21,5 +22,20 @@ public class ConverterUtil {
             labels[1] = h.annotation().value("yAxisLabel");
         }
         return labels;
-    }              
+    }
+    
+    public static final String[] getAxisLabels(IDataPointSet d) {
+        
+        String[] labels = new String[] { "", "" };
+        
+        // X label.
+        if (d.annotation().hasKey("xAxisLabel")) {
+            labels[0] = d.annotation().value("xAxisLabel");
+        }
+        // Y label.
+        if (d.annotation().hasKey("yAxisLabel")) {
+            labels[1] = d.annotation().value("yAxisLabel");
+        }
+        return labels;
+    }            
 }

@@ -12,22 +12,21 @@ import org.jfree.chart.plot.CrosshairState;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.AbstractXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRendererState;
 import org.jfree.data.xy.IntervalXYZDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYZDataset;
 
-public class XYVariableBinWidthBlockRenderer extends AbstractXYItemRenderer {
+public class XYVariableBinWidthBlockRenderer extends AbstractXYItemRenderer implements HasPaintScale {
 
-    PaintScale paintScale;
+    AbstractPaintScale paintScale;
 
-    public void setPaintScale(PaintScale paintScale) {
+    public void setPaintScale(AbstractPaintScale paintScale) {
         this.paintScale = paintScale;
     }
     
-    public PaintScale getPaintScale() {
+    public AbstractPaintScale getPaintScale() {
         return paintScale;
     }
 

@@ -359,14 +359,16 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
 
     /**
-     * Create an JFreeChart from an AIDA object and the given style.
+     * Create an JFreeChart from an AIDA object and the given style, 
+     * or if the base chart is already set, then overlay the plot 
+     * onto it.
      * @param type The object's class.
      * @param object The AIDA object to convert.
      * @param style The PlotterStyle to apply.
      * @return The new JFreeChart that was created.
      */
     @SuppressWarnings("unchecked")
-    private <T> JFreeChart createChart(Class<T> type, Object object, IPlotterStyle style) {
+    private <T> void createChart(Class<T> type, Object object, IPlotterStyle style) {
         
         // Find the appropriate converter for the object.
         Converter<T> converter = null;
@@ -416,17 +418,15 @@ public class PlotterRegion extends DummyPlotterRegion {
                 // Overlay the new chart onto the existing base chart.
                 overlay(newChart.getXYPlot());
         }
-        
-        // Rebuild the chart's legend after the object has been added.
-        LegendUtil.rebuildChartLegend(baseChart, state.getObjectStyles());
-        
+                        
         // Add a listener which will handle updates to the histogram.
         addPlotListener(object, dataset);
         
         // Create a reference between the user style and its object.
-        state.addObjectStyle(new ObjectStyle(object, style));        
+        state.addObjectStyle(new ObjectStyle(object, style));
         
-        return newChart;
+        // Rebuild the chart's legend after the object has been added.
+        LegendUtil.rebuildChartLegend(baseChart, state.getObjectStyles());
     }
 
     /**

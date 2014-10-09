@@ -1,8 +1,8 @@
-package hep.aida.jfree.plot.style.util;
+package hep.aida.jfree.plotter.style.util;
 
-import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_FILL_COLOR;
-import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_LINE_COLOR;
-import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
+import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_FILL_COLOR;
+import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_LINE_COLOR;
+import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
 import hep.aida.IBaseHistogram;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.plotter.ObjectStyle;

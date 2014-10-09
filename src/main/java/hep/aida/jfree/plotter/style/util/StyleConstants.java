@@ -1,4 +1,4 @@
-package hep.aida.jfree.plot.style.util;
+package hep.aida.jfree.plotter.style.util;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

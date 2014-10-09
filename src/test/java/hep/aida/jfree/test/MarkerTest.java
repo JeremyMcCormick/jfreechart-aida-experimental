@@ -2,7 +2,7 @@ package hep.aida.jfree.test;
 
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.plot.style.util.MarkerUtil;
+import hep.aida.jfree.plotter.style.util.MarkerUtil;
 import hep.aida.jfree.test.AbstractPlotTest;
 
 import java.util.Random;

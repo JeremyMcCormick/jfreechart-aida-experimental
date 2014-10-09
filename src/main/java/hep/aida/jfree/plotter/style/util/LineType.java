@@ -1,4 +1,4 @@
-package hep.aida.jfree.plot.style.util;
+package hep.aida.jfree.plotter.style.util;
 
 /**
  * This is a utility class for creating different line types, including solid,

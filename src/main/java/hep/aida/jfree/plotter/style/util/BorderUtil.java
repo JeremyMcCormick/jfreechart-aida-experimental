@@ -1,4 +1,4 @@
-package hep.aida.jfree.plot.style.util;
+package hep.aida.jfree.plotter.style.util;
 
 import hep.aida.IBorderStyle;
 import jas.util.border.ShadowBorder;

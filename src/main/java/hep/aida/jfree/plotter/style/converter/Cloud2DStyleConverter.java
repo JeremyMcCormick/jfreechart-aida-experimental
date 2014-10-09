@@ -1,12 +1,12 @@
-package hep.aida.jfree.plot.style.converter;
+package hep.aida.jfree.plotter.style.converter;
 
-import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_FILL_COLOR;
-import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
+import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_FILL_COLOR;
+import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
 import hep.aida.IDataStyle;
 import hep.aida.IFillStyle;
 import hep.aida.IMarkerStyle;
-import hep.aida.jfree.plot.style.util.ColorUtil;
-import hep.aida.jfree.plot.style.util.MarkerUtil;
+import hep.aida.jfree.plotter.style.util.ColorUtil;
+import hep.aida.jfree.plotter.style.util.MarkerUtil;
 
 import java.awt.Color;
 import java.awt.Shape;

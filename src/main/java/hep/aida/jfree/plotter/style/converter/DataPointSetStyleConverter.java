@@ -1,16 +1,16 @@
-package hep.aida.jfree.plot.style.converter;
+package hep.aida.jfree.plotter.style.converter;
 
 import static hep.aida.jfree.dataset.DataPointSetAdapter.ERRORS;
 import static hep.aida.jfree.dataset.DataPointSetAdapter.VALUES;
 import static hep.aida.jfree.dataset.DataPointSetAdapter.LINES;
-import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_LINE_COLOR;
-import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
+import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_LINE_COLOR;
+import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
 import hep.aida.IDataPointSet;
 import hep.aida.ILineStyle;
 import hep.aida.IMarkerStyle;
-import hep.aida.jfree.plot.style.util.ColorUtil;
-import hep.aida.jfree.plot.style.util.MarkerUtil;
-import hep.aida.jfree.plot.style.util.StrokeUtil;
+import hep.aida.jfree.plotter.style.util.ColorUtil;
+import hep.aida.jfree.plotter.style.util.MarkerUtil;
+import hep.aida.jfree.plotter.style.util.StrokeUtil;
 import hep.aida.ref.plotter.Style;
 
 import java.awt.Color;

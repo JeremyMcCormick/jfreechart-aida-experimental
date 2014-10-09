@@ -1,4 +1,4 @@
-package hep.aida.jfree.plot.listener;
+package hep.aida.jfree.plotter.listener;
 
 import hep.aida.IHistogram2D;
 import hep.aida.jfree.converter.Histogram2DConverter;

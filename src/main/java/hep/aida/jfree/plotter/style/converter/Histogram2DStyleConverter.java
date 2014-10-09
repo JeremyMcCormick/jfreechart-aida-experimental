@@ -1,10 +1,10 @@
-package hep.aida.jfree.plot.style.converter;
+package hep.aida.jfree.plotter.style.converter;
 
 import hep.aida.ILineStyle;
 import hep.aida.IPlotterStyle;
-import hep.aida.jfree.plot.style.util.ColorUtil;
-import hep.aida.jfree.plot.style.util.StrokeUtil;
-import hep.aida.jfree.plot.style.util.StyleConstants;
+import hep.aida.jfree.plotter.style.util.ColorUtil;
+import hep.aida.jfree.plotter.style.util.StrokeUtil;
+import hep.aida.jfree.plotter.style.util.StyleConstants;
 import hep.aida.jfree.renderer.HasPaintScale;
 
 import java.awt.Color;

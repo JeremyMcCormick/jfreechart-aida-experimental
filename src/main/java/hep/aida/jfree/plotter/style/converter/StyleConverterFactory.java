@@ -1,4 +1,4 @@
-package hep.aida.jfree.plot.style.converter;
+package hep.aida.jfree.plotter.style.converter;
 
 import hep.aida.ICloud1D;
 import hep.aida.ICloud2D;

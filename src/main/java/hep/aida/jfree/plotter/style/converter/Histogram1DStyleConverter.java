@@ -1,19 +1,19 @@
-package hep.aida.jfree.plot.style.converter;
+package hep.aida.jfree.plotter.style.converter;
 
 import static hep.aida.jfree.dataset.Histogram1DAdapter.ERRORS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.POINTS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.VALUES;
-import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_FILL_COLOR;
-import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_LINE_COLOR;
-import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
-import static hep.aida.jfree.plot.style.util.StyleConstants.TRANSPARENT_COLOR;
+import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_FILL_COLOR;
+import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_LINE_COLOR;
+import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
+import static hep.aida.jfree.plotter.style.util.StyleConstants.TRANSPARENT_COLOR;
 import hep.aida.IDataStyle;
 import hep.aida.IFillStyle;
 import hep.aida.ILineStyle;
 import hep.aida.IMarkerStyle;
-import hep.aida.jfree.plot.style.util.ColorUtil;
-import hep.aida.jfree.plot.style.util.MarkerUtil;
-import hep.aida.jfree.plot.style.util.StrokeUtil;
+import hep.aida.jfree.plotter.style.util.ColorUtil;
+import hep.aida.jfree.plotter.style.util.MarkerUtil;
+import hep.aida.jfree.plotter.style.util.StrokeUtil;
 import hep.aida.ref.plotter.Style;
 
 import java.awt.Color;

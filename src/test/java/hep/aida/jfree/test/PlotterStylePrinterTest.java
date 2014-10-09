@@ -1,6 +1,6 @@
 package hep.aida.jfree.test;
 
-import hep.aida.jfree.plot.style.util.PlotterStylePrinter;
+import hep.aida.jfree.plotter.style.util.PlotterStylePrinter;
 import hep.aida.jfree.test.AbstractPlotTest;
 
 import java.io.File;

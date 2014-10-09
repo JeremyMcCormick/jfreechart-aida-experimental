@@ -1,4 +1,4 @@
-package hep.aida.jfree.plot.listener;
+package hep.aida.jfree.plotter.listener;
 
 import hep.aida.ref.event.AIDAListener;
 import hep.aida.ref.event.AIDAObservable;

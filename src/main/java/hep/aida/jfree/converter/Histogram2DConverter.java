@@ -4,7 +4,7 @@ import hep.aida.IHistogram2D;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.dataset.Bounds;
 import hep.aida.jfree.dataset.Histogram2DAdapter;
-import hep.aida.jfree.plot.style.util.StyleConstants;
+import hep.aida.jfree.plotter.style.util.StyleConstants;
 import hep.aida.jfree.renderer.AbstractPaintScale;
 import hep.aida.jfree.renderer.CustomPaintScale;
 import hep.aida.jfree.renderer.GreyPaintScale;

@@ -1,6 +1,6 @@
 package hep.aida.jfree.plotter;
 
-import hep.aida.jfree.plot.listener.PlotListener;
+import hep.aida.jfree.plotter.listener.PlotListener;
 
 import java.util.ArrayList;
 import java.util.Collections;

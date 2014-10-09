@@ -1,4 +1,4 @@
-package hep.aida.jfree.plot.style.converter;
+package hep.aida.jfree.plotter.style.converter;
 
 import hep.aida.IAxisStyle;
 import hep.aida.IBoxStyle;
@@ -7,11 +7,11 @@ import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
 import hep.aida.IStatisticsBoxStyle;
 import hep.aida.jfree.annotations.BasicMultiLineXYTextAnnotation;
-import hep.aida.jfree.plot.style.util.BorderUtil;
-import hep.aida.jfree.plot.style.util.ColorUtil;
-import hep.aida.jfree.plot.style.util.StrokeUtil;
-import hep.aida.jfree.plot.style.util.StyleConstants;
 import hep.aida.jfree.plotter.ChartState;
+import hep.aida.jfree.plotter.style.util.BorderUtil;
+import hep.aida.jfree.plotter.style.util.ColorUtil;
+import hep.aida.jfree.plotter.style.util.StrokeUtil;
+import hep.aida.jfree.plotter.style.util.StyleConstants;
 import hep.aida.ref.plotter.BaseStyle;
 import hep.aida.ref.plotter.PlotterFontUtil;
 import hep.aida.ref.plotter.Style;

@@ -1,4 +1,4 @@
-package hep.aida.jfree.plot.listener;
+package hep.aida.jfree.plotter.listener;
 
 import hep.aida.ICloud1D;
 import hep.aida.ICloud2D;

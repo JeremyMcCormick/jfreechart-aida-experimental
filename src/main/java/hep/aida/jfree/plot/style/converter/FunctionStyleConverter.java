@@ -1,5 +1,6 @@
 package hep.aida.jfree.plot.style.converter;
 
+import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_LINE_COLOR;
 import hep.aida.ILineStyle;
 import hep.aida.IMarkerStyle;
 import hep.aida.IPlotterStyle;
@@ -19,7 +20,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
  */
 // FIXME: The shape color is always the same as the line.  This is probably because there is one paint object.
 // This can be fixed by adding 2 series in the adapter, one for the line and the other for the shapes.
-public class FunctionStyleConverter extends AbstractStyleConverter {
+public class FunctionStyleConverter extends BaseStyleConverter {
     
     public void applyStyle() {
         IPlotterStyle style = state.getPlotterStyle();

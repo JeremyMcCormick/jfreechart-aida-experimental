@@ -13,7 +13,6 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYErrorRenderer;
@@ -98,6 +97,6 @@ public class DataPointSetConverter implements Converter<IDataPointSet> {
         // Apply the default chart theme.
         ChartFactory.getChartTheme().apply(newChart);
         
-        return chart;
+        return newChart;
     }       
 }

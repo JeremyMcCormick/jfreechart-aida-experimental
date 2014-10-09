@@ -29,9 +29,9 @@ public class PlotListenerFactory {
         } else if (plot instanceof IHistogram2D) {
             return new Histogram2DListener((IHistogram2D)plot, chart, dataset);
         } else if (plot instanceof IDataPointSet) {
-          return new DataPointSetListener((IDataPointSet)plot, chart, dataset);
+            return new DataPointSetListener((IDataPointSet)plot, chart, dataset);
         } else {
             return null;
-        }
+        }        
     }
 }

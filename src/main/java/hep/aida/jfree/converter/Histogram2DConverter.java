@@ -38,17 +38,12 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
 
     //public static final int COLOR_DATA = 0;
     public static final int COLOR_SCALE_LEGEND = 1;
-    
-    // for reference from JASHist2DHistogramStyle
-    //public static final String COLORMAP_RAINBOW = "COLORMAP_RAINBOW";
-    //public static final String COLORMAP_GRAYSCALE = "COLORMAP_GRAYSCALE";
-    //public static final String COLORMAP_USERDEFINED = "COLORMAP_USERDEFINED";
-    
+        
     // These are changed from the AIDA values to be more user friendly. 
     public static final String COLORMAP_RAINBOW = "rainbow";
     public static final String COLORMAP_GRAYSCALE = "grayscale";
     public static final String COLORMAP_USERDEFINED = "userdefined";
-
+    
     public Class<IHistogram2D> convertsType() {
         return IHistogram2D.class;
     }
@@ -80,6 +75,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
             newChart = createColorMap(adapter, style);
         } else if (hist2DStyle.equals(StyleConstants.BOX_PLOT)) {
             // box plot
+            //System.out.println("creating box plot");
             newChart = createBoxPlot(adapter, style);
         } else if (hist2DStyle.equals(StyleConstants.ELLIPSE_PLOT)) {
             // ellipse style is not implemented yet!
@@ -90,6 +86,42 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
 
         return newChart;
     }
+    
+    /**
+     * Create a box plot to display 2D histogram data.
+     * 
+     * @param adapter
+     * @param style
+     * @return
+     */
+    JFreeChart createBoxPlot(Histogram2DAdapter adapter, IPlotterStyle style) {
+                
+        IHistogram2D histogram = adapter.getHistogram();
+
+        // Setup the renderer.
+        XYVariableBinWidthBoxRenderer renderer = new XYVariableBinWidthBoxRenderer();
+        if (histogram.entries() > 0) {
+            adapter.recomputeZBounds();
+            renderer.setMaximumValue(adapter.getZBounds(0).getMaximum());
+        }
+                                   
+        // Create the plot.        
+        XYPlot plot = new XYPlot(adapter, null, null, renderer);
+        configureAxes(plot, histogram);
+        JFreeChart chart = new JFreeChart(adapter.getHistogram().title(), plot);        
+        //chart.getXYPlot().configureDomainAxes();
+        //chart.getXYPlot().configureRangeAxes();
+                
+        // Apply default styles.
+        ChartFactory.getChartTheme().apply(chart);
+
+        // Turn off the default chart legend unless it is activated by style code later.
+        chart.getLegend().setVisible(false);
+
+        chart.fireChartChanged();
+        
+        return chart;
+    }
 
     /**
      * Convert 2D histogram to color map chart.
@@ -98,8 +130,10 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @param style
      * @return
      */
-    static JFreeChart createColorMap(Histogram2DAdapter adapter, IPlotterStyle style) {
-                        
+    JFreeChart createColorMap(Histogram2DAdapter adapter, IPlotterStyle style) {
+        
+        IHistogram2D histogram = adapter.getHistogram();
+        
         // Check if using a log scale.
         boolean logScale = false;
         if (style.zAxisStyle().parameterValue(StyleConstants.SCALE).startsWith(StyleConstants.LOG)) {
@@ -113,9 +147,8 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         XYPlot plot = new XYPlot(adapter, null, null, renderer);
         JFreeChart chart = new JFreeChart(adapter.getHistogram().title(), plot);
 
-        // Configure the axes;
-        configureAxes(adapter.getHistogram(), chart, 0);
-
+        configureAxes(plot, histogram);
+        
         // Add paint scale color legend.
         createPaintScaleLegend(chart, renderer.getPaintScale(), logScale);
         
@@ -136,7 +169,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @param style
      * @return The renderer for the color map.
      */
-    static XYVariableBinWidthBlockRenderer createColorMapRenderer(Histogram2DAdapter adapter, IPlotterStyle style) {
+    XYVariableBinWidthBlockRenderer createColorMapRenderer(Histogram2DAdapter adapter, IPlotterStyle style) {
                 
         // Setup the renderer.
         XYVariableBinWidthBlockRenderer renderer = new XYVariableBinWidthBlockRenderer();
@@ -210,7 +243,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @param scale
      * @param logScale
      */
-    private static void createPaintScaleLegend(JFreeChart chart, PaintScale scale, boolean logScale) {
+    private void createPaintScaleLegend(JFreeChart chart, PaintScale scale, boolean logScale) {
         NumberAxis legendAxis = null;
         if (logScale) {
             legendAxis = new LogarithmicAxis("scale");
@@ -240,56 +273,34 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         legend.setPosition(RectangleEdge.RIGHT);
         chart.addSubtitle(legend);
     }   
-
-    /**
-     * Create a box plot to display 2D histogram data.
-     * 
-     * @param adapter
-     * @param style
-     * @return
-     */
-    public JFreeChart createBoxPlot(Histogram2DAdapter adapter, IPlotterStyle style) {
-                
-        IHistogram2D histogram = adapter.getHistogram();
-
-        // Setup the renderer.
-        XYVariableBinWidthBoxRenderer renderer = new XYVariableBinWidthBoxRenderer();
-        if (histogram.entries() > 0) {
-            adapter.recomputeZBounds();
-            renderer.setMaximumValue(adapter.getZBounds(0).getMaximum());
-        }
-
-        // Create the plot.
-        XYPlot plot = new XYPlot(adapter, null, null, renderer);        
-        JFreeChart chart = new JFreeChart(adapter.getHistogram().title(), plot);
-        configureAxes(histogram, chart, 0);
-
-        // Apply default styles.
-        ChartFactory.getChartTheme().apply(chart);
-
-        // Turn off the default chart legend.
-        chart.getLegend().setVisible(false);
-
-        return chart;
-    }
-
-    private static void configureAxes(IHistogram2D h2d, JFreeChart chart, double margin) {
-
-        String[] labels = ConverterUtil.getAxisLabels(h2d);
         
+    private void configureAxes(XYPlot plot, IHistogram2D histogram) {
+        
+        String[] labels = ConverterUtil.getAxisLabels(histogram);
+        
+        // Configure the x axis.
         NumberAxis xAxis = new NumberAxis(labels[0]);
-        xAxis.setLowerBound(h2d.xAxis().binLowerEdge(0));
-        xAxis.setUpperBound(h2d.xAxis().binUpperEdge(h2d.xAxis().bins() - 1));
+        xAxis.setUpperMargin(0.2);
+        xAxis.setLowerMargin(0.2);
+        double xAxisSize = Math.abs(histogram.xAxis().lowerEdge()) + Math.abs(histogram.xAxis().upperEdge());
+        if (xAxisSize <= 1.0) {
+            xAxis.setUpperMargin(0.5);
+            xAxis.setLowerMargin(0.5);
+        }
+        xAxis.setDefaultAutoRange(new Range(histogram.xAxis().lowerEdge(), histogram.xAxis().upperEdge()));
         
-        NumberAxis yAxis = new NumberAxis(labels[1]);
-        yAxis.setLowerBound(h2d.yAxis().binLowerEdge(0));
-        yAxis.setUpperBound(h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
-                
-        chart.getXYPlot().setDomainAxis(xAxis);
-        chart.getXYPlot().configureDomainAxes();
+        // Configure the y axis.
+        NumberAxis yAxis = new NumberAxis(labels[0]);
+        yAxis.setUpperMargin(0.2);
+        yAxis.setLowerMargin(0.2);
+        double yAxisSize = Math.abs(histogram.yAxis().lowerEdge()) + Math.abs(histogram.yAxis().upperEdge());
+        if (yAxisSize <= 1.0) {
+            yAxis.setUpperMargin(0.5);
+            yAxis.setLowerMargin(0.5);
+        }
+        yAxis.setDefaultAutoRange(new Range(histogram.yAxis().lowerEdge(), histogram.yAxis().upperEdge()));  
         
-        chart.getXYPlot().setRangeAxis(yAxis);
-        chart.getXYPlot().configureRangeAxes();        
+        plot.setDomainAxis(xAxis);
+        plot.setRangeAxis(yAxis);
     }
-
 }

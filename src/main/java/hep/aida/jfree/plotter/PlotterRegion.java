@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.general.Dataset;
 import org.jfree.data.xy.XYDataset;
 
 /**
@@ -305,8 +304,8 @@ public class PlotterRegion extends DummyPlotterRegion {
         
     /**
      * This is the primary method for converting from AIDA to JFreeChart objects.
-     * @param object The AIDA object to converter (e.g. an IHistogram1D etc.).
-     * @param userStyle The PlotterStyle to apply to the plot.
+     * @param object The AIDA object to convert (e.g. an IHistogram1D etc.).
+     * @param userStyle The PlotterStyle to apply.
      * @param options User options (currently ignored).
      */
     private void addObject(Object object, IPlotterStyle userStyle, String options) {     
@@ -324,6 +323,7 @@ public class PlotterRegion extends DummyPlotterRegion {
             // Add a function to the region.
             createChart(IFunction.class, object, userStyle);
         } else {
+            // The object type is not supported.
             throw new IllegalArgumentException("The object type " + object.getClass().getCanonicalName() + " is not supported.");
         }                
     }
@@ -335,7 +335,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      */
     private void setBaseChart(JFreeChart newChart) {
                
-        // The new chart becomes the base chart for this region.
+        // This chart becomes the base chart for the region.
         baseChart = newChart;
 
         // Is the current ChartPanel null?
@@ -359,10 +359,10 @@ public class PlotterRegion extends DummyPlotterRegion {
     }
 
     /**
-     * Create a JFreeChart from an IBaseHistogram and the given style.
-     * @param histogram The IBaseHistogram to be converted.
-     * @param style The IPlotterStyle to apply to the chart.
-     * @param converter The object converter to use.
+     * Create an JFreeChart from an AIDA object and the given style.
+     * @param type The object's class.
+     * @param object The AIDA object to convert.
+     * @param style The PlotterStyle to apply.
      * @return The new JFreeChart that was created.
      */
     @SuppressWarnings("unchecked")
@@ -379,13 +379,14 @@ public class PlotterRegion extends DummyPlotterRegion {
         
         // Was a converter found?
         if (converter == null)
-            // There is not converter for this type or object!
-            throw new RuntimeException("No converter found for type: "  + type.getCanonicalName());
+            // There is no converter for this type or object.
+            throw new RuntimeException("No converter found for object with type: "  + object.getClass().getCanonicalName());
                      
-        // Create a new chart.
+        // Create a chart from the AIDA object.  
+        // In a few cases, this might not create a new chart (e.g. for an IFunction).
         JFreeChart newChart = converter.convert(baseChart, type.cast(object), style);
         
-        // The FunctionStyleConverter needs the dataset indices.
+        // The FunctionStyleConverter will need the dataset indices.
         int[] datasetIndices = null;
         if (object instanceof IFunction) {
             datasetIndices = new int[] {baseChart.getXYPlot().getDatasetCount() - 1};
@@ -403,14 +404,14 @@ public class PlotterRegion extends DummyPlotterRegion {
         }
         
         // Get reference to the dataset for the PlotListener.
-        XYDataset dataset = newChart.getXYPlot().getDataset(0);
+        XYDataset dataset = newChart.getXYPlot().getDataset();
         
         // Is the region's chart object not set?
         if (this.baseChart == null) {
             // Set the base chart, because this is the first object that was plotted.
             setBaseChart(newChart);
         } else {
-            // Did the converter actually create a new chart?
+            // Did the converter actually create a new chart or just modify the current one?
             if (this.baseChart != newChart)
                 // Overlay the new chart onto the existing base chart.
                 overlay(newChart.getXYPlot());
@@ -468,28 +469,5 @@ public class PlotterRegion extends DummyPlotterRegion {
         ((IsObservable) function).addListener(listener);
         this.listeners.add(listener);
     }
-    */
-    
-    /**
-     * Add an AIDA function object to this region.
-     * @param function
-     * @param style
-     */
-    // FIXME: I think this will fail if no histograms have been added to the region!
-    /*
-    private void createChart(IFunction function, IPlotterStyle style) {
-        // Add function to JFreeChart object.
-        FunctionConverter.addFunction(chart, function);
-
-        // Apply styles to function.
-        StyleConverter styleConverter = StyleConverterFactory.create(function);
-        int[] datasetIndices = new int[] {chart.getXYPlot().getDatasetCount() - 1};
-        styleConverter.applyStyle(chart, function, style, datasetIndices);
-        
-        // FIXME: Add this back once figure out how to connect with the object it is fitting.
-        //addFunctionListener(function, chart, new int[] { chart.getXYPlot().getDatasetCount() - 1 });
-    }
-    */
-    
-
+    */          
 }

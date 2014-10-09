@@ -4,6 +4,7 @@ import hep.aida.IHistogram2D;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.dataset.Bounds;
 import hep.aida.jfree.dataset.Histogram2DAdapter;
+import hep.aida.jfree.plot.style.util.StyleConstants;
 import hep.aida.jfree.renderer.AbstractPaintScale;
 import hep.aida.jfree.renderer.CustomPaintScale;
 import hep.aida.jfree.renderer.GreyPaintScale;
@@ -66,21 +67,21 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         // Get display style with default as color map.
         String hist2DStyle = null;
         try {
-            hist2DStyle = style.parameterValue("hist2DStyle");
+            hist2DStyle = style.parameterValue(StyleConstants.HIST2DSTYLE);
         } catch (Exception e) {            
         }        
         if (hist2DStyle == null)
-            hist2DStyle = "colorMap";
+            hist2DStyle = StyleConstants.COLOR_MAP;
         
         JFreeChart chart = null;
                 
-        if (hist2DStyle.equals("colorMap")) {
+        if (hist2DStyle.equals(StyleConstants.COLOR_MAP)) {
             // color map
             chart = createColorMap(adapter, style);
-        } else if (hist2DStyle.equals("box")) {
+        } else if (hist2DStyle.equals(StyleConstants.BOX_PLOT)) {
             // box plot
             chart = createBoxPlot(adapter, style);
-        } else if (hist2DStyle.equals("ellipse")) {
+        } else if (hist2DStyle.equals(StyleConstants.ELLIPSE_PLOT)) {
             // ellipse style is not implemented yet!
             throw new IllegalArgumentException("The ellipse style is not implemented yet!");
         } else {
@@ -101,7 +102,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
                         
         // Check if using a log scale.
         boolean logScale = false;
-        if (style.zAxisStyle().parameterValue("scale").startsWith("log")) {
+        if (style.zAxisStyle().parameterValue(StyleConstants.SCALE).startsWith(StyleConstants.LOG)) {
             logScale = true;
         }
 
@@ -136,13 +137,9 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @return The renderer for the color map.
      */
     static XYVariableBinWidthBlockRenderer createColorMapRenderer(Histogram2DAdapter adapter, IPlotterStyle style) {
-        
-        IHistogram2D histogram = adapter.getHistogram();
-        
-        // Setup the Renderer.
+                
+        // Setup the renderer.
         XYVariableBinWidthBlockRenderer renderer = new XYVariableBinWidthBlockRenderer();
-        //renderer.setBlockHeight(histogram.yAxis().binWidth(0));
-        //renderer.setBlockWidth(histogram.xAxis().binWidth(0));
         
         // Calculate the lower and upper Z value bounds for the Dataset.
         Bounds bounds = adapter.recomputeZBounds();
@@ -150,6 +147,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         double minimum = 0.0;
         double maximum = 1.0;
         if (bounds.isValid()) {
+            // FIXME: Doesn't use lower bound right now!!!
             //minimum = bounds.getMinimum();
             maximum = bounds.getMaximum();
         }
@@ -157,22 +155,22 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         // Get the color map style if it exists.
         String colorMapScheme = null;
         try {
-            colorMapScheme = style.dataStyle().fillStyle().parameterValue("colorMapScheme");
+            colorMapScheme = style.dataStyle().fillStyle().parameterValue(StyleConstants.COLOR_MAP_SCHEME);
         } catch (IllegalArgumentException e) {            
         }
         if (colorMapScheme == null || colorMapScheme.equals("none"))
             colorMapScheme = COLORMAP_RAINBOW;
                 
         // Create the PaintScale based on the color map setting.
-        PaintScale paintScale = null;
+        AbstractPaintScale paintScale = null;
         if (colorMapScheme.equals(COLORMAP_RAINBOW)) {
             paintScale = new RainbowPaintScale(minimum, maximum);
         } else if (colorMapScheme.equals(COLORMAP_GRAYSCALE)) {
             paintScale = new GreyPaintScale(minimum, maximum);
         } else if (colorMapScheme.equals(COLORMAP_USERDEFINED)) {
             try {
-                Color startColor = ColorConverter.get(style.dataStyle().fillStyle().parameterValue("startColor"));
-                Color endColor = ColorConverter.get(style.dataStyle().fillStyle().parameterValue("endColor"));
+                Color startColor = ColorConverter.get(style.dataStyle().fillStyle().parameterValue(StyleConstants.START_COLOR));
+                Color endColor = ColorConverter.get(style.dataStyle().fillStyle().parameterValue(StyleConstants.END_COLOR));
                 paintScale = new CustomPaintScale(startColor, endColor, 0, maximum);
             } catch (Exception e) {                
                 throw new RuntimeException(e);
@@ -181,15 +179,15 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
             throw new RuntimeException("Unknown color map scheme: " + colorMapScheme);
         }
         
-        // Set log scale if selected.q
+        // Enable log scale if selected in style parameter.
         String logScale = null;
         try {
-            logScale = style.zAxisStyle().parameterValue("scale");
+            logScale = style.zAxisStyle().parameterValue(StyleConstants.SCALE);
         } catch (IllegalArgumentException e) {            
         }               
         if (logScale != null) {
             if (logScale.startsWith("log")) {
-                ((AbstractPaintScale)paintScale).setLogScale();
+                paintScale.setLogScale();
             }
         }
         
@@ -251,18 +249,13 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @return
      */
     public JFreeChart createBoxPlot(Histogram2DAdapter adapter, IPlotterStyle style) {
-        
-        //System.out.println("Histogram2DConverter.createBoxPlot");
-        
+                
         IHistogram2D histogram = adapter.getHistogram();
-        //System.out.println("  entries = " + histogram.entries());
 
         // Setup the renderer.
-        //XYBoxRenderer renderer = new XYBoxRenderer(histogram.xAxis().binWidth(0), histogram.yAxis().binWidth(0));
         XYVariableBinWidthBoxRenderer renderer = new XYVariableBinWidthBoxRenderer();
         if (histogram.entries() > 0) {
             adapter.recomputeZBounds();
-            //System.out.println("  maxZ = " + adapter.getZBounds(0).getMaximum());
             renderer.setMaximumValue(adapter.getZBounds(0).getMaximum());
         }
 
@@ -287,16 +280,10 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         NumberAxis xAxis = new NumberAxis(labels[0]);
         xAxis.setLowerBound(h2d.xAxis().binLowerEdge(0));
         xAxis.setUpperBound(h2d.xAxis().binUpperEdge(h2d.xAxis().bins() - 1));
-        //xAxis.setAutoRange(false);
-        //System.out.println("x lower bound = " + h2d.xAxis().binLowerEdge(0));
-        //System.out.println("x upper bound = " + h2d.xAxis().binUpperEdge(h2d.xAxis().bins() - 1));
         
         NumberAxis yAxis = new NumberAxis(labels[1]);
         yAxis.setLowerBound(h2d.yAxis().binLowerEdge(0));
         yAxis.setUpperBound(h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
-        //yAxis.setAutoRange(false);
-        //System.out.println("y lower bound = " + h2d.yAxis().binLowerEdge(0));
-        //System.out.println("y upper bound = " + h2d.yAxis().binUpperEdge(h2d.yAxis().bins() - 1));
                 
         chart.getXYPlot().setDomainAxis(xAxis);
         chart.getXYPlot().configureDomainAxes();

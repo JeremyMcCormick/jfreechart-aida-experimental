@@ -383,7 +383,13 @@ public class PlotterRegion extends DummyPlotterRegion {
             throw new RuntimeException("No converter found for type: "  + type.getCanonicalName());
                      
         // Create a new chart.
-        JFreeChart newChart = converter.convert(type.cast(object), style);
+        JFreeChart newChart = converter.convert(baseChart, type.cast(object), style);
+        
+        // The FunctionStyleConverter needs the dataset index.
+        int[] datasetIndices = null;
+        if (object instanceof IFunction) {
+            datasetIndices = new int[] {baseChart.getXYPlot().getDatasetCount() - 1};
+        }
         
         // Is there a PlotterStyle object?
         if (style != null) {            
@@ -392,7 +398,7 @@ public class PlotterRegion extends DummyPlotterRegion {
             // Was a style converter found?
             if (styleConverter != null) {
                 // Apply visual style to the chart.
-                styleConverter.applyStyle(newChart, object, style, null);                
+                styleConverter.applyStyle(newChart, object, style, datasetIndices);                
             } 
         }
         
@@ -405,7 +411,8 @@ public class PlotterRegion extends DummyPlotterRegion {
             setBaseChart(newChart);
         } else {
             // Overlay the plot onto an existing chart.
-            overlay(newChart.getXYPlot());
+            if (this.baseChart != newChart)
+                overlay(newChart.getXYPlot());
         }
         
         // Rebuild the chart's legend after the object has been added.

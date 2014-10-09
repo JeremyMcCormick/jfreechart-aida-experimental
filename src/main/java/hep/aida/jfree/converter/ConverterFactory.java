@@ -25,6 +25,7 @@ public class ConverterFactory {
         converters.add(new Cloud2DConverter());
         converters.add(new Profile1DConverter());
         converters.add(new DataPointSetConverter());
+        converters.add(new FunctionConverter());
     }
 
     public Converter getConverter(Object object) {

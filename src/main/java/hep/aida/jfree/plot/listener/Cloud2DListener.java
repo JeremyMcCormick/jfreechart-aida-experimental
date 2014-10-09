@@ -3,6 +3,7 @@ package hep.aida.jfree.plot.listener;
 import hep.aida.ICloud2D;
 
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.xy.XYDataset;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -10,11 +11,8 @@ import org.jfree.chart.JFreeChart;
  */
 public class Cloud2DListener extends PlotListener<ICloud2D> {
 
-    ICloud2D cloud;
-
-    Cloud2DListener(ICloud2D cloud, JFreeChart chart) {
-        super(cloud, chart);
-        this.cloud = (ICloud2D) cloud;
+    Cloud2DListener(ICloud2D cloud, JFreeChart chart, XYDataset dataset) {
+        super(cloud, chart, dataset);
     }
     
     public synchronized void update() {

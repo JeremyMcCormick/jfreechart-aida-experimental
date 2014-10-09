@@ -8,6 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.xy.XYDataset;
 
 /**
  * This listener class is used to update the JFreeChart backend 
@@ -20,6 +21,7 @@ public abstract class PlotListener<T> implements AIDAListener {
 
     JFreeChart chart;
     T plot;
+    XYDataset dataset;
     private final int DEFAULT_INTERVAL = 500; // in ms
     int updateInterval = DEFAULT_INTERVAL;
     Timer updateTimer = new Timer();
@@ -30,11 +32,12 @@ public abstract class PlotListener<T> implements AIDAListener {
      * @param chart The corresponding chart for the histogram.
      * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
-    PlotListener(T plot, JFreeChart chart) {
+    PlotListener(T plot, JFreeChart chart, XYDataset dataset) {
         if (!(plot instanceof AIDAObservable))
             throw new IllegalArgumentException("The plot object is not an instance of AIDAObservable.");
         this.chart = chart;
         this.plot = plot;
+        this.dataset = dataset;
     }
 
     /**
@@ -43,11 +46,12 @@ public abstract class PlotListener<T> implements AIDAListener {
      * @param chart The corresponding chart for the histogram.
      * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
-    PlotListener(T plot, JFreeChart chart, int updateInterval) {
+    PlotListener(T plot, JFreeChart chart, XYDataset dataset, int updateInterval) {
         if (!(plot instanceof AIDAObservable))
             throw new IllegalArgumentException("The plot object is not an instance of AIDAObservable.");
         this.chart = chart;
         this.plot = plot;
+        this.dataset = dataset;
         this.updateInterval = updateInterval;
     }
 

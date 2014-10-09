@@ -1,10 +1,9 @@
 package hep.aida.jfree.plot.listener;
 
-//import hep.aida.IBaseHistogram;
 import hep.aida.IHistogram1D;
-import hep.aida.ref.histogram.Histogram1D;
 
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.xy.XYDataset;
 
 /**
  * This is a listener to update display of a 1D histogram in JFreeChart.
@@ -14,11 +13,8 @@ import org.jfree.chart.JFreeChart;
  */
 public class Histogram1DListener extends PlotListener<IHistogram1D> {
 
-    IHistogram1D histogram;
-
-    Histogram1DListener(IHistogram1D histogram, JFreeChart chart) {
-        super(histogram, chart);
-        this.histogram = (Histogram1D) histogram;
+    Histogram1DListener(IHistogram1D histogram, JFreeChart chart, XYDataset dataset) {
+        super(histogram, chart, dataset);
     }
     
     public synchronized void update() {

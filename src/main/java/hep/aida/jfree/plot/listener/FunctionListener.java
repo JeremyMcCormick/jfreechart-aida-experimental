@@ -3,15 +3,13 @@ package hep.aida.jfree.plot.listener;
 import hep.aida.IFunction;
 
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.xy.XYDataset;
 
-// FIXME: This class should be added to PlotListenerFactory.
+
 public class FunctionListener extends PlotListener<IFunction> {
-
-    IFunction function;
     
-    public FunctionListener(IFunction function, JFreeChart chart) {
-        super(function, chart);
-        this.function = function;
+    public FunctionListener(IFunction function, JFreeChart chart, XYDataset dataset) {
+        super(function, chart, dataset);
     }
     
     public synchronized void update() {

@@ -5,12 +5,12 @@ import hep.aida.jfree.dataset.DataPointSetAdapter;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
-import org.jfree.data.general.Dataset;
+import org.jfree.data.xy.XYDataset;
 
 
 public class DataPointSetListener extends PlotListener<IDataPointSet> {
 
-    DataPointSetListener(IDataPointSet object, JFreeChart chart, Dataset dataset) {
+    DataPointSetListener(IDataPointSet object, JFreeChart chart, XYDataset dataset) {
         super(object, chart, dataset);
     }
     

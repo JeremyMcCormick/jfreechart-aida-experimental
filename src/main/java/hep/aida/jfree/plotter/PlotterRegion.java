@@ -385,7 +385,7 @@ public class PlotterRegion extends DummyPlotterRegion {
         // Create a new chart.
         JFreeChart newChart = converter.convert(baseChart, type.cast(object), style);
         
-        // The FunctionStyleConverter needs the dataset index.
+        // The FunctionStyleConverter needs the dataset indices.
         int[] datasetIndices = null;
         if (object instanceof IFunction) {
             datasetIndices = new int[] {baseChart.getXYPlot().getDatasetCount() - 1};
@@ -410,8 +410,9 @@ public class PlotterRegion extends DummyPlotterRegion {
             // Set the base chart, because this is the first object that was plotted.
             setBaseChart(newChart);
         } else {
-            // Overlay the plot onto an existing chart.
+            // Did the converter actually create a new chart?
             if (this.baseChart != newChart)
+                // Overlay the new chart onto the existing base chart.
                 overlay(newChart.getXYPlot());
         }
         
@@ -459,8 +460,6 @@ public class PlotterRegion extends DummyPlotterRegion {
             // Increment the index for the next dataset and renderer pair.
             ++datasetIndex;
         }
-        
-        // TODO: Should axes be resized here, too?
     }
         
     /*

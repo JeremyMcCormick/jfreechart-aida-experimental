@@ -2,10 +2,12 @@ package hep.aida.jfree.plot.style.converter;
 
 import hep.aida.ICloud1D;
 import hep.aida.ICloud2D;
+import hep.aida.IDataPointSet;
 import hep.aida.IFunction;
 import hep.aida.IHistogram1D;
 import hep.aida.IHistogram2D;
 import hep.aida.IProfile1D;
+import hep.aida.jfree.converter.DataPointSetConverter;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
@@ -22,8 +24,10 @@ public class StyleConverterFactory {
             return new Histogram2DStyleConverter();
         } else if (object instanceof IFunction) {
             return new FunctionStyleConverter();
+        } else if (object instanceof IDataPointSet) {
+            return new DataPointSetStyleConverter();
         } else {
-            return null;
+            return new BaseStyleConverter();
         }
     }
 }

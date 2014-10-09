@@ -45,10 +45,13 @@ public class LegendUtil {
                 legendItemSources.add(legendItemSource);
             }
         }
-        if (chart.getLegend() == null) {
-            chart.addLegend(new LegendTitle(null));
+        if (legendItemSources.size() > 0) {
+            if (chart.getLegend() == null) {
+                chart.addLegend(new LegendTitle(null));
+            }
+            chart.getLegend().setSources(legendItemSources.toArray(new LegendItemSource[]{}));
+            chart.getLegend().setVisible(true);
         }
-        chart.getLegend().setSources(legendItemSources.toArray(new LegendItemSource[]{}));
     }
     
     static LegendItem createLegendItem(IBaseHistogram histogram, IPlotterStyle style) {

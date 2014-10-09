@@ -1,8 +1,8 @@
 package hep.aida.jfree.plot.style.util;
 
-import static hep.aida.jfree.plot.style.converter.StyleConverter.DEFAULT_FILL_COLOR;
-import static hep.aida.jfree.plot.style.converter.StyleConverter.DEFAULT_LINE_COLOR;
-import static hep.aida.jfree.plot.style.converter.StyleConverter.DEFAULT_SHAPE_COLOR;
+import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_FILL_COLOR;
+import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_LINE_COLOR;
+import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
 import hep.aida.IBaseHistogram;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.plotter.ObjectStyle;
@@ -23,6 +23,10 @@ public class LegendUtil {
     }
 
     public static void rebuildChartLegend(JFreeChart chart, List<ObjectStyle> objectStyles) {
+        
+        if (chart == null)
+            throw new IllegalArgumentException("The chart argument is null.");
+        
         List<LegendItemSource> legendItemSources = new ArrayList<LegendItemSource>(); 
         for (ObjectStyle objectStyle : objectStyles) {
             Object object = objectStyle.object();

@@ -23,7 +23,7 @@ public class Cloud1DConverter implements Converter<ICloud1D> {
         return ICloud1D.class;
     }
 
-    public JFreeChart convert(ICloud1D cloud, IPlotterStyle style) {
+    public JFreeChart convert(JFreeChart chart, ICloud1D cloud, IPlotterStyle style) {
         
         // Create the backing datasets, which are actually adapters.
         XYDataset[] datasets = createDatasets(cloud);

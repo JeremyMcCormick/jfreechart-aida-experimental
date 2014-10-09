@@ -4,17 +4,15 @@ import static hep.aida.jfree.dataset.Histogram1DAdapter.ERRORS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.POINTS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.STEPS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.VALUES;
-
-import java.awt.Color;
-
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.dataset.Histogram1DAdapter;
 import hep.aida.jfree.renderer.Histogram1DErrorRenderer;
 
+import java.awt.Color;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.LegendItemSource;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
@@ -40,7 +38,7 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         return IHistogram1D.class;
     }
 
-    public JFreeChart convert(IHistogram1D histogram, IPlotterStyle style) {
+    public JFreeChart convert(JFreeChart chart, IHistogram1D histogram, IPlotterStyle style) {
         
         // Create the backing datasets, which are actually adapters.
         XYDataset[] datasets = createDatasets(histogram);

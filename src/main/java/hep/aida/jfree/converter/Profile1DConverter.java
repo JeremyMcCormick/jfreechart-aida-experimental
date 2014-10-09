@@ -15,9 +15,8 @@ public class Profile1DConverter implements Converter<IProfile1D> {
         return IProfile1D.class;
     }
 
-    public JFreeChart convert(IProfile1D obj, IPlotterStyle style) {
+    public JFreeChart convert(JFreeChart chart, IProfile1D obj, IPlotterStyle style) {
         Profile1DAdapter adapter = new Profile1DAdapter(obj);
-        JFreeChart chart = new Histogram1DConverter().convert(adapter, style);
-        return chart;
+        return new Histogram1DConverter().convert(chart, adapter, style);
     }
 }

@@ -18,16 +18,14 @@ class Cloud2DConverter implements Converter<ICloud2D> {
     }
 
     // Convert 2D cloud to chart.
-    public JFreeChart convert(ICloud2D cloud, IPlotterStyle style) {
+    public JFreeChart convert(JFreeChart chart, ICloud2D cloud, IPlotterStyle style) {
 
         // Create dataset.
         Cloud2DAdapter adapter = new Cloud2DAdapter(cloud);
 
         // Create chart.
-        JFreeChart chart = ChartFactory.createScatterPlot(
+        return ChartFactory.createScatterPlot(
                 cloud.title(), null, null, adapter, 
                 PlotOrientation.VERTICAL, true, true, false);
-        
-        return chart;
     }
 }

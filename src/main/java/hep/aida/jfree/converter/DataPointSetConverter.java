@@ -29,7 +29,7 @@ public class DataPointSetConverter implements Converter<IDataPointSet> {
     }
 
     @Override
-    public JFreeChart convert(IDataPointSet dataPointSet, IPlotterStyle style) {
+    public JFreeChart convert(JFreeChart chart, IDataPointSet dataPointSet, IPlotterStyle style) {
         
         // Create the dataset adapter.
         DataPointSetAdapter adapter = new DataPointSetAdapter(dataPointSet);
@@ -91,12 +91,12 @@ public class DataPointSetConverter implements Converter<IDataPointSet> {
         plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
         
         // Create the chart.
-        JFreeChart chart = new JFreeChart(dataPointSet.title(), JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+        JFreeChart newChart = new JFreeChart(dataPointSet.title(), JFreeChart.DEFAULT_TITLE_FONT, plot, true);
         
         //configureAxes(chart, adapter);
 
         // Apply the default chart theme.
-        ChartFactory.getChartTheme().apply(chart);
+        ChartFactory.getChartTheme().apply(newChart);
         
         return chart;
     }       

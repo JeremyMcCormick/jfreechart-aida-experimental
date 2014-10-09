@@ -25,5 +25,5 @@ public interface Converter<T> {
      * @param style The style settings.
      * @return The chart.
      */
-    JFreeChart convert(T object, IPlotterStyle style);
+    JFreeChart convert(JFreeChart chart, T object, IPlotterStyle style);
 }

@@ -59,7 +59,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @param histogram
      * @param style
      */
-    public JFreeChart convert(IHistogram2D histogram, IPlotterStyle style) {
+    public JFreeChart convert(JFreeChart chart, IHistogram2D histogram, IPlotterStyle style) {
         
         // Create the Dataset adapter.
         Histogram2DAdapter adapter = new Histogram2DAdapter(histogram);
@@ -73,22 +73,22 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         if (hist2DStyle == null)
             hist2DStyle = StyleConstants.COLOR_MAP;
         
-        JFreeChart chart = null;
+        JFreeChart newChart = null;
                 
         if (hist2DStyle.equals(StyleConstants.COLOR_MAP)) {
             // color map
-            chart = createColorMap(adapter, style);
+            newChart = createColorMap(adapter, style);
         } else if (hist2DStyle.equals(StyleConstants.BOX_PLOT)) {
             // box plot
-            chart = createBoxPlot(adapter, style);
+            newChart = createBoxPlot(adapter, style);
         } else if (hist2DStyle.equals(StyleConstants.ELLIPSE_PLOT)) {
             // ellipse style is not implemented yet!
-            throw new IllegalArgumentException("The ellipse style is not implemented yet!");
+            throw new IllegalArgumentException("The ellipse style is not implemented yet.");
         } else {
             throw new IllegalArgumentException("Unknown hist2DStyle: " + hist2DStyle);
         }
 
-        return chart;
+        return newChart;
     }
 
     /**

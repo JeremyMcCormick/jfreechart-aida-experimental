@@ -3,6 +3,10 @@ package hep.aida.jfree.plot.style.converter;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.ERRORS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.POINTS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.VALUES;
+import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_FILL_COLOR;
+import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_LINE_COLOR;
+import static hep.aida.jfree.plot.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
+import static hep.aida.jfree.plot.style.util.StyleConstants.TRANSPARENT_COLOR;
 import hep.aida.IDataStyle;
 import hep.aida.IFillStyle;
 import hep.aida.ILineStyle;
@@ -24,11 +28,11 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public class Histogram1DStyleConverter extends AbstractStyleConverter {
+public class Histogram1DStyleConverter extends BaseStyleConverter {
 
     /**
      * 
-     * @param chart
+     * @param baseChart
      */
     void makeDataInvisible() {
         state.getChart().getXYPlot().getRenderer(VALUES).setSeriesVisible(VALUES, false);
@@ -36,7 +40,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
 
     /**
      * 
-     * @param chart
+     * @param baseChart
      */
     void makeErrorsInvisible() {
         state.getChart().getXYPlot().getRenderer(ERRORS).setSeriesVisible(ERRORS, false);
@@ -44,7 +48,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
 
     /**
      * 
-     * @param chart
+     * @param baseChart
      * @param hist
      * @param style
      */
@@ -64,7 +68,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
 
     /**
      * 
-     * @param chart
+     * @param baseChart
      * @param hist
      * @param style
      */
@@ -84,7 +88,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
 
     /**
      * 
-     * @param chart
+     * @param baseChart
      * @param hist
      * @param style
      */
@@ -119,7 +123,7 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
 
     /**
      * 
-     * @param chart
+     * @param baseChart
      * @param hist
      * @param style
      */
@@ -134,13 +138,13 @@ public class Histogram1DStyleConverter extends AbstractStyleConverter {
             renderer.setSeriesPaint(VALUES, color);
             renderer.setSeriesOutlinePaint(VALUES, color);
         } else {
-            renderer.setSeriesPaint(VALUES, TRANSPARENT);
+            renderer.setSeriesPaint(VALUES, TRANSPARENT_COLOR);
         }
     }
 
     /**
      * 
-     * @param chart
+     * @param baseChart
      * @param style
      */
     void applyErrorBarStyle() {

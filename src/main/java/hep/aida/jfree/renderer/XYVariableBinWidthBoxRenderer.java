@@ -36,11 +36,12 @@ public class XYVariableBinWidthBoxRenderer extends AbstractXYItemRenderer {
         return (value / maximumValue) * binSize;
     }
 
-    public void drawItem(Graphics2D g2, XYItemRendererState state, Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot, ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset, int series, int item, CrosshairState crosshairState, int pass) {
+    public void drawItem(Graphics2D g2, XYItemRendererState state, Rectangle2D dataArea, PlotRenderingInfo info, 
+            XYPlot plot, ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset, int series, int item, CrosshairState crosshairState, int pass) {
 
         if (!this.isSeriesVisible(series))
             return;
-                               
+                                             
         double x = dataset.getXValue(series, item);
         double y = dataset.getYValue(series, item);
         double z = 0.0;
@@ -65,9 +66,9 @@ public class XYVariableBinWidthBoxRenderer extends AbstractXYItemRenderer {
         if (z == 0)
             return;
                           
-        double heightScaled = computeScaledValue(binWidth, z);
-        double widthScaled = computeScaledValue(binHeight, z);
-               
+        double heightScaled = computeScaledValue(binHeight, z);
+        double widthScaled = computeScaledValue(binWidth, z);
+                       
         double xx0 = domainAxis.valueToJava2D(x, dataArea, plot.getDomainAxisEdge());
         double yy0 = rangeAxis.valueToJava2D(y, dataArea, plot.getRangeAxisEdge());
         double xx1 = domainAxis.valueToJava2D(x + widthScaled, dataArea, plot.getDomainAxisEdge());
@@ -80,9 +81,17 @@ public class XYVariableBinWidthBoxRenderer extends AbstractXYItemRenderer {
         double heightDraw = Math.abs(yy1 - yy0);
        
         if (orientation.equals(PlotOrientation.HORIZONTAL)) {
-            box = new Rectangle2D.Double(Math.min(yy0, yy1) + heightDraw / 2, Math.min(xx0, xx1) - widthDraw / 2, Math.abs(yy1 - yy0), Math.abs(xx0 - xx1));
+            box = new Rectangle2D.Double(
+                    Math.min(yy0, yy1) + heightDraw / 2, 
+                    Math.min(xx0, xx1) - widthDraw / 2, 
+                    Math.abs(yy1 - yy0), 
+                    Math.abs(xx0 - xx1));
         } else {
-            box = new Rectangle2D.Double(Math.min(xx0, xx1) - widthDraw / 2, Math.min(yy0, yy1) + heightDraw / 2, Math.abs(xx1 - xx0), Math.abs(yy1 - yy0));
+            box = new Rectangle2D.Double(
+                    Math.min(xx0, xx1) - widthDraw / 2, 
+                    Math.min(yy0, yy1) + heightDraw / 2, 
+                    Math.abs(xx1 - xx0), 
+                    Math.abs(yy1 - yy0));
         }
         g2.setPaint(this.getSeriesOutlinePaint(series));
         Stroke stroke = this.getSeriesStroke(series);

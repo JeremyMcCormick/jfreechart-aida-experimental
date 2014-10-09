@@ -36,9 +36,9 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
         Histogram2DAdapter adapter = (Histogram2DAdapter)dataset;
         Bounds zBounds = adapter.recomputeZBounds();
         if (zBounds.isValid()) {        
-            if (plot.getRenderer() instanceof XYVariableBinWidthBlockRenderer) {
+            if (plot.getRendererForDataset(dataset) instanceof XYVariableBinWidthBlockRenderer) {
                 updateColorMap(zBounds);
-            } else if (plot.getRenderer() instanceof XYVariableBinWidthBoxRenderer) {
+            } else if (plot.getRendererForDataset(dataset) instanceof XYVariableBinWidthBoxRenderer) {
                 updateBoxPlot(zBounds);
             }
         }    
@@ -51,8 +51,7 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
         ((XYVariableBinWidthBoxRenderer)chart.getXYPlot().getRendererForDataset(dataset)).setMaximumValue(zBounds.getMaximum());
     }
 
-    private void updateColorMap(Bounds zBounds) {
-                        
+    private void updateColorMap(Bounds zBounds) {       
         // Set the new Z bounds on the PaintScale.        
         PaintScale scale = ((XYVariableBinWidthBlockRenderer)chart.getXYPlot().getRendererForDataset(dataset)).getPaintScale();
         if (scale instanceof AbstractPaintScale) {

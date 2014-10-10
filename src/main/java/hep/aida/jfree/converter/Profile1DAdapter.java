@@ -14,30 +14,30 @@ import hep.aida.IProfile1D;
  */
 public class Profile1DAdapter implements IHistogram1D {
 
-    IProfile1D profile = null;
+    IProfile1D p1D = null;
 
     Profile1DAdapter(IProfile1D profile) {
-        this.profile = profile;
+        this.p1D = profile;
     }
 
     public int allEntries() {
-        return profile.allEntries();
+        return p1D.allEntries();
     }
 
     public double equivalentBinEntries() {
-        return profile.entries();
+        return p1D.entries();
     }
 
     public int extraEntries() {
-        return profile.extraEntries();
+        return p1D.extraEntries();
     }
 
     public double maxBinHeight() {
-        return profile.maxBinHeight();
+        return p1D.maxBinHeight();
     }
 
     public double minBinHeight() {
-        return profile.maxBinHeight();
+        return p1D.maxBinHeight();
     }
 
     public void scale(double arg0) throws IllegalArgumentException {
@@ -45,43 +45,43 @@ public class Profile1DAdapter implements IHistogram1D {
     }
 
     public double sumAllBinHeights() {
-        return profile.sumAllBinHeights();
+        return p1D.sumAllBinHeights();
     }
 
     public double sumBinHeights() {
-        return profile.sumBinHeights();
+        return p1D.sumBinHeights();
     }
 
     public double sumExtraBinHeights() {
-        return profile.sumExtraBinHeights();
+        return p1D.sumExtraBinHeights();
     }
 
     public IAnnotation annotation() {
-        return profile.annotation();
+        return p1D.annotation();
     }
 
     public int dimension() {
-        return profile.dimension();
+        return p1D.dimension();
     }
 
     public int entries() {
-        return profile.entries();
+        return p1D.entries();
     }
 
     public int nanEntries() {
-        return profile.nanEntries();
+        return p1D.nanEntries();
     }
 
     public void reset() throws RuntimeException {
-        profile.reset();
+        p1D.reset();
     }
 
-    public void setTitle(String arg0) throws IllegalArgumentException {
-        profile.setTitle(arg0);
+    public void setTitle(String title) throws IllegalArgumentException {
+        throw new UnsupportedOperationException("Method not supported."); 
     }
 
     public String title() {
-        return profile.title();
+        return p1D.title();
     }
 
     public void add(IHistogram1D arg0) throws IllegalArgumentException {
@@ -89,27 +89,27 @@ public class Profile1DAdapter implements IHistogram1D {
     }
 
     public IAxis axis() {
-        return profile.axis();
+        return p1D.axis();
     }
 
     public int binEntries(int arg0) throws IllegalArgumentException {
-        return profile.binEntries(arg0);
+        return p1D.binEntries(arg0);
     }
 
     public double binError(int arg0) throws IllegalArgumentException {
-        return profile.binError(arg0);
+        return p1D.binError(arg0);
     }
 
     public double binHeight(int arg0) throws IllegalArgumentException {
-        return profile.binHeight(arg0);
+        return p1D.binHeight(arg0);
     }
 
     public double binMean(int arg0) throws IllegalArgumentException {
-        return profile.binMean(arg0);
+        return p1D.binMean(arg0);
     }
 
     public int coordToIndex(double arg0) {
-        return profile.coordToIndex(arg0);
+        return p1D.coordToIndex(arg0);
     }
 
     public void fill(double arg0) throws IllegalArgumentException {
@@ -121,10 +121,10 @@ public class Profile1DAdapter implements IHistogram1D {
     }
 
     public double mean() {
-        return profile.mean();
+        return p1D.mean();
     }
 
     public double rms() {
-        return profile.rms();
+        return p1D.rms();
     }
 }

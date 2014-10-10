@@ -60,8 +60,10 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         yAxis.setAutoRange(true);
         yAxis.setAutoRangeIncludesZero(true);
         yAxis.setUpperMargin(DEFAULT_Y_AXIS_MARGIN);
-        if (histogram.maxBinHeight() > 0.0)
-            yAxis.setAutoRangeMinimumSize(histogram.maxBinHeight());
+        // If there is data here already then size the y axis correctly.
+        if (histogram.maxBinHeight() > 0.0) {
+            yAxis.setAutoRangeMinimumSize(histogram.maxBinHeight() + findMaxError(histogram));
+        }
         yAxis.setRangeType(RangeType.POSITIVE);
 
         return createHistogramChart(histogram.title(), xAxis, yAxis, datasets, renderers);
@@ -138,4 +140,21 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         }
         return datasets;
     }        
+    
+    /**
+     * Get the error value for the highest bin value.
+     * @param h1D The IHistogram1D.
+     * @return The error value for the highest bin value.
+     */
+    public static double findMaxError(IHistogram1D h1D) {
+        double maxBinHeight = h1D.maxBinHeight();
+        double maxError = 0;
+        for (int i = 0; i < h1D.axis().bins(); i++) {
+            if (h1D.binHeight(i) == maxBinHeight) {
+                if (h1D.binError(i) > maxError)
+                    maxError = h1D.binError(i); 
+            }
+        }
+        return maxError;
+    }    
 }

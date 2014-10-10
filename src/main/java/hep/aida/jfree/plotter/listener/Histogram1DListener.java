@@ -1,6 +1,7 @@
 package hep.aida.jfree.plotter.listener;
 
 import hep.aida.IHistogram1D;
+import hep.aida.jfree.converter.Histogram1DConverter;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYDataset;
@@ -18,6 +19,8 @@ public class Histogram1DListener extends PlotListener<IHistogram1D> {
     }
     
     public synchronized void update() {
+        chart.getXYPlot().getRangeAxis().setAutoRangeMinimumSize(plot.maxBinHeight() 
+                + Histogram1DConverter.findMaxError(plot));
         chart.getXYPlot().getRangeAxis().configure();
         super.update();
     }

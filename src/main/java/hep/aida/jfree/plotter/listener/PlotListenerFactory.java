@@ -6,6 +6,7 @@ import hep.aida.IDataPointSet;
 import hep.aida.IHistogram1D;
 import hep.aida.IHistogram2D;
 import hep.aida.IProfile1D;
+import hep.aida.IProfile2D;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYDataset;
@@ -33,6 +34,8 @@ public class PlotListenerFactory {
             return new DataPointSetListener((IDataPointSet)plot, chart, dataset);
         } else if (plot instanceof IProfile1D) {
             return new Profile1DListener((IProfile1D)plot, chart, dataset);
+        } else if (plot instanceof IProfile2D) {
+            return new Profile2DListener((IProfile2D)plot, chart, dataset);
         } else {
             return null;
         }        

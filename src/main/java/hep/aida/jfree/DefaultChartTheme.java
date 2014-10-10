@@ -1,4 +1,4 @@
-package hep.aida.jfree.chart;
+package hep.aida.jfree;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

@@ -16,7 +16,7 @@ import org.jfree.data.xy.XYDataset;
  */
 public class FunctionConverter implements Converter<IFunction> { 
     
-    private static int SAMPLES_FACTOR = 3;
+    public static int SAMPLES_FACTOR = 3;
     
     @Override
     public Class<IFunction> convertsType() {
@@ -28,7 +28,7 @@ public class FunctionConverter implements Converter<IFunction> {
         if (chart == null)
             throw new RuntimeException("The chart is null.");
                 
-        XYDataset functionData = toXYDataset(
+        XYDataset functionData = createXYDataset(
                 function, 
                 chart.getXYPlot().getDomainAxis().getLowerBound(),
                 chart.getXYPlot().getDomainAxis().getUpperBound(),
@@ -42,7 +42,7 @@ public class FunctionConverter implements Converter<IFunction> {
         return chart;
     }
       
-    private static XYDataset toXYDataset(IFunction function, double start, double end, int samples) {
+    public static XYDataset createXYDataset(IFunction function, double start, double end, int samples) {
         return DatasetUtilities.sampleFunction2D(new Function2DAdapter(function), start, end, samples, "functionData");
     }
 }

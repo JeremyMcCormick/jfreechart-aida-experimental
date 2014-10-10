@@ -22,22 +22,26 @@ public abstract class PlotListener<T> implements AIDAListener {
     JFreeChart chart;
     T plot;
     XYDataset dataset;
-    private final int DEFAULT_INTERVAL = 500; // in ms
+    private final int DEFAULT_INTERVAL = 1000;
     int updateInterval = DEFAULT_INTERVAL;
     Timer updateTimer = new Timer();
 
+    protected PlotListener() {
+    }
+    
     /**
      * 
      * @param hist The backing histogram.
      * @param chart The corresponding chart for the histogram.
      * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
-    PlotListener(T plot, JFreeChart chart, XYDataset dataset) {
-        if (!(plot instanceof IsObservable))
-            throw new IllegalArgumentException("The object does not implement IsObservable.");
+    PlotListener(T plot, JFreeChart chart, XYDataset dataset) {        
         this.chart = chart;
         this.plot = plot;
         this.dataset = dataset;
+        if (!(plot instanceof IsObservable))
+            throw new IllegalArgumentException("The object does not implement IsObservable.");
+        ((IsObservable) plot).addListener(this);
     }
 
     /**
@@ -46,15 +50,16 @@ public abstract class PlotListener<T> implements AIDAListener {
      * @param chart The corresponding chart for the histogram.
      * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
-    PlotListener(T plot, JFreeChart chart, XYDataset dataset, int updateInterval) {
-        if (!(plot instanceof IsObservable))
-            throw new IllegalArgumentException("The object does not implement IsObservable.");
+    PlotListener(T plot, JFreeChart chart, XYDataset dataset, int updateInterval) {        
         this.chart = chart;
         this.plot = plot;
         this.dataset = dataset;
         this.updateInterval = updateInterval;
+        if (!(plot instanceof IsObservable))
+            throw new IllegalArgumentException("The object does not implement IsObservable.");
+        ((IsObservable) plot).addListener(this);
     }
-
+       
     /** 
      * Start the task to update the plot graphics.
      * @param e The EventObject, which is unused.
@@ -76,6 +81,9 @@ public abstract class PlotListener<T> implements AIDAListener {
 
         PlotListener<T> listener;
 
+        protected UpdateTask() {
+        }
+        
         UpdateTask(PlotListener<T> listener) {
             this.listener = listener;
         }

@@ -12,6 +12,7 @@ import hep.aida.jfree.plotter.style.converter.StyleConverter;
 import hep.aida.jfree.plotter.style.converter.StyleConverterFactory;
 import hep.aida.jfree.plotter.style.util.LegendUtil;
 import hep.aida.ref.event.IsObservable;
+import hep.aida.ref.function.FunctionDispatcher;
 import hep.aida.ref.plotter.DummyPlotterRegion;
 import jas.util.layout.PercentLayout;
 
@@ -406,7 +407,7 @@ public class PlotterRegion extends DummyPlotterRegion {
         }
         
         // Get reference to the dataset for the PlotListener.
-        XYDataset dataset = newChart.getXYPlot().getDataset();
+        XYDataset dataset = newChart.getXYPlot().getDataset(newChart.getXYPlot().getDatasetCount() - 1);        
         
         // Is the region's chart object not set?
         if (this.baseChart == null) {
@@ -435,8 +436,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      */
     private void addPlotListener(Object plot, XYDataset dataset) {
         PlotListener<?> listener = PlotListenerFactory.createListener(plot, baseChart, dataset);
-        if (listener != null) {
-            ((IsObservable) plot).addListener(listener);
+        if (listener != null) {            
             state.addPlotListener(listener);
         }                
     }

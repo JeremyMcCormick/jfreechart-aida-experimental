@@ -32,7 +32,7 @@ import org.jfree.data.xy.XYDataset;
 public class Histogram1DConverter implements Converter<IHistogram1D> {
 
     static final double DEFAULT_X_AXIS_MARGIN = 0.05;
-    static final double DEFAULT_Y_AXIS_MARGIN = 0.1;
+    static final double DEFAULT_Y_AXIS_MARGIN = 0.2;
     
     public Class<IHistogram1D> convertsType() {
         return IHistogram1D.class;

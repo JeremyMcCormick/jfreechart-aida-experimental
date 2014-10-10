@@ -3,6 +3,7 @@ package hep.aida.jfree.plotter.listener;
 import hep.aida.ICloud1D;
 import hep.aida.ICloud2D;
 import hep.aida.IDataPointSet;
+import hep.aida.IFunction;
 import hep.aida.IHistogram1D;
 import hep.aida.IHistogram2D;
 import hep.aida.IProfile1D;
@@ -36,6 +37,8 @@ public class PlotListenerFactory {
             return new Profile1DListener((IProfile1D)plot, chart, dataset);
         } else if (plot instanceof IProfile2D) {
             return new Profile2DListener((IProfile2D)plot, chart, dataset);
+        } else if (plot instanceof IFunction) {
+            return new FunctionListener((IFunction)plot, chart, dataset);
         } else {
             return null;
         }        

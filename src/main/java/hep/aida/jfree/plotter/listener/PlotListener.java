@@ -1,7 +1,7 @@
 package hep.aida.jfree.plotter.listener;
 
 import hep.aida.ref.event.AIDAListener;
-import hep.aida.ref.event.AIDAObservable;
+import hep.aida.ref.event.IsObservable;
 
 import java.util.EventObject;
 import java.util.Timer;
@@ -33,8 +33,8 @@ public abstract class PlotListener<T> implements AIDAListener {
      * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
     PlotListener(T plot, JFreeChart chart, XYDataset dataset) {
-        if (!(plot instanceof AIDAObservable))
-            throw new IllegalArgumentException("The plot object is not an instance of AIDAObservable.");
+        if (!(plot instanceof IsObservable))
+            throw new IllegalArgumentException("The object does not implement IsObservable.");
         this.chart = chart;
         this.plot = plot;
         this.dataset = dataset;
@@ -47,8 +47,8 @@ public abstract class PlotListener<T> implements AIDAListener {
      * @param datasetIndices The indices of the datasets corresponding to the histogram in the chart.
      */
     PlotListener(T plot, JFreeChart chart, XYDataset dataset, int updateInterval) {
-        if (!(plot instanceof AIDAObservable))
-            throw new IllegalArgumentException("The plot object is not an instance of AIDAObservable.");
+        if (!(plot instanceof IsObservable))
+            throw new IllegalArgumentException("The object does not implement IsObservable.");
         this.chart = chart;
         this.plot = plot;
         this.dataset = dataset;
@@ -86,7 +86,7 @@ public abstract class PlotListener<T> implements AIDAListener {
             update();
 
             // Set valid for next callback.
-            ((AIDAObservable) plot).setValid(listener);
+            ((IsObservable) plot).setValid(listener);
         }
     }
 

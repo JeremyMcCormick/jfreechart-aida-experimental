@@ -2,6 +2,7 @@ package hep.aida.jfree.converter;
 
 import hep.aida.IBaseHistogram;
 import hep.aida.IDataPointSet;
+import hep.aida.IHistogram1D;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
@@ -13,6 +14,9 @@ import org.jfree.data.xy.XYDataset;
  * @version $Id: $
  */
 public class ConverterUtil {
+    
+    private ConverterUtil() {        
+    }
     
     /**
      * Get the axis labels for a histogram if the annotation is set.
@@ -59,7 +63,7 @@ public class ConverterUtil {
      * @param plot
      * @return
      */
-    XYItemRenderer[] getRenderers(XYPlot plot) {
+    static XYItemRenderer[] getRenderers(XYPlot plot) {
         XYItemRenderer[] renderers = new XYItemRenderer[plot.getRendererCount()];
         for (int i = 0; i < plot.getRendererCount(); i++) {
             renderers[i] = plot.getRenderer(i);
@@ -72,7 +76,7 @@ public class ConverterUtil {
      * @param plot
      * @return
      */
-    XYDataset[] getDatasets(XYPlot plot) {
+    static XYDataset[] getDatasets(XYPlot plot) {
         XYDataset[] datasets = new XYDataset[plot.getDatasetCount()];
         for (int i = 0; i < plot.getDatasetCount(); i++) {
             datasets[i] = plot.getDataset(i);
@@ -86,7 +90,7 @@ public class ConverterUtil {
      * @param plot The plot with the overlay data.
      * @return The indices of the overlaid datasets in the target chart.
      */
-    int[] overlay(JFreeChart chart, XYPlot plot) {                     
+    static int[] overlay(JFreeChart chart, XYPlot plot) {                     
         return overlay(chart, getDatasets(plot), getRenderers(plot));        
     }
     
@@ -98,7 +102,7 @@ public class ConverterUtil {
      * @return The indices of the overlaid datasets in the new chart.
      * @throw IllegalArgumentException If datasets and renderers have different lengths.
      */
-    int[] overlay(JFreeChart chart, XYDataset[] datasets, XYItemRenderer[] renderers) {
+    static int[] overlay(JFreeChart chart, XYDataset[] datasets, XYItemRenderer[] renderers) {
         
         if (datasets.length != renderers.length) {
             throw new IllegalArgumentException("The datasets and renderers have different lengths.");
@@ -123,6 +127,5 @@ public class ConverterUtil {
         }
         
         return datasetIndices;
-    }
-    
+    }       
 }

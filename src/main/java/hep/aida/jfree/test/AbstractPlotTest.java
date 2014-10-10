@@ -38,7 +38,6 @@ public abstract class AbstractPlotTest extends TestCase {
         tree = treeFactory.createTree(this.getClass().getSimpleName());
         plotter = plotterFactory.create();
         fitFactory = analysisFactory.createFitFactory();
-        //((Plotter)plotter).setEmbedded(false);
         style = plotter.style();
     }
     

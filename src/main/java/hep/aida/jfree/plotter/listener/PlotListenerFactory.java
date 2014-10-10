@@ -5,6 +5,7 @@ import hep.aida.ICloud2D;
 import hep.aida.IDataPointSet;
 import hep.aida.IHistogram1D;
 import hep.aida.IHistogram2D;
+import hep.aida.IProfile1D;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYDataset;
@@ -20,7 +21,7 @@ public class PlotListenerFactory {
     }
     
     public static PlotListener<?> createListener(Object plot, JFreeChart chart, XYDataset dataset) {
-        if (plot instanceof IHistogram1D) {
+        if (plot instanceof IHistogram1D) {            
             return new Histogram1DListener((IHistogram1D)plot, chart, dataset);
         } else if (plot instanceof ICloud1D) {
             return new Cloud1DListener((ICloud1D)plot, chart, dataset);
@@ -30,6 +31,8 @@ public class PlotListenerFactory {
             return new Histogram2DListener((IHistogram2D)plot, chart, dataset);
         } else if (plot instanceof IDataPointSet) {
             return new DataPointSetListener((IDataPointSet)plot, chart, dataset);
+        } else if (plot instanceof IProfile1D) {
+            return new Profile1DListener((IProfile1D)plot, chart, dataset);
         } else {
             return null;
         }        

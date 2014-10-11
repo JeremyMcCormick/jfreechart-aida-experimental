@@ -9,6 +9,9 @@ public class Profile1DTest extends AbstractPlotTest {
 
     public void test() {
 
+        setBatchMode(false);
+        setWaitTime(100000);
+        
         // Create 1D and 2D IProfile with fixed bin width
         IProfile1D prof1DFixedBinWidth = histogramFactory.createProfile1D("prof1DFixedBinWidth", "Fixed bin width 1D", 10, 0, 1);
 
@@ -17,21 +20,31 @@ public class Profile1DTest extends AbstractPlotTest {
         // Create 1D IProfile with variable bin width
         IProfile1D prof1DVariableBinWidth = histogramFactory.createProfile1D("prof1DVariableBinWidth", "Variable bin width 1D", xBinEdges);
 
+        // Display the results
+        plotter.createRegions(2, 1);
+        plotter.region(0).plot(prof1DFixedBinWidth);
+        plotter.region(1).plot(prof1DVariableBinWidth);
+        plotter.show();
+        
         Random r = new Random();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             double x = r.nextDouble();
             double y = x + 0.1 * r.nextGaussian();
 
             // Fill the IProfiles with default weight.
             prof1DFixedBinWidth.fill(x, y);
             prof1DVariableBinWidth.fill(x, y);
+            
+            synchronized (Thread.currentThread()) {
+                try {
+                    Thread.currentThread().wait(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }            
         }
-
-        // Display the results
-        plotter.createRegions(2, 1);
-        plotter.region(0).plot(prof1DFixedBinWidth);
-        plotter.region(1).plot(prof1DVariableBinWidth);
+        plotter.show();
         
         mode();
     }

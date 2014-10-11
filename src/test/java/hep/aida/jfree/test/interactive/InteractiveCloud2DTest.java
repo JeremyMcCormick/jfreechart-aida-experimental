@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class InteractiveCloud2DTest extends AbstractPlotTest {
 
-    protected void plot() {
+    public void testInteractiveCloud2D() {
 
         ICloud2D c2d = histogramFactory.createCloud2D("/", "c2d", 0, "autoconvert=false");
 
@@ -35,10 +35,9 @@ public class InteractiveCloud2DTest extends AbstractPlotTest {
 
         Random rand = new Random();
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            Object object = new Boolean(true);
-            synchronized(object) {
+            synchronized(Thread.currentThread()) {
                 try {
-                    object.wait(1);
+                    Thread.currentThread().wait(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -46,6 +45,5 @@ public class InteractiveCloud2DTest extends AbstractPlotTest {
             c2d.fill(Math.abs(rand.nextDouble()) * 1000000, Math.abs(rand.nextDouble()) * 1000000);
         }
         
-        mode();
     }    
 }

@@ -8,7 +8,7 @@ import hep.aida.IAnalysisFactory;
 import hep.aida.IHistogram1D;
 import hep.aida.IHistogramFactory;
 import hep.aida.jfree.AnalysisFactory;
-import hep.aida.jfree.chart.DefaultChartTheme;
+import hep.aida.jfree.DefaultChartTheme;
 import hep.aida.jfree.converter.ConverterUtil;
 
 import java.awt.Color;

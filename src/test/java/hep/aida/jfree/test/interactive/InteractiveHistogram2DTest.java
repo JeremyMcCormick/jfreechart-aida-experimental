@@ -20,7 +20,7 @@ public class InteractiveHistogram2DTest extends AbstractPlotTest {
     public void testBoxPlot() {
         
         // Create a 2D histogram.
-        IHistogram2D h2d = histogramFactory.createHistogram2D("h2d", 2, 0., 2., 2, 0., 2.);
+        IHistogram2D h2d = histogramFactory.createHistogram2D("h2d", 2, -0.01, 0.01, 2, -0.01, 0.01);
 
         // Set labels for the axes.
         h2d.annotation().addItem("xAxisLabel", h2d.title() + " X");
@@ -43,10 +43,11 @@ public class InteractiveHistogram2DTest extends AbstractPlotTest {
         // plotter.createRegions(1, 2, 0);
 
         // Display as color map.
-        // plotter.region(0).plot(h2d, pstyle);
+        //plotter.region(0).plot(h2d, pstyle);
 
         // Display as box plot.
         pstyle.setParameter("hist2DStyle", "box");
+        pstyle.legendBoxStyle().setVisible(true);
         pstyle.dataStyle().lineStyle().setVisible(true);
         pstyle.dataStyle().lineStyle().setColor("blue");
         pstyle.dataStyle().fillStyle().setVisible(false);
@@ -55,12 +56,21 @@ public class InteractiveHistogram2DTest extends AbstractPlotTest {
         plotter.createRegion();
         System.out.println("doing plot ...");
         plotter.region(0).plot(h2d, pstyle);
+        plotter.show();
         
         // Fill the histogram with random data.
         
         Random rand = new Random();
-        for (int i = 0; i < 1000; i++) {
-            h2d.fill(rand.nextDouble() * 2.0, rand.nextDouble() * 2.0);            
+        for (int i = 0; i < 100000; i++) {
+            //h2d.fill(-5 + rand.nextDouble() * 10.0, -5 + rand.nextDouble() * 10.0);
+            h2d.fill(-0.01 + rand.nextDouble() * 0.02, -0.01 + rand.nextDouble() * 0.02);
+            synchronized (Thread.currentThread()) {
+                try {
+                    Thread.currentThread().wait(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         
         mode();
@@ -70,6 +80,8 @@ public class InteractiveHistogram2DTest extends AbstractPlotTest {
         
         double[] xBinEdges = { 0.0, 1.0, 3.0, 6.0, 10.0 };
         double[] yBinEdges = { 0.0, 5.0, 15.0, 30.0 };
+        //double[] xBinEdges = { 0.0, 2.0, 5.0 };
+        //double[] yBinEdges = { 0.0, 5.0, 10.0 };
         
         // Create a 2D histogram.
         IHistogram2D histogram = histogramFactory.createHistogram2D(
@@ -105,11 +117,19 @@ public class InteractiveHistogram2DTest extends AbstractPlotTest {
 
         plotter.createRegion();
         plotter.region(0).plot(histogram, pstyle);
+        plotter.show();
         
         // Fill the histogram with random data.
         Random rand = new Random();
         for (int i = 0; i < 100000; i++) {
             histogram.fill(rand.nextDouble() * 10, rand.nextDouble() * 30);
+            synchronized(Thread.currentThread()) {
+                try {
+                    Thread.currentThread().wait(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         
         mode();

@@ -11,8 +11,6 @@ import hep.aida.jfree.plotter.listener.PlotListenerFactory;
 import hep.aida.jfree.plotter.style.converter.StyleConverter;
 import hep.aida.jfree.plotter.style.converter.StyleConverterFactory;
 import hep.aida.jfree.plotter.style.util.LegendUtil;
-import hep.aida.ref.event.IsObservable;
-import hep.aida.ref.function.FunctionDispatcher;
 import hep.aida.ref.plotter.DummyPlotterRegion;
 import jas.util.layout.PercentLayout;
 
@@ -131,23 +129,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     public JPanel getPanel() {
         return chartPanel;
     }
-
-    /**
-     * Get the JFreeChart XYPlot of this region.
-     * @return The XYPlot of this region.
-     */
-    public XYPlot getPlot() {
-        return baseChart.getXYPlot();
-    }
-
-    /**
-     * Get the JFreeChart object of this region.
-     * @return The JFreeChart of this region.
-     */
-    public JFreeChart getChart() {
-        return baseChart;
-    }
-                
+                    
     /**
      * Plot an IBaseHistogam with the region's style.
      * @param histogram The IBaseHistogram to plot.
@@ -255,24 +237,7 @@ public class PlotterRegion extends DummyPlotterRegion {
     public String title() {
         return title;
     }
-      
-    /**
-     * This is a convenience method for users to get the styles that are associated
-     * with an object being plotted within this region.  This returns a list because 
-     * the same object could be plotted more than once.
-     * @param object
-     * @return
-     */
-    public List<ObjectStyle> getObjectStyles(Object object) {
-        List<ObjectStyle> foundObjectStyles = new ArrayList<ObjectStyle>();
-        for (ObjectStyle objectStyle : state.getObjectStyles()) {
-            if (objectStyle.object == object) {
-                foundObjectStyles.add(objectStyle);
-            }
-        }
-        return foundObjectStyles;
-    }
-    
+          
     /**
      * Get a list of objects that are plotted in this region.
      * @return The list of objects plotted in this region.
@@ -363,7 +328,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      * Create an JFreeChart from an AIDA object and the given style, 
      * or if the base chart is already set, then overlay the plot 
      * onto it.
-     * @param type The object's class.
+     * @param type The AIDA object's class.
      * @param object The AIDA object to convert.
      * @param style The PlotterStyle to apply.
      * @return The new JFreeChart that was created.
@@ -406,7 +371,7 @@ public class PlotterRegion extends DummyPlotterRegion {
             } 
         }
         
-        // Get reference to the dataset for the PlotListener.
+        // Get reference to the dataset for the PlotListener.  It should be the last one in the list.
         XYDataset dataset = newChart.getXYPlot().getDataset(newChart.getXYPlot().getDatasetCount() - 1);        
         
         // Is the region's chart object not set?
@@ -461,13 +426,5 @@ public class PlotterRegion extends DummyPlotterRegion {
             // Increment the index for the next dataset and renderer pair.
             ++datasetIndex;
         }
-    }
-        
-    /*
-    private void addFunctionListener(IFunction function, JFreeChart chart, int[] datasetIndices) {
-        PlotListener<IFunction> listener = new FunctionListener(function, chart, datasetIndices);
-        ((IsObservable) function).addListener(listener);
-        this.listeners.add(listener);
-    }
-    */          
+    }          
 }

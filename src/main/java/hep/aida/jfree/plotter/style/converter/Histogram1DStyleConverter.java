@@ -3,6 +3,7 @@ package hep.aida.jfree.plotter.style.converter;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.ERRORS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.POINTS;
 import static hep.aida.jfree.dataset.Histogram1DAdapter.VALUES;
+import static hep.aida.jfree.dataset.Histogram1DAdapter.STEPS;
 import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_FILL_COLOR;
 import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_LINE_COLOR;
 import static hep.aida.jfree.plotter.style.util.StyleConstants.DEFAULT_SHAPE_COLOR;
@@ -36,6 +37,8 @@ public class Histogram1DStyleConverter extends BaseStyleConverter {
      */
     void makeDataInvisible() {
         state.getChart().getXYPlot().getRenderer(VALUES).setSeriesVisible(VALUES, false);
+        state.getChart().getXYPlot().getRenderer(STEPS).setSeriesVisible(STEPS, false);
+        state.getChart().getXYPlot().getRenderer(POINTS).setSeriesVisible(POINTS, false);
     }
 
     /**
@@ -108,15 +111,16 @@ public class Histogram1DStyleConverter extends BaseStyleConverter {
         } else {
             if (!state.getPlotterStyle().dataStyle().fillStyle().isVisible()) {
 
-                // If lines and fill are both turned off, then turn off the bar chart renderer entirely.
+                // If both lines and fill are turned off, then turn off the bar chart renderer entirely.
                 plot.getRenderer(VALUES).setSeriesVisible(VALUES, false);
-
-                // FIXME: Determine if this should actually happen here!           
+           
                 // Turn on the step renderer by default.
-                // XYItemRenderer stepRenderer = plot.getRenderer(STEPS);
-                // stepRenderer.setSeriesVisible(STEPS, true);
-                // stepRenderer.setSeriesPaint(STEPS, color);
-                // stepRenderer.setSeriesStroke(STEPS, stroke);
+                // FIXME: This is a bit strange because the color and stroke come from the line style
+                //        which is technically turned off!
+                XYItemRenderer stepRenderer = plot.getRenderer(STEPS);
+                stepRenderer.setSeriesVisible(STEPS, true);
+                stepRenderer.setSeriesPaint(STEPS, color);
+                stepRenderer.setSeriesStroke(STEPS, stroke);
             }
         }
     }
@@ -173,24 +177,16 @@ public class Histogram1DStyleConverter extends BaseStyleConverter {
             // Set the stroke on the renderer.
             renderer.setSeriesStroke(ERRORS, stroke);
 
-            //
-            // FIXME: Need to make sure cap length is handled correctly here...
-            //
-            
-            // Default cap length.
-            // renderer.setCapLength(4.0f);
+           
             // Error bar decoration.
+            // FIXME: Need to make sure cap length and error bar decoration are handled correctly here.
             String decoration = errorStyle.parameterValue(Style.ERRORBAR_DECORATION);
             if (decoration != null) {
                 float capLength = Float.parseFloat(decoration);
-                if (capLength == 0.f) {
+                if (capLength != 0.f) {
                     renderer.setCapLength(capLength);
                 }
             }
-            // } else {
-            // renderer.setCapLength(capLength);
-            // }
-            // }
         } else {
             renderer.setSeriesVisible(ERRORS, false);
         }

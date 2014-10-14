@@ -53,7 +53,7 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         NumberAxis xAxis = new NumberAxis(labels[0]);
         xAxis.setAutoRange(true);
         xAxis.setDefaultAutoRange(new Range(histogram.axis().lowerEdge(), histogram.axis().upperEdge()));
-        xAxis.setUpperMargin(DEFAULT_X_AXIS_MARGIN);
+        //xAxis.setUpperMargin(DEFAULT_X_AXIS_MARGIN);
         
         // Configure the Y axis.
         NumberAxis yAxis = new NumberAxis(labels[1]);
@@ -62,7 +62,8 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         yAxis.setUpperMargin(DEFAULT_Y_AXIS_MARGIN);
         // If there is data here already then size the y axis correctly.
         if (histogram.maxBinHeight() > 0.0) {
-            yAxis.setAutoRangeMinimumSize(histogram.maxBinHeight() + findMaxError(histogram));
+            double xMinSize = histogram.maxBinHeight() + findMaxError(histogram);
+            yAxis.setAutoRangeMinimumSize(xMinSize);
         }
         yAxis.setRangeType(RangeType.POSITIVE);
 

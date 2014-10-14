@@ -1,6 +1,7 @@
 package hep.aida.jfree.plotter.style.converter;
 
 import hep.aida.IAxisStyle;
+import hep.aida.IBorderStyle;
 import hep.aida.IBoxStyle;
 import hep.aida.IGridStyle;
 import hep.aida.IHistogram1D;
@@ -26,11 +27,14 @@ import javax.swing.border.Border;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.AxisLabelLocation;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
 
 /**
@@ -254,7 +258,7 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * 
+     * This sets the style on the data box surrounding the plot.
      * @param baseChart
      * @param style
      */
@@ -328,6 +332,22 @@ class BaseStyleConverter implements StyleConverter {
                 throw new RuntimeException(x);
             }
         }
+        
+        //state.getPlotterStyle().titleStyle().boxStyle();
+        //state.getPlotterStyle().titleStyle().textStyle();        
+        //state.getPlotterStyle().titleStyle().boxStyle().borderStyle();
+        //state.getPlotterStyle().titleStyle().boxStyle().foregroundStyle();
+
+        IBorderStyle borderStyle = state.getPlotterStyle().titleStyle().boxStyle().borderStyle();
+        if (borderStyle.isVisible()) {
+            TextTitle textTitle = state.getChart().getTitle();
+            int thickness = borderStyle.thickness();
+            textTitle.setBorder(thickness, thickness, thickness, thickness);            
+            Color color = ColorUtil.toColor(borderStyle, StyleConstants.DEFAULT_TITLE_BORDER_COLOR);
+            textTitle.setPaint(color);
+            //textTitle.setMargin(new RectangleInsets(5, 5, 5, 5));
+            textTitle.setPadding(new RectangleInsets(2, 5, 2, 5));
+        }
     }
 
     /**
@@ -391,22 +411,19 @@ class BaseStyleConverter implements StyleConverter {
             } catch (Exception cce) {
                 throw new RuntimeException(cce);
             }
-        }
+        } 
 
         // tick labels font
         axis.setTickLabelFont(PlotterFontUtil.getFont(axisStyle.tickLabelStyle()));
 
         // axis line color
-        String axisLineColor = axisStyle.lineStyle().color();
-        if (axisLineColor != null) {
-            try {
-                Color color = ColorUtil.toColor(axisStyle.lineStyle());
-                axis.setAxisLinePaint(color);
-            } catch (Exception cce) {
-                throw new RuntimeException(cce);
-            }
-        }
-
+        Color axisLineColor = StyleConstants.DEFAULT_AXIS_COLOR;
+        if (axisStyle.lineStyle().color() != null) {
+            axisLineColor = ColorUtil.toColor(axisStyle.lineStyle());
+        }        
+        axis.setAxisLinePaint(axisLineColor);
+        axis.setTickMarkPaint(axisLineColor);
+                
         // axis line width
         float axisLineWidth = StrokeUtil.lineThickness(axisStyle.lineStyle().thickness());
         if (axisLineWidth >= 0) {
@@ -442,6 +459,8 @@ class BaseStyleConverter implements StyleConverter {
         // if (verticalLabel)
         // axis.setLabelAngle(Math.PI/2);
         // label.setRotated(verticalLabel);
+        
+        axis.setLabelLocation(AxisLabelLocation.HIGH_END);
     }
 
     /**
@@ -505,11 +524,7 @@ class BaseStyleConverter implements StyleConverter {
      * @return True if data is visible; false if not.
      */
     boolean isDataVisible() {
-        boolean visible = true;
-        if (!state.getPlotterStyle().dataStyle().isVisible()) {
-            visible = false;
-        }
-        return visible;
+        return state.getPlotterStyle().dataStyle().isVisible();
     }
 
     /**
@@ -519,11 +534,7 @@ class BaseStyleConverter implements StyleConverter {
      * @return True if data is visible; false if not.
      */
     boolean areErrorsVisible() {
-        boolean visible = true;
-        if (!state.getPlotterStyle().dataStyle().errorBarStyle().isVisible()) {
-            visible = false;
-        }
-        return visible;
+        return state.getPlotterStyle().dataStyle().errorBarStyle().isVisible();
     }
     
     // FIXME: Only works for 1D histograms.

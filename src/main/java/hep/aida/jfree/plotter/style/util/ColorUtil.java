@@ -173,4 +173,16 @@ public final class ColorUtil {
         return color;
     }
 
+    
+    public static Color toColor(String colorString) {
+        Color color = null;
+        try {
+            color = ColorConverter.get(colorString);
+        } catch (ColorConversionException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } 
+        return color;
+    }
 }

@@ -1,10 +1,12 @@
 package hep.aida.jfree;
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.renderer.xy.XYBarRenderer;
-
 import hep.aida.IPlotterFactory;
 import hep.aida.jfree.plotter.PlotterFactory;
+import hep.aida.jfree.plotter.style.registry.DefaultPlotterStyles;
+import hep.aida.jfree.plotter.style.registry.InMemoryCloningStyleStore;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
 
 /**
  * JFreeChart AnalysisFactory
@@ -13,6 +15,11 @@ import hep.aida.jfree.plotter.PlotterFactory;
  */
 public class AnalysisFactory extends hep.aida.ref.AnalysisFactory {
 
+    static {
+        InMemoryCloningStyleStore.initialize();
+        DefaultPlotterStyles.registerDefaultStyles();
+    }
+    
     public static void configure() {
         ChartFactory.setChartTheme(new DefaultChartTheme());
         XYBarRenderer.setDefaultShadowsVisible(false);

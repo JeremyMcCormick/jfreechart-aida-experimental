@@ -1,7 +1,8 @@
-package hep.aida.jfree.test;
+package hep.aida.jfree.test.interactive;
 
 import hep.aida.IDataPointSet;
 import hep.aida.IPlotterStyle;
+import hep.aida.jfree.test.AbstractPlotTest;
 
 import java.util.Random;
 
@@ -13,7 +14,7 @@ import java.util.Random;
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  *
  */
-public class DataPointSetTest extends AbstractPlotTest {
+public class InteractiveDataPointSetTest extends AbstractPlotTest {
     
     public void testDataPointSet() {
         

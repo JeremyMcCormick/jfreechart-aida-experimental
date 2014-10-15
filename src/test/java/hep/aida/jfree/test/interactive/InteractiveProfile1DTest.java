@@ -1,11 +1,11 @@
-package hep.aida.jfree.test;
+package hep.aida.jfree.test.interactive;
 
 import hep.aida.IProfile1D;
 import hep.aida.jfree.test.AbstractPlotTest;
 
 import java.util.Random;
 
-public class Profile1DTest extends AbstractPlotTest {
+public class InteractiveProfile1DTest extends AbstractPlotTest {
 
     public void test() {
 

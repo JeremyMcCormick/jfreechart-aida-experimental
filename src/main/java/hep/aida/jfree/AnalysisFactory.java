@@ -16,24 +16,20 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 public class AnalysisFactory extends hep.aida.ref.AnalysisFactory {
 
     static {
+        // Static initialization of the style registry.
         InMemoryCloningStyleStore.initialize();
         DefaultPlotterStyles.registerDefaultStyles();
-    }
-    
-    public static void configure() {
+        
+        // Static initialization of the default look and feel for JFreeChart.
         ChartFactory.setChartTheme(new DefaultChartTheme());
         XYBarRenderer.setDefaultShadowsVisible(false);
-    }
-
+    }    
     /**
      * Register this class as the AIDA AnalysisFactory by setting the system property.
      */
     public final static void register() {        
         // Set the system property for this class to provide the AIDA factory implementation.
         System.setProperty("hep.aida.IAnalysisFactory", AnalysisFactory.class.getName());
-
-        // Setup JFreeChart default configuration.
-        configure();
     }
 
     /**

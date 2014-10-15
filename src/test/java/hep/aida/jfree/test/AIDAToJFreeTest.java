@@ -64,8 +64,8 @@ public class AIDAToJFreeTest extends AbstractPlotTest {
 
     public void test() {
 
-        setBatchMode(false);
-        this.setWaitTime(100000);
+        //setBatchMode(false);
+        //this.setWaitTime(100000);
         
         // Create a list with various types of histograms
         List<IBaseHistogram> histos = new ArrayList<IBaseHistogram>();

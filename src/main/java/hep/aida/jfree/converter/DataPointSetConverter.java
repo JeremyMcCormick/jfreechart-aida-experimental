@@ -13,6 +13,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYErrorRenderer;
@@ -22,6 +23,8 @@ import org.jfree.data.RangeType;
 
 public class DataPointSetConverter implements Converter<IDataPointSet> {
 
+    public static final int MAX_POINTS = 20;
+    
     @Override
     public Class<IDataPointSet> convertsType() {
         return IDataPointSet.class;
@@ -53,9 +56,13 @@ public class DataPointSetConverter implements Converter<IDataPointSet> {
         
         // Configure the X axis.
         NumberAxis xAxis = new NumberAxis(labels[0]);
+        xAxis.setAutoRange(false);
         xAxis.setTickUnit(new NumberTickUnit(1.0));
         xAxis.setRangeType(RangeType.POSITIVE);
         xAxis.setMinorTickMarksVisible(false);
+        if (adapter.getItemCount(DataPointSetAdapter.VALUES) > 0) {            
+            configureDomainAxis(xAxis, adapter, MAX_POINTS);
+        }
         
         // Configure the Y axis.
         NumberAxis yAxis = new NumberAxis(labels[1]);
@@ -99,4 +106,15 @@ public class DataPointSetConverter implements Converter<IDataPointSet> {
         
         return newChart;
     }       
+    
+    public static void configureDomainAxis(ValueAxis axis, DataPointSetAdapter adapter, int maxPoints) {    
+        int nPoints = adapter.getItemCount(DataPointSetAdapter.VALUES);        
+        int xLowerBound = 0;
+        if (nPoints > maxPoints) {
+            xLowerBound = nPoints - maxPoints;
+        }
+        int xUpperBound = xLowerBound + maxPoints + 1;        
+        axis.setRange(xLowerBound, xUpperBound);
+    }
+    
 }

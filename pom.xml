@@ -41,8 +41,8 @@
         <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-jaida-standard-distribution</artifactId>
-<!--            <version>3.4.9</version> -->
-            <version>3.4.10-SNAPSHOT</version>
+            <version>3.4.9</version> 
+<!--            <version>3.4.10-SNAPSHOT</version> -->
             <type>pom</type>
         </dependency>
         <dependency>

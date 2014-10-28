@@ -15,7 +15,10 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
  */
 public class AnalysisFactory extends hep.aida.ref.AnalysisFactory {
 
-    static {
+    /**
+     * Perform various static configuration.
+     */
+    public final static void configure() {
         // Static initialization of the style registry.
         InMemoryCloningStyleStore.initialize();
         DefaultPlotterStyles.registerDefaultStyles();
@@ -24,6 +27,7 @@ public class AnalysisFactory extends hep.aida.ref.AnalysisFactory {
         ChartFactory.setChartTheme(new DefaultChartTheme());
         XYBarRenderer.setDefaultShadowsVisible(false);
     }    
+    
     /**
      * Register this class as the AIDA AnalysisFactory by setting the system property.
      */

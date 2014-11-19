@@ -14,7 +14,6 @@ import hep.aida.jfree.plotter.style.util.LegendUtil;
 import hep.aida.ref.plotter.DummyPlotterRegion;
 import jas.util.layout.PercentLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -401,7 +400,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      */
     private void addPlotListener(Object plot, XYDataset dataset) {
         PlotListener<?> listener = PlotListenerFactory.createListener(plot, baseChart, dataset);
-        if (listener != null) {            
+        if (listener != null) {
             state.addPlotListener(listener);
         }                
     }

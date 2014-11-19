@@ -51,12 +51,15 @@ public class LegendUtil {
             }
             chart.getLegend().setSources(legendItemSources.toArray(new LegendItemSource[]{}));
             chart.getLegend().setVisible(true);
+        } else {
+            chart.getLegend().setVisible(false);
         }
     }
     
     static LegendItem createLegendItem(IBaseHistogram histogram, IPlotterStyle style) {
         LegendItem legendItem = null;
-        if (style.legendBoxStyle().isVisible()) {                       
+        if (style.legendBoxStyle().isVisible()) {
+            System.out.println("legend is not visible for " + histogram.title());
             String label = histogram.title();
             if (label == null) {
                 label = histogram.toString();

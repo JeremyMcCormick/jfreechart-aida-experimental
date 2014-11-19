@@ -31,6 +31,7 @@ public abstract class AbstractPlotTest extends TestCase {
     
     protected void setUp() {
         AnalysisFactory.register();
+        AnalysisFactory.configure();
         analysisFactory = IAnalysisFactory.create();
         plotterFactory = analysisFactory.createPlotterFactory();
         histogramFactory = analysisFactory.createHistogramFactory(null);

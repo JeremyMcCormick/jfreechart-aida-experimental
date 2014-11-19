@@ -23,14 +23,12 @@ import org.jfree.data.xy.XYDataset;
  */
 public class Histogram2DListener extends PlotListener<IHistogram2D> {
     
-    // Update interval is every 1 second.
-    static private int updateInterval = 1000;
-
     Histogram2DListener(IHistogram2D histogram, JFreeChart chart, XYDataset dataset) {
-        super(histogram, chart, dataset, updateInterval); 
+        super(histogram, chart, dataset); 
     }
 
-    public synchronized void update() {
+    @Override
+    public void update() {
         chart.setNotify(false);        
         XYPlot plot = chart.getXYPlot();        
         Histogram2DAdapter adapter = (Histogram2DAdapter)dataset;

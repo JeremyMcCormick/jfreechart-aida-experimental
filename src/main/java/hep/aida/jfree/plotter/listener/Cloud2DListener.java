@@ -15,7 +15,7 @@ public class Cloud2DListener extends PlotListener<ICloud2D> {
         super(cloud, chart, dataset);
     }
     
-    public synchronized void update() {
+    public void update() {
         chart.setNotify(false);        
         chart.getXYPlot().configureDomainAxes();
         chart.getXYPlot().configureRangeAxes();

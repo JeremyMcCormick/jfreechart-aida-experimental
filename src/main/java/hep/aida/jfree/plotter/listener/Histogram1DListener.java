@@ -18,7 +18,8 @@ public class Histogram1DListener extends PlotListener<IHistogram1D> {
         super(histogram, chart, dataset);
     }
     
-    public synchronized void update() {
+    @Override
+    public void update() {
         double xMinSize = plot.maxBinHeight() + Histogram1DConverter.findMaxError(plot);
         if (xMinSize > 0.) {
             chart.getXYPlot().getRangeAxis().setAutoRangeMinimumSize(xMinSize);

@@ -22,8 +22,8 @@ public class Profile2DListener extends PlotListener<IProfile2D> {
         ((IsObservable)adapter).removeListener(listener);
     }
     
-    public synchronized void update() {
+    @Override
+    public void update() {
         listener.update();
     }
-
 }

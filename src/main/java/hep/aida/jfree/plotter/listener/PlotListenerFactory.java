@@ -15,7 +15,6 @@ import org.jfree.data.xy.XYDataset;
 /**
  * This factory creates {@link PlotListener} objects depending on the type of AIDA object.
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
- * @version $Id: $
  */
 public class PlotListenerFactory {
 

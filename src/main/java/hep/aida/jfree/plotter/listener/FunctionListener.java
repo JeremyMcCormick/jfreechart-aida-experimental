@@ -15,8 +15,7 @@ public class FunctionListener extends PlotListener<IFunction> implements hep.aid
     
     double lowerBound;
     double upperBound;
-    int nSamples;
-    boolean validForUpdate = true;
+    int nSamples;    
     
     public FunctionListener(IFunction function, JFreeChart chart, XYDataset dataset) {
         this.plot = function;
@@ -32,8 +31,9 @@ public class FunctionListener extends PlotListener<IFunction> implements hep.aid
     }
     
     @Override
-    public synchronized void functionChanged(FunctionChangedEvent event) {
-        if (validForUpdate) {
+    public void functionChanged(FunctionChangedEvent event) {
+        // Is the plot valid for updating?
+        if (isValid) {
             chart.setNotify(false);
             XYSeriesCollection functionData = (XYSeriesCollection)FunctionConverter.createXYDataset( 
                     plot, 
@@ -43,16 +43,15 @@ public class FunctionListener extends PlotListener<IFunction> implements hep.aid
             ((XYSeriesCollection)dataset).removeAllSeries();
             ((XYSeriesCollection)dataset).addSeries(functionData.getSeries(0));
             chart.setNotify(true);
-            validForUpdate = false;
+            isValid = false;
         }
     }
 
     @Override
     public void chartProgress(ChartProgressEvent event) {
         if (event.getType() == ChartProgressEvent.DRAWING_FINISHED) {
-            validForUpdate = true;
-        } else if (event.getType() == ChartProgressEvent.DRAWING_STARTED) {
-            validForUpdate = false;
-        }
+            // Set valid for updating after drawing is done.
+            isValid = true;
+        } 
     }    
 }

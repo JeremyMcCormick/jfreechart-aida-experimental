@@ -16,6 +16,7 @@ public class FunctionListener extends PlotListener<IFunction> implements hep.aid
     double lowerBound;
     double upperBound;
     int nSamples;    
+    boolean isValid = true;
     
     public FunctionListener(IFunction function, JFreeChart chart, XYDataset dataset) {
         this.plot = function;

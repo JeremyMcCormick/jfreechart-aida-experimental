@@ -30,20 +30,20 @@ public final class DefaultPlotterStyles {
         store.addStyle(new ROOTHistogram1DStyle());
     }
     
-    static class DefaultPlotterStyle extends PlotterStyle {        
+    public static class DefaultPlotterStyle extends PlotterStyle {        
         DefaultPlotterStyle(PlotterStyle plotterStyle) {
             super(plotterStyle);
             setName(getClass().getSimpleName());
         }                
     }
    
-    private static class BasePlotterStyle extends PlotterStyle {        
+    public static class BasePlotterStyle extends PlotterStyle {        
         BasePlotterStyle() {
             setName(getClass().getSimpleName());
         }                
     }
         
-    private static class DefaultHistogram1DStyle extends PlotterStyle {
+    public static class DefaultHistogram1DStyle extends PlotterStyle {
         DefaultHistogram1DStyle() {
             super(basePlotterStyle);
             setName(getClass().getSimpleName());
@@ -57,7 +57,7 @@ public final class DefaultPlotterStyles {
         }
     }    
     
-    private static class ROOTHistogram1DStyle extends DefaultHistogram1DStyle {
+    public static class ROOTHistogram1DStyle extends DefaultHistogram1DStyle {
         ROOTHistogram1DStyle() {
             setName(getClass().getSimpleName());
             
@@ -86,7 +86,7 @@ public final class DefaultPlotterStyles {
         }
     }
     
-    private static class DefaultCloud2DStyle extends PlotterStyle {
+    public static class DefaultCloud2DStyle extends PlotterStyle {
         DefaultCloud2DStyle() {
             super(basePlotterStyle);
             setName(getClass().getSimpleName());      
@@ -98,7 +98,7 @@ public final class DefaultPlotterStyles {
         }
     }
     
-    private static class DefaultDataPointSetStyle extends PlotterStyle {
+    public static class DefaultDataPointSetStyle extends PlotterStyle {
         DefaultDataPointSetStyle() {
             super(basePlotterStyle);
             setName(getClass().getSimpleName());
@@ -110,7 +110,7 @@ public final class DefaultPlotterStyles {
         }                
     }
     
-    private static class DefaultBoxPlotStyle extends PlotterStyle {
+    public static class DefaultBoxPlotStyle extends PlotterStyle {
         DefaultBoxPlotStyle() {
             super(basePlotterStyle);
             setName(getClass().getSimpleName());
@@ -121,7 +121,7 @@ public final class DefaultPlotterStyles {
         }
     }
     
-    private static class DefaultColorMapStyle extends PlotterStyle {
+    public static class DefaultColorMapStyle extends PlotterStyle {
         DefaultColorMapStyle() {
             super(basePlotterStyle);
             this.setName(getClass().getSimpleName());          
@@ -132,7 +132,7 @@ public final class DefaultPlotterStyles {
         }
     }
     
-    private static class DefaultFunctionStyle extends PlotterStyle {
+    public static class DefaultFunctionStyle extends PlotterStyle {
         DefaultFunctionStyle() {
             super(basePlotterStyle);
             

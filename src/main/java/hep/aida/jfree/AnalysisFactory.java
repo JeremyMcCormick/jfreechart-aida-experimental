@@ -2,8 +2,7 @@ package hep.aida.jfree;
 
 import hep.aida.IPlotterFactory;
 import hep.aida.jfree.plotter.PlotterFactory;
-import hep.aida.jfree.plotter.style.registry.DefaultPlotterStyles;
-import hep.aida.jfree.plotter.style.registry.InMemoryCloningStyleStore;
+import hep.aida.jfree.plotter.style.registry.DefaultStyleStore;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -19,9 +18,9 @@ public class AnalysisFactory extends hep.aida.ref.AnalysisFactory {
      * Perform various static configuration.
      */
     public final static void configure() {
+        
         // Static initialization of the style registry.
-        InMemoryCloningStyleStore.initialize();
-        DefaultPlotterStyles.registerDefaultStyles();
+        DefaultStyleStore.initialize();
         
         // Static initialization of the default look and feel for JFreeChart.
         ChartFactory.setChartTheme(new DefaultChartTheme());

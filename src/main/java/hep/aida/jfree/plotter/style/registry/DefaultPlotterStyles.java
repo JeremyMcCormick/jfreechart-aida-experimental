@@ -20,7 +20,7 @@ public final class DefaultPlotterStyles {
     }
     
     public static void registerDefaultStyles() {
-        InMemoryCloningStyleStore store = (InMemoryCloningStyleStore)StyleRegistry.getStyleRegistry().getStore(STORE_NAME);
+        DefaultStyleStore store = (DefaultStyleStore)StyleRegistry.getStyleRegistry().getStore(STORE_NAME);
         store.addStyle(new DefaultHistogram1DStyle());
         store.addStyle(new DefaultCloud2DStyle());
         store.addStyle(new DefaultBoxPlotStyle());

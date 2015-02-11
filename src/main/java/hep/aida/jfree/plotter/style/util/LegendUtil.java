@@ -59,7 +59,6 @@ public class LegendUtil {
     static LegendItem createLegendItem(IBaseHistogram histogram, IPlotterStyle style) {
         LegendItem legendItem = null;
         if (style.legendBoxStyle().isVisible()) {
-            System.out.println("legend is not visible for " + histogram.title());
             String label = histogram.title();
             if (label == null) {
                 label = histogram.toString();

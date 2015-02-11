@@ -8,13 +8,19 @@ import hep.aida.ref.plotter.style.registry.StyleRegistry;
 
 public class DefaultStyleStore extends BaseStyleStore {
 
+    static boolean initialized;
+    
+    static final String STORE_NAME = "DefaultStyleStore";
+    
     private DefaultStyleStore() {
-        super("DefaultStyleStore");
+        super(STORE_NAME);
     }
     
-    public static void initialize() {             
-        StyleRegistry.getStyleRegistry().addStore(new DefaultStyleStore());
-        DefaultPlotterStyles.registerDefaultStyles();
+    public static void initialize() {
+        if (StyleRegistry.getStyleRegistry().getStore(STORE_NAME) == null) {
+            StyleRegistry.getStyleRegistry().addStore(new DefaultStyleStore());
+            DefaultPlotterStyles.registerDefaultStyles();
+        }
     }
     
     public void commit() {
@@ -22,24 +28,19 @@ public class DefaultStyleStore extends BaseStyleStore {
     }
     
     public void addStyle(IPlotterStyle style) { 
-        System.out.println("DefaultStyleStore.addStyle - " + style.name());
         if (this.getStyle(style.name()) != null)
                 throw new IllegalArgumentException("There is already a style named " + style.name() + " in this store.");
         addStyle(style.name(), style);
     }
     
     public IPlotterStyle getStyle(String styleName) {
-        
-        System.out.println("DefaultStyleStore.getStyle - " + styleName);
-        
+                
         IPlotterStyle style = super.getStyle(styleName);
                 
         // Clone the style instead of just returning it.
         if (style != null) {
-            System.out.println("found style " + style.name());
             return new DefaultPlotterStyle((PlotterStyle)style);
         } else {
-            System.out.println("could not find style!");
             return null;
         }
     }

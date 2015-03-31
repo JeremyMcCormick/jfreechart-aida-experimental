@@ -53,7 +53,7 @@ public final class DefaultPlotterStyles {
             dataStyle().lineStyle().setVisible(true);
             dataStyle().outlineStyle().setVisible(false);
             dataStyle().markerStyle().setVisible(false);
-            legendBoxStyle().setVisible(true);
+            legendBoxStyle().setVisible(false);
         }
     }    
     
@@ -94,7 +94,7 @@ public final class DefaultPlotterStyles {
             dataStyle().markerStyle().setVisible(true);
             dataStyle().markerStyle().setShape("circle");
             dataStyle().markerStyle().setSize(2);
-            legendBoxStyle().setVisible(true);
+            legendBoxStyle().setVisible(false);
         }
     }
     
@@ -107,6 +107,8 @@ public final class DefaultPlotterStyles {
             dataStyle().outlineStyle().setVisible(true);
             dataStyle().outlineStyle().setThickness(1);
             dataStyle().outlineStyle().setColor("black");
+            
+            legendBoxStyle().setVisible(false);
         }                
     }
     
@@ -118,6 +120,8 @@ public final class DefaultPlotterStyles {
             dataStyle().fillStyle().setVisible(false);
             dataStyle().lineStyle().setColor("blue");
             dataStyle().lineStyle().setThickness(1);
+            
+            legendBoxStyle().setVisible(false);
         }
     }
     
@@ -129,6 +133,8 @@ public final class DefaultPlotterStyles {
             setParameter(StyleConstants.HIST2DSTYLE, "colorMap");
             dataStyle().fillStyle().setParameter(StyleConstants.COLOR_MAP_SCHEME, "rainbow");
             dataStyle().fillStyle().setParameter(StyleConstants.SHOW_ZERO_HEIGHT_BINS, "false");
+            
+            legendBoxStyle().setVisible(true);
         }
     }
     
@@ -139,6 +145,8 @@ public final class DefaultPlotterStyles {
             setName(getClass().getSimpleName());
             dataStyle().lineStyle().setColor("red");
             dataStyle().lineStyle().setThickness(2);
+            
+            legendBoxStyle().setVisible(false);
         }
     }
 }

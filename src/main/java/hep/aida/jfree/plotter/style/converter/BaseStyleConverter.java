@@ -7,6 +7,7 @@ import hep.aida.IGridStyle;
 import hep.aida.IHistogram1D;
 import hep.aida.IPlotterStyle;
 import hep.aida.IStatisticsBoxStyle;
+import hep.aida.ITitleStyle;
 import hep.aida.jfree.annotations.BasicMultiLineXYTextAnnotation;
 import hep.aida.jfree.plotter.ChartState;
 import hep.aida.jfree.plotter.style.util.BorderUtil;
@@ -320,33 +321,30 @@ class BaseStyleConverter implements StyleConverter {
      * @param style
      */
     void applyTitleStyle() {
-        Font titleFont = PlotterFontUtil.getFont(state.getPlotterStyle().titleStyle().textStyle());
-        state.getChart().getTitle().setFont(titleFont);
-
-        String colorStr = state.getPlotterStyle().titleStyle().textStyle().color();
-        if (colorStr != null) {
-            try {
-                Color titleColor = ColorUtil.toColor(state.getPlotterStyle().titleStyle().textStyle());
-                state.getChart().getTitle().setPaint(titleColor);
-            } catch (Exception x) {
-                throw new RuntimeException(x);
+        ITitleStyle titleStyle = state.getPlotterStyle().titleStyle();
+        if (titleStyle.isVisible()) {
+            Font titleFont = PlotterFontUtil.getFont(state.getPlotterStyle().titleStyle().textStyle());
+            state.getChart().getTitle().setFont(titleFont);
+            String colorStr = state.getPlotterStyle().titleStyle().textStyle().color();
+            if (colorStr != null) {
+                try {
+                    Color titleColor = ColorUtil.toColor(state.getPlotterStyle().titleStyle().textStyle());
+                    state.getChart().getTitle().setPaint(titleColor);
+                } catch (Exception x) {
+                    throw new RuntimeException(x);
+                }
             }
-        }
-        
-        //state.getPlotterStyle().titleStyle().boxStyle();
-        //state.getPlotterStyle().titleStyle().textStyle();        
-        //state.getPlotterStyle().titleStyle().boxStyle().borderStyle();
-        //state.getPlotterStyle().titleStyle().boxStyle().foregroundStyle();
-
-        IBorderStyle borderStyle = state.getPlotterStyle().titleStyle().boxStyle().borderStyle();
-        if (borderStyle.isVisible()) {
-            TextTitle textTitle = state.getChart().getTitle();
-            int thickness = borderStyle.thickness();
-            textTitle.setBorder(thickness, thickness, thickness, thickness);            
-            Color color = ColorUtil.toColor(borderStyle, StyleConstants.DEFAULT_TITLE_BORDER_COLOR);
-            textTitle.setPaint(color);
-            //textTitle.setMargin(new RectangleInsets(5, 5, 5, 5));
-            textTitle.setPadding(new RectangleInsets(2, 5, 2, 5));
+            IBorderStyle borderStyle = state.getPlotterStyle().titleStyle().boxStyle().borderStyle();
+            if (borderStyle.isVisible()) {
+                TextTitle textTitle = state.getChart().getTitle();
+                int thickness = borderStyle.thickness();
+                textTitle.setBorder(thickness, thickness, thickness, thickness);
+                Color color = ColorUtil.toColor(borderStyle, StyleConstants.DEFAULT_TITLE_BORDER_COLOR);
+                textTitle.setPaint(color);
+                textTitle.setPadding(new RectangleInsets(2, 5, 2, 5));
+            }
+        } else {
+            state.getChart().getTitle().setVisible(false);
         }
     }
 

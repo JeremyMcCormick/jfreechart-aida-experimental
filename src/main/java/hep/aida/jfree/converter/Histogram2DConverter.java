@@ -87,6 +87,19 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         return newChart;
     }
     
+    public static String getHist2DStyle(IPlotterStyle style) {
+        // Get display style with default as color map.
+        String hist2DStyle = null;
+        try {
+            hist2DStyle = style.parameterValue(StyleConstants.HIST2DSTYLE);
+        } catch (Exception e) {            
+        }        
+        if (hist2DStyle == null) {
+            hist2DStyle = StyleConstants.COLOR_MAP;
+        }
+        return hist2DStyle;
+    }
+    
     /**
      * Create a box plot to display 2D histogram data.
      * 
@@ -150,7 +163,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         configureAxes(plot, histogram);
         
         // Add paint scale color legend.
-        createPaintScaleLegend(chart, renderer.getPaintScale(), logScale);
+        createPaintScaleLegend(chart, renderer.getPaintScale(), logScale, style);
         
         // Turn off the default legend.
         chart.getLegend().setVisible(false);
@@ -243,7 +256,7 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
      * @param scale
      * @param logScale
      */
-    private void createPaintScaleLegend(JFreeChart chart, PaintScale scale, boolean logScale) {
+    private void createPaintScaleLegend(JFreeChart chart, PaintScale scale, boolean logScale, IPlotterStyle style) {
         NumberAxis legendAxis = null;
         if (logScale) {
             legendAxis = new LogarithmicAxis("scale");
@@ -270,7 +283,11 @@ public class Histogram2DConverter implements Converter<IHistogram2D> {
         legend.setFrame(new BlockBorder(Color.black));
         legend.setPadding(new RectangleInsets(10D, 10D, 10D, 10D));
         legend.setStripWidth(20D);
-        legend.setPosition(RectangleEdge.RIGHT);
+        legend.setPosition(RectangleEdge.RIGHT);    
+        if (!style.legendBoxStyle().isVisible()) {
+            // Set legend to invisible if turned off in style setting.
+            legend.setVisible(false);
+        }
         chart.addSubtitle(legend);
     }   
         

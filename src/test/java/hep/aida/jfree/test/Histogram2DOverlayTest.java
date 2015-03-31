@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class Histogram2DOverlayTest extends AbstractPlotTest {
     
-    public void testHistogram2DOverlay() {
+    public void test() {
         
         this.setBatchMode(false);
         this.setWaitTime(10);
@@ -23,11 +23,13 @@ public class Histogram2DOverlayTest extends AbstractPlotTest {
         
         IPlotterStyle style = plotterFactory.createPlotterStyle();
         style.setParameter("hist2DStyle", "box");
+        style.dataStyle().fillStyle().setVisible(false);
         style.dataStyle().lineStyle().setVisible(true);
         style.dataStyle().lineStyle().setColor("green");        
         plotter.region(0).plot(histogram1, style);
         style = plotterFactory.createPlotterStyle();
         style.setParameter("hist2DStyle", "box");
+        style.dataStyle().fillStyle().setVisible(false);
         style.dataStyle().lineStyle().setVisible(true);
         style.dataStyle().lineStyle().setColor("red");
         plotter.region(0).plot(histogram2, style);

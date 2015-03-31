@@ -58,6 +58,11 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
         
         // Rebuild the plot's legend.
         PaintScaleLegend legend = (PaintScaleLegend)chart.getSubtitle(Histogram2DConverter.COLOR_SCALE_LEGEND);
-        legend.getAxis().setRange(new Range(scale.getLowerBound(), scale.getUpperBound()));
+        try {            
+            legend.getAxis().setRange(new Range(scale.getLowerBound(), scale.getUpperBound()));
+        } catch (IllegalArgumentException e) {
+            // Sometimes the range is not positive so trap this error.
+            e.printStackTrace();
+        }
     }
 }

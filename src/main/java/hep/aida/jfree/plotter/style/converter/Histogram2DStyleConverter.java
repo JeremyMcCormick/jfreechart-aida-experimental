@@ -58,10 +58,10 @@ public class Histogram2DStyleConverter extends BaseStyleConverter {
         if (hist2DStyle.equals(StyleConstants.BOX_PLOT)) {            
             // Is the fill style visible?
             if (state.getPlotterStyle().dataStyle().fillStyle().isVisible()) {
-                Color color = ColorUtil.toColor(state.getPlotterStyle().dataStyle().fillStyle(), null);
-                if (color != null) {
-                    ((AbstractXYItemRenderer)renderer).setSeriesFillPaint(0, color);
-                }
+                Color color = ColorUtil.toColor(state.getPlotterStyle().dataStyle().fillStyle(), StyleConstants.DEFAULT_FILL_COLOR);
+                //if (color != null) {
+                ((AbstractXYItemRenderer)renderer).setSeriesFillPaint(0, color);
+                //}
             } else {
                 // The fill will not be visible.
                 ((AbstractXYItemRenderer)renderer).setSeriesFillPaint(0, null);

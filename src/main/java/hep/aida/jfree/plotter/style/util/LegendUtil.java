@@ -10,7 +10,6 @@ import hep.aida.IHistogram2D;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.converter.Histogram2DConverter;
 import hep.aida.jfree.plotter.ObjectStyle;
-import hep.aida.ref.function.BaseModelFunction;
 
 import java.awt.Color;
 import java.util.ArrayList;

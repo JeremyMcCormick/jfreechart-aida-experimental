@@ -14,14 +14,7 @@ import java.util.Random;
  */
 public class InteractiveHistogram1DTest extends AbstractPlotTest {
     
-	private static final int PLOT_COUNT = 25;
-	
     public void testHistogram1D() {
-
-        //IHistogram1D histogram = histogramFactory.createHistogram1D("h1d", 50, -3, 6);
-
-        //histogram.annotation().addItem("xAxisLabel", "Value");
-        //histogram.annotation().addItem("yAxisLabel", "Entries");
         
         IPlotterStyle style = plotterFactory.createPlotterStyle();
         style.legendBoxStyle().setVisible(true);

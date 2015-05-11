@@ -28,15 +28,15 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
     }
 
     @Override
-    public void update() {
+    public void update() {    	
         chart.setNotify(false);        
-        XYPlot plot = chart.getXYPlot();        
+        XYPlot xyplot = chart.getXYPlot();        
         Histogram2DAdapter adapter = (Histogram2DAdapter)dataset;
         Bounds zBounds = adapter.recomputeZBounds();
         if (zBounds.isValid()) {        
-            if (plot.getRendererForDataset(dataset) instanceof XYVariableBinWidthBlockRenderer) {
+            if (xyplot.getRendererForDataset(dataset) instanceof XYVariableBinWidthBlockRenderer) {
                 updateColorMap(zBounds);
-            } else if (plot.getRendererForDataset(dataset) instanceof XYVariableBinWidthBoxRenderer) {
+            } else if (xyplot.getRendererForDataset(dataset) instanceof XYVariableBinWidthBoxRenderer) {
                 updateBoxPlot(zBounds);
             }
         }    
@@ -46,18 +46,18 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
 
     private void updateBoxPlot(Bounds zBounds) {
         // Update box plot bounds for the given renderer.
-        ((XYVariableBinWidthBoxRenderer)chart.getXYPlot().getRendererForDataset(dataset)).setMaximumValue(zBounds.getMaximum());
+        ((XYVariableBinWidthBoxRenderer)this.chart.getXYPlot().getRendererForDataset(this.dataset)).setMaximumValue(zBounds.getMaximum());
     }
 
     private void updateColorMap(Bounds zBounds) {       
         // Set the new Z bounds on the PaintScale.        
-        PaintScale scale = ((XYVariableBinWidthBlockRenderer)chart.getXYPlot().getRendererForDataset(dataset)).getPaintScale();
+        PaintScale scale = ((XYVariableBinWidthBlockRenderer)this.chart.getXYPlot().getRendererForDataset(this.dataset)).getPaintScale();
         if (scale instanceof AbstractPaintScale) {
             ((AbstractPaintScale) scale).setBounds(0., zBounds.getMaximum());
         }
         
         // Rebuild the plot's legend.
-        PaintScaleLegend legend = (PaintScaleLegend)chart.getSubtitle(Histogram2DConverter.COLOR_SCALE_LEGEND);
+        PaintScaleLegend legend = (PaintScaleLegend)this.chart.getSubtitle(Histogram2DConverter.COLOR_SCALE_LEGEND);
         try {            
             legend.getAxis().setRange(new Range(scale.getLowerBound(), scale.getUpperBound()));
         } catch (IllegalArgumentException e) {

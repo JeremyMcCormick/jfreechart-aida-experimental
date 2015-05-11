@@ -16,10 +16,10 @@ public class Cloud2DListener extends PlotListener<ICloud2D> {
     }
     
     public void update() {
-        chart.setNotify(false);        
-        chart.getXYPlot().configureDomainAxes();
-        chart.getXYPlot().configureRangeAxes();
-        chart.setNotify(true);
-        chart.fireChartChanged();
+    	this.chart.setNotify(false);        
+    	this.chart.getXYPlot().configureDomainAxes();
+    	this.chart.getXYPlot().configureRangeAxes();
+    	this.chart.setNotify(true);
+        super.update();
     }
 }

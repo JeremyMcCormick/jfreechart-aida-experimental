@@ -13,38 +13,36 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class FunctionListener extends PlotListener<IFunction> implements hep.aida.ref.function.FunctionListener, ChartProgressListener {
     
-    double lowerBound;
-    double upperBound;
-    int nSamples;    
-    boolean isValid = true;
+    private double lowerBound;
+    private double upperBound;
+    private int nSamples;    
+    private boolean isValid = true;
     
     public FunctionListener(IFunction function, JFreeChart chart, XYDataset dataset) {
-        this.plot = function;
-        this.chart = chart;
-        this.dataset = dataset;
+    	super(function, chart, dataset);
         if (function instanceof FunctionDispatcher) {
             ((FunctionDispatcher)function).addFunctionListener(this);
         }
-        lowerBound = chart.getXYPlot().getDomainAxis().getLowerBound();
-        upperBound = chart.getXYPlot().getDomainAxis().getUpperBound();
-        nSamples = dataset.getItemCount(0) * FunctionConverter.SAMPLES_FACTOR;
+        this.lowerBound = chart.getXYPlot().getDomainAxis().getLowerBound();
+        this.upperBound = chart.getXYPlot().getDomainAxis().getUpperBound();
+        this.nSamples = dataset.getItemCount(0) * FunctionConverter.SAMPLES_FACTOR;
         chart.addProgressListener(this);
     }
     
     @Override
     public void functionChanged(FunctionChangedEvent event) {
         // Is the plot valid for updating?
-        if (isValid) {
-            chart.setNotify(false);
+        if (this.isValid) {
+        	this.chart.setNotify(false);
             XYSeriesCollection functionData = (XYSeriesCollection)FunctionConverter.createXYDataset( 
-                    plot, 
-                    lowerBound,
-                    upperBound,
-                    nSamples);
-            ((XYSeriesCollection)dataset).removeAllSeries();
-            ((XYSeriesCollection)dataset).addSeries(functionData.getSeries(0));
-            chart.setNotify(true);
-            isValid = false;
+            		this.plot, 
+            		this.lowerBound,
+            		this.upperBound,
+            		this.nSamples);
+            ((XYSeriesCollection)this.dataset).removeAllSeries();
+            ((XYSeriesCollection)this.dataset).addSeries(functionData.getSeries(0));
+            this.chart.setNotify(true);
+            this.isValid = false;
         }
     }
 
@@ -52,7 +50,7 @@ public class FunctionListener extends PlotListener<IFunction> implements hep.aid
     public void chartProgress(ChartProgressEvent event) {
         if (event.getType() == ChartProgressEvent.DRAWING_FINISHED) {
             // Set valid for updating after drawing is done.
-            isValid = true;
+        	this.isValid = true;
         } 
     }    
 }

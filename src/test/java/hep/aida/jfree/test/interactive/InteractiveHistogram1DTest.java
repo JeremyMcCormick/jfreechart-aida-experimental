@@ -5,32 +5,46 @@ import hep.aida.IPlotter;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.test.AbstractPlotTest;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
 public class InteractiveHistogram1DTest extends AbstractPlotTest {
-        
+    
+	private static final int PLOT_COUNT = 25;
+	
     public void testHistogram1D() {
 
-        IHistogram1D histogram = histogramFactory.createHistogram1D("h1d", 50, -3, 6);
+        //IHistogram1D histogram = histogramFactory.createHistogram1D("h1d", 50, -3, 6);
 
-        histogram.annotation().addItem("xAxisLabel", "Value");
-        histogram.annotation().addItem("yAxisLabel", "Entries");
+        //histogram.annotation().addItem("xAxisLabel", "Value");
+        //histogram.annotation().addItem("yAxisLabel", "Entries");
         
         IPlotterStyle style = plotterFactory.createPlotterStyle();
         style.legendBoxStyle().setVisible(true);
         
+        plotter.createRegions(5, 5);
+        List<IHistogram1D> histograms = new ArrayList<IHistogram1D>();
+        for (int regionIndex = 0; regionIndex < 25; regionIndex++) {
+        	IHistogram1D histogram = histogramFactory.createHistogram1D("Histogram " + regionIndex, 50, -3, 6);
+        	histograms.add(histogram);
+        	plotter.region(regionIndex).plot(histogram, style);	
+        }
+        
         plotter.createRegion();
-        plotter.region(0).plot(histogram, style);
+        
         
         // Call show() here to see interactive updating of plot.
         plotter.show();
         
-        Random rand = new Random();
+        Random rand = new Random();        
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            histogram.fill(rand.nextGaussian());
+        	for (IHistogram1D histogram : histograms) {
+        		histogram.fill(rand.nextGaussian());
+        	}
         }        
         
         mode();

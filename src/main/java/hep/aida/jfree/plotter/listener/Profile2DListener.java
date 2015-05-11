@@ -16,14 +16,10 @@ public class Profile2DListener extends PlotListener<IProfile2D> {
     Profile2DListener(IProfile2D plot, JFreeChart chart, XYDataset dataset) {
         super(plot, chart, dataset);
         
+        // Wrap the Profile2D with a Histogram2D adapter.
         // This should be okay, because the backing Histogram2D is not actually used directly when updating.
         IHistogram2D adapter = new Profile2DAdapter(plot);
         listener = new Histogram2DListener(adapter, chart, dataset);
         ((IsObservable)adapter).removeListener(listener);
-    }
-    
-    @Override
-    public void update() {
-        listener.update();
-    }
+    }    
 }

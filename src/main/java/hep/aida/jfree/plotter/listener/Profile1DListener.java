@@ -16,9 +16,9 @@ public class Profile1DListener extends PlotListener<IProfile1D> {
     }
     
     @Override
-    public void update() {       
-        chart.getXYPlot().getRangeAxis().setAutoRangeMinimumSize(plot.maxBinHeight() + findMaxError(plot));
-        chart.getXYPlot().getRangeAxis().configure();
+    public void update() {
+        this.chart.getXYPlot().getRangeAxis().setAutoRangeMinimumSize(this.plot.maxBinHeight() + findMaxError(this.plot));
+        this.chart.getXYPlot().getRangeAxis().configure();
         super.update();
     }
     

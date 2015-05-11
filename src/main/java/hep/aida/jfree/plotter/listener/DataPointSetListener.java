@@ -24,13 +24,13 @@ public class DataPointSetListener extends PlotListener<IDataPointSet> {
     }
     
     public void update() {
-
+    	
         // Configure the domain or x axis.
-        DataPointSetConverter.configureDomainAxis(chart.getXYPlot().getDomainAxis(), adapter, DataPointSetConverter.MAX_POINTS);
+        DataPointSetConverter.configureDomainAxis(this.chart.getXYPlot().getDomainAxis(), this.adapter, DataPointSetConverter.MAX_POINTS);
         
         // Configure the range or y axis.
-        ValueAxis yAxis = chart.getXYPlot().getRangeAxis();
-        double maxY = ((DataPointSetAdapter)dataset).getMaxY();        
+        ValueAxis yAxis = this.chart.getXYPlot().getRangeAxis();
+        double maxY = ((DataPointSetAdapter)this.dataset).getMaxY();        
         if (maxY > yAxis.getAutoRangeMinimumSize()) {
             yAxis.setAutoRangeMinimumSize(maxY);
         }

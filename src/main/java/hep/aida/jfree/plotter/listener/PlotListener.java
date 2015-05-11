@@ -46,10 +46,9 @@ public abstract class PlotListener<T> implements AIDAListener, ChartProgressList
         this.dataset = dataset;
         
         this.plot = plot;
-        if (!(plot instanceof IsObservable)) {
-            throw new IllegalArgumentException("The plot object does not implement the AIDA IsObservable interface.");
+        if (plot instanceof IsObservable) {
+        	((IsObservable) plot).addListener(this);
         }
-        ((IsObservable) plot).addListener(this);       
     }
        
     /** 

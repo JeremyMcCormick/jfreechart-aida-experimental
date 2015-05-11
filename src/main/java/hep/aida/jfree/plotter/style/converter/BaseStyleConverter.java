@@ -39,22 +39,19 @@ import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
 
 /**
- * This class converts from AIDA styles to JFreeChart.
- * 
- * See this method for how to apply styles from AIDA using the JAS3 plotter,
- * which was used as a reference:
- * 
- * freehep-jaida: hep.aida.ref.plotter.PlotterRegion.applyStyle(JASHistData jasHistData, IPlotterStyle style);
+ * This class converts from AIDA styles to JFreeChart. See this method for how to apply styles from AIDA using the JAS3
+ * plotter, which was used as a reference: freehep-jaida: hep.aida.ref.plotter.PlotterRegion.applyStyle(JASHistData
+ * jasHistData, IPlotterStyle style);
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
 class BaseStyleConverter implements StyleConverter {
-    
+
     protected ChartState state = null;
-            
+
     BaseStyleConverter() {
     }
-            
+
     public void applyStyle(JFreeChart chart, Object plotObject, IPlotterStyle style, int[] datasetIndices) {
         state = new ChartState();
         state.setChart(chart);
@@ -63,18 +60,16 @@ class BaseStyleConverter implements StyleConverter {
         state.setDatasetIndices(datasetIndices);
         applyStyle();
     }
-    
-        
+
     /**
-     * This is the primary method for modifying a JFreeChart plot based on AIDA
-     * styles.
+     * This is the primary method for modifying a JFreeChart plot based on AIDA styles.
      * 
      * @param baseChart The chart to which styles should be applied.
      * @param hist The backing histogram for the chart.
      * @param style The styles to apply.
      */
     void applyStyle() {
-        // Apply styles to the chart, NOT directly having to do with data, 
+        // Apply styles to the chart, NOT directly having to do with data,
         // e.g. title, background colors, etc.
         applyNonDataStyle();
 
@@ -83,10 +78,9 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * This is the default implementation to apply all styles to data and
-     * non-data elements of the chart. Implementations of this method for specific
-     * types should probably override this to avoid strange default behavior and
-     * implement the most efficient way of applying the styles.
+     * This is the default implementation to apply all styles to data and non-data elements of the chart.
+     * Implementations of this method for specific types should probably override this to avoid strange default behavior
+     * and implement the most efficient way of applying the styles.
      * 
      * @param baseChart The chart to which styles should be applied.
      * @param hist The backing histogram.
@@ -95,22 +89,22 @@ class BaseStyleConverter implements StyleConverter {
     void applyDataStyle() {
         // Is plot visible?
         if (state.getPlotterStyle().isVisible()) {
-                       
+
             // Set the data styling or turn it off if invisible.
             if (isDataVisible()) {
-                
+
                 // Apply data fill style which fills histograms.
                 applyDataFillStyle();
 
-                // Apply data line style which draws histogram bars. 
+                // Apply data line style which draws histogram bars.
                 applyDataLineStyle();
 
-                // Apply marker style which draws markers such as circles at data points.                
+                // Apply marker style which draws markers such as circles at data points.
                 applyDataMarkerStyle();
-                
+
                 // Apply data outline style which draws lines between data points.
-                applyDataOutlineStyle();                
-                                
+                applyDataOutlineStyle();
+
                 // Are errors visible?
                 if (areErrorsVisible()) {
                     // Apply error bar style, which will only show if the data itself is set to visible.
@@ -118,24 +112,23 @@ class BaseStyleConverter implements StyleConverter {
                 } else {
                     // Turn off display of error values.
                     makeErrorsInvisible();
-                }                                               
+                }
             } else {
-                
+
                 // Turn off display of histogram data.
                 makeDataInvisible();
-                
+
                 // Turn off display of errors.
                 makeErrorsInvisible();
-            }       
-            
+            }
+
             // Draw the statistics box, which only really makes sense if data is visible.
-            drawStatisticsBox();                
-        } 
+            drawStatisticsBox();
+        }
     }
 
     /**
-     * This method applies styles to non-data elements of the chart, such as the
-     * title, axes, and background.
+     * This method applies styles to non-data elements of the chart, such as the title, axes, and background.
      * 
      * @param baseChart The chart to which styles should be applied.
      * @param hist The backing histogram.
@@ -159,8 +152,7 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * This is a helper method to call all methods that apply axis styles of
-     * various kinds.
+     * This is a helper method to call all methods that apply axis styles of various kinds.
      * 
      * @param baseChart
      * @param hist
@@ -190,13 +182,15 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * Apply axil labels to the chart from the hist
+     * Apply axis labels to the chart from the histogram.
+     * 
      * @param baseChart
      * @param hist
      */
     void applyAxisLabels() {
         if (state.getHistogram().annotation().hasKey("xAxisLabel")) {
-            state.getChart().getXYPlot().getDomainAxis().setLabel(state.getHistogram().annotation().value("xAxisLabel"));
+            state.getChart().getXYPlot().getDomainAxis()
+                    .setLabel(state.getHistogram().annotation().value("xAxisLabel"));
         }
         if (state.getHistogram().annotation().hasKey("yAxisLabel")) {
             state.getChart().getXYPlot().getRangeAxis().setLabel(state.getHistogram().annotation().value("yAxisLabel"));
@@ -204,8 +198,8 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * Sets log style on X and Y axes. This MUST come before other axis styling,
-     * because it sets a new axis object on the plot.
+     * Sets log style on X and Y axes. This MUST come before other axis styling, because it sets a new axis object on
+     * the plot.
      * 
      * @param baseChart The chart to style.
      * @param style The AIDA plotter style.
@@ -216,9 +210,8 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * Set the location of the axis. Currently only handles placement of Y axis
-     * on left or right side. AIDA does not appear to support placing the X axis
-     * on the top of the plot. (JFreeChart does support this.)
+     * Set the location of the axis. Currently only handles placement of Y axis on left or right side. AIDA does not
+     * appear to support placing the X axis on the top of the plot. (JFreeChart does support this.)
      * 
      * @param baseChart The chart to set axis location.
      * @param style The AIDA plot style.
@@ -228,7 +221,8 @@ class BaseStyleConverter implements StyleConverter {
         String yAxisValue = yAxisStyle.parameterValue("yAxis");
         if (yAxisValue != null) {
             try {
-                AxisLocation axisLocation = (yAxisValue.equalsIgnoreCase("Y1")) ? AxisLocation.BOTTOM_OR_RIGHT : AxisLocation.BOTTOM_OR_LEFT;
+                AxisLocation axisLocation = (yAxisValue.equalsIgnoreCase("Y1")) ? AxisLocation.BOTTOM_OR_RIGHT
+                        : AxisLocation.BOTTOM_OR_LEFT;
                 state.getChart().getXYPlot().setDomainAxisLocation(axisLocation);
             } catch (Exception cce) {
                 throw new RuntimeException(cce);
@@ -238,6 +232,7 @@ class BaseStyleConverter implements StyleConverter {
 
     /**
      * Set log axis if selected.
+     * 
      * @param plot The plot with the axes.
      * @param axisStyle The AIDA axis style settings.
      * @param domain True if axis is domain; false if range.
@@ -260,12 +255,13 @@ class BaseStyleConverter implements StyleConverter {
 
     /**
      * This sets the style on the data box surrounding the plot.
+     * 
      * @param baseChart
      * @param style
      */
-    void applyDataBoxStyle() {        
-        IBoxStyle boxStyle = state.getPlotterStyle().dataBoxStyle();        
-        if (boxStyle.isVisible()) {            
+    void applyDataBoxStyle() {
+        IBoxStyle boxStyle = state.getPlotterStyle().dataBoxStyle();
+        if (boxStyle.isVisible()) {
             if (boxStyle.backgroundStyle().isVisible()) {
                 Color color = ColorUtil.toColor(state.getPlotterStyle().dataBoxStyle().backgroundStyle(), Color.white);
                 state.getChart().getXYPlot().setBackgroundPaint(color);
@@ -276,26 +272,25 @@ class BaseStyleConverter implements StyleConverter {
                 state.getChart().getXYPlot().setOutlineStroke(stroke);
                 Color color = ColorUtil.toColor(boxStyle.borderStyle(), Color.black);
                 state.getChart().getXYPlot().setOutlinePaint(color);
-                
+
             }
         }
     }
 
     /**
-     * 
      * @param baseChart
      * @param style
      */
     void applyRegionStyle() {
         Color color = ColorUtil.toColor(state.getPlotterStyle().regionBoxStyle().backgroundStyle(), Color.white);
         state.getChart().setBackgroundPaint(color);
-        
-        //Border border = BorderUtil.toBorder(style.regionBoxStyle().borderStyle());
-        //if (border != null)
-        //    System.out.println("created border: " + border.getClass().getCanonicalName());
+
+        // Border border = BorderUtil.toBorder(style.regionBoxStyle().borderStyle());
+        // if (border != null)
+        // System.out.println("created border: " + border.getClass().getCanonicalName());
 
         // TODO: set border styling here
-        //style.regionBoxStyle().borderStyle().borderType();
+        // style.regionBoxStyle().borderStyle().borderType();
     }
 
     public void applyStyle(ChartPanel panel) {
@@ -304,9 +299,10 @@ class BaseStyleConverter implements StyleConverter {
         this.state.setPanel(panel);
         applyPanelStyle();
     }
-    
+
     /**
      * Apply panel style.
+     * 
      * @param panel The ChartPanel.
      * @param style The plotter style.
      */
@@ -314,9 +310,8 @@ class BaseStyleConverter implements StyleConverter {
         Border border = BorderUtil.toBorder(state.getPlotterStyle().regionBoxStyle().borderStyle());
         state.getPanel().setBorder(border);
     }
-    
+
     /**
-     * 
      * @param baseChart
      * @param style
      */
@@ -349,7 +344,6 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * 
      * @param axis
      * @param axisStyle
      */
@@ -367,7 +361,6 @@ class BaseStyleConverter implements StyleConverter {
 
     /**
      * This method applies these styles to the axis:
-     * 
      * <ul>
      * <li>axis labels
      * <li>tick labels
@@ -381,7 +374,8 @@ class BaseStyleConverter implements StyleConverter {
     void applyAxisStyle(ValueAxis axis, IAxisStyle axisStyle) {
         // Axis label.
         String axisLabel = axisStyle.label();
-        boolean setlabel = axisLabel != null && ((BaseStyle) axisStyle).isParameterSet(hep.aida.ref.plotter.Style.AXIS_LABEL);
+        boolean setlabel = axisLabel != null
+                && ((BaseStyle) axisStyle).isParameterSet(hep.aida.ref.plotter.Style.AXIS_LABEL);
         if (setlabel)
             axis.setLabel(axisLabel);
 
@@ -409,7 +403,7 @@ class BaseStyleConverter implements StyleConverter {
             } catch (Exception cce) {
                 throw new RuntimeException(cce);
             }
-        } 
+        }
 
         // tick labels font
         axis.setTickLabelFont(PlotterFontUtil.getFont(axisStyle.tickLabelStyle()));
@@ -418,10 +412,10 @@ class BaseStyleConverter implements StyleConverter {
         Color axisLineColor = StyleConstants.DEFAULT_AXIS_COLOR;
         if (axisStyle.lineStyle().color() != null) {
             axisLineColor = ColorUtil.toColor(axisStyle.lineStyle());
-        }        
+        }
         axis.setAxisLinePaint(axisLineColor);
         axis.setTickMarkPaint(axisLineColor);
-                
+
         // axis line width
         float axisLineWidth = StrokeUtil.lineThickness(axisStyle.lineStyle().thickness());
         if (axisLineWidth >= 0) {
@@ -439,7 +433,7 @@ class BaseStyleConverter implements StyleConverter {
         if (allowZeroSuppression) {
             // System.out.println("allowZeroSuppression = " +
             // allowZeroSuppression);
-            
+
             // FIXME: Fixed if using a LogAxis.
             if (axis instanceof NumberAxis)
                 ((NumberAxis) axis).setAutoRangeIncludesZero(false);
@@ -457,12 +451,11 @@ class BaseStyleConverter implements StyleConverter {
         // if (verticalLabel)
         // axis.setLabelAngle(Math.PI/2);
         // label.setRotated(verticalLabel);
-        
+
         axis.setLabelLocation(AxisLabelLocation.HIGH_END);
     }
 
     /**
-     * 
      * @param baseChart
      * @param style
      */
@@ -534,22 +527,22 @@ class BaseStyleConverter implements StyleConverter {
     boolean areErrorsVisible() {
         return state.getPlotterStyle().dataStyle().errorBarStyle().isVisible();
     }
-    
+
     // FIXME: Only works for 1D histograms.
     void drawStatisticsBox() {
         IStatisticsBoxStyle statStyle = state.getPlotterStyle().statisticsBoxStyle();
         if (statStyle.isVisible()) {
             if (state.getHistogram() instanceof IHistogram1D) {
-                
+
                 XYPlot plot = state.getChart().getXYPlot();
-                IHistogram1D hist = (IHistogram1D)state.getHistogram();
+                IHistogram1D hist = (IHistogram1D) state.getHistogram();
                 int entries = hist.allEntries();
                 double mean = hist.mean();
                 double rms = hist.rms();
                 String stats = "entries: " + entries + "\n" + "mean: " + mean + "\n" + "rms: " + rms;
                 double x = statStyle.boxStyle().x();
                 double y = statStyle.boxStyle().y();
-                //System.out.println("drawing @ x, y = " + x + " " + y);
+                // System.out.println("drawing @ x, y = " + x + " " + y);
                 BasicMultiLineXYTextAnnotation annotation = new BasicMultiLineXYTextAnnotation(stats, x, y);
                 annotation.setTextAnchor(TextAnchor.TOP_LEFT);
                 annotation.setOutlineStroke(new BasicStroke(1.0f));
@@ -564,9 +557,8 @@ class BaseStyleConverter implements StyleConverter {
             }
         }
     }
-    
+
     /**
-     * 
      * @param baseChart
      * @param style
      */
@@ -574,7 +566,6 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * 
      * @param baseChart
      * @param hist
      * @param style
@@ -583,7 +574,6 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * 
      * @param baseChart
      * @param hist
      * @param style
@@ -592,7 +582,6 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * 
      * @param baseChart
      * @param hist
      * @param style
@@ -601,7 +590,6 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * 
      * @param baseChart
      * @param hist
      * @param style
@@ -610,16 +598,14 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * 
      * @param baseChart
      */
     void makeDataInvisible() {
     }
 
     /**
-     * 
      * @param baseChart
      */
     void makeErrorsInvisible() {
-    }    
+    }
 }

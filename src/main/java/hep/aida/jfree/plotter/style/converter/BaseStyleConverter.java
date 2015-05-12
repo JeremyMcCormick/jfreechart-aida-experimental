@@ -12,6 +12,7 @@ import hep.aida.jfree.annotations.BasicMultiLineXYTextAnnotation;
 import hep.aida.jfree.plotter.ChartState;
 import hep.aida.jfree.plotter.style.util.BorderUtil;
 import hep.aida.jfree.plotter.style.util.ColorUtil;
+import hep.aida.jfree.plotter.style.util.RegionUtil;
 import hep.aida.jfree.plotter.style.util.StrokeUtil;
 import hep.aida.jfree.plotter.style.util.StyleConstants;
 import hep.aida.ref.plotter.BaseStyle;
@@ -278,24 +279,20 @@ class BaseStyleConverter implements StyleConverter {
     }
 
     /**
-     * @param baseChart
-     * @param style
+     * Apply region style.
+     * 
+     * @param baseChart the chart
+     * @param style the AIDA style
      */
-    void applyRegionStyle() {
-        Color color = ColorUtil.toColor(state.getPlotterStyle().regionBoxStyle().backgroundStyle(), Color.white);
-        state.getChart().setBackgroundPaint(color);
-
-        // Border border = BorderUtil.toBorder(style.regionBoxStyle().borderStyle());
-        // if (border != null)
-        // System.out.println("created border: " + border.getClass().getCanonicalName());
-
-        // TODO: set border styling here
-        // style.regionBoxStyle().borderStyle().borderType();
+    public void applyRegionStyle() {
+        // Apply style using util method.
+        RegionUtil.applyRegionStyle(state.getChart(), state.getPlotterStyle().regionBoxStyle());
     }
 
     public void applyStyle(ChartPanel panel) {
-        if (this.state == null)
+        if (this.state == null) {
             throw new RuntimeException("The ChartState was never set.");
+        }
         this.state.setPanel(panel);
         applyPanelStyle();
     }

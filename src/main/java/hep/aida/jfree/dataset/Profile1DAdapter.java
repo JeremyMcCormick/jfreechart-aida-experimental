@@ -1,4 +1,4 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.dataset;
 
 import hep.aida.IAnnotation;
 import hep.aida.IAxis;
@@ -6,8 +6,7 @@ import hep.aida.IHistogram1D;
 import hep.aida.IProfile1D;
 
 /**
- * This is a read-only adapter to implement the IHistogram1D interface using a
- * backing IProfile1D.
+ * This is a read-only adapter to implement the IHistogram1D interface using a backing IProfile1D.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  * @version $Id: $
@@ -16,7 +15,7 @@ public class Profile1DAdapter implements IHistogram1D {
 
     IProfile1D p1D = null;
 
-    Profile1DAdapter(IProfile1D profile) {
+    public Profile1DAdapter(IProfile1D profile) {
         this.p1D = profile;
     }
 
@@ -77,7 +76,7 @@ public class Profile1DAdapter implements IHistogram1D {
     }
 
     public void setTitle(String title) throws IllegalArgumentException {
-        throw new UnsupportedOperationException("Method not supported."); 
+        throw new UnsupportedOperationException("Method not supported.");
     }
 
     public String title() {

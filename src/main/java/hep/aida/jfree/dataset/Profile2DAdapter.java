@@ -1,4 +1,4 @@
-package hep.aida.jfree.converter;
+package hep.aida.jfree.dataset;
 
 import hep.aida.IAnnotation;
 import hep.aida.IAxis;

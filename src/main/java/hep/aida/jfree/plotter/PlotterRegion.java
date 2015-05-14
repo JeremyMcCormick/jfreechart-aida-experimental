@@ -466,8 +466,11 @@ public class PlotterRegion extends DummyPlotterRegion {
 
     public void refresh() {
         if (this.chartPanel != null && this.chartPanel.getChart() != null) {
-            this.chartPanel.getChart().getXYPlot().configureRangeAxes();
-            this.chartPanel.getChart().fireChartChanged();
+            for (PlotListener<?> listener : state.plotListeners) {
+                // Call the listener's update method.
+                listener.update();
+            }
+            getChart().fireChartChanged();
         }
     }
 

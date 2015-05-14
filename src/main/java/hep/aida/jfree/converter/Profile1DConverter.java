@@ -2,6 +2,7 @@ package hep.aida.jfree.converter;
 
 import hep.aida.IPlotterStyle;
 import hep.aida.IProfile1D;
+import hep.aida.jfree.dataset.Profile1DAdapter;
 
 import org.jfree.chart.JFreeChart;
 

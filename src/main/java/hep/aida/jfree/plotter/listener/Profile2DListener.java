@@ -2,7 +2,7 @@ package hep.aida.jfree.plotter.listener;
 
 import hep.aida.IHistogram2D;
 import hep.aida.IProfile2D;
-import hep.aida.jfree.converter.Profile2DAdapter;
+import hep.aida.jfree.dataset.Profile2DAdapter;
 import hep.aida.ref.event.IsObservable;
 
 import org.jfree.chart.JFreeChart;

@@ -5,6 +5,7 @@ import hep.aida.ref.plotter.DummyPlotter;
 import hep.aida.ref.plotter.PlotterStyle;
 import jas.util.layout.PercentLayout;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,16 +16,16 @@ import javax.swing.JPanel;
  * <p>
  * This class implements a JFreeChart <code>IPlotter</code> by extending AIDA's <code>DummyPlotter</code> class.
  * <p>
- * By default, it has behavior which is suitable for embedding into external Swing components such as JPanels. 
+ * By default, it has behavior which is suitable for embedding into external Swing components such as JPanels.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
 public class Plotter extends DummyPlotter {
 
-    List<PlotterRegion> regions = new ArrayList<PlotterRegion>();
-    JPanel rootPanel;
-    boolean isSetup = false;
-    
+    private List<PlotterRegion> regions = new ArrayList<PlotterRegion>();
+    private JPanel rootPanel;
+    private boolean isSetup = false;
+
     List<PlotterRegionListener> plotterRegionListeners = new ArrayList<PlotterRegionListener>();
 
     /**
@@ -35,15 +36,16 @@ public class Plotter extends DummyPlotter {
         rootPanel.setLayout(new PercentLayout());
         rootPanel.setOpaque(false);
     }
-    
+
     /**
      * Add a PlotterRegionListener which will be registered with all regions created by this plotter.
+     * 
      * @param listener The PlotterRegionListener to register with created regions.
      */
     public void addPlotterRegionListener(PlotterRegionListener listener) {
         plotterRegionListeners.add(listener);
     }
-        
+
     /**
      * Show the regions of this plotter, first setting them up if necessary.
      */
@@ -52,7 +54,7 @@ public class Plotter extends DummyPlotter {
     }
 
     /**
-     * This will set the Plotter's JPanel to invisible. 
+     * This will set the Plotter's JPanel to invisible.
      */
     public void hide() {
         rootPanel.setVisible(false);
@@ -68,6 +70,7 @@ public class Plotter extends DummyPlotter {
 
     /**
      * Get the panel containing the graphics for all of this plotter's regions.
+     * 
      * @return The panel with the plots.
      */
     public JPanel panel() {
@@ -76,6 +79,7 @@ public class Plotter extends DummyPlotter {
 
     /**
      * Write the graphics to a file.
+     * 
      * @param file The file name, from which the type is inferred from the extension.
      */
     public void writeToFile(String file) throws IOException {
@@ -91,11 +95,12 @@ public class Plotter extends DummyPlotter {
 
     /**
      * Write the graphics to a file.
+     * 
      * @param file The file name.
      * @param type The file type (such as "PNG").
      */
     public void writeToFile(String file, String type) throws IOException {
-        if (!isSetup) { 
+        if (!isSetup) {
             plotRegions();
         }
         if (!file.endsWith(type))
@@ -103,44 +108,43 @@ public class Plotter extends DummyPlotter {
         System.out.println("Saving plots to " + file);
         super.writeToFile(file, type, null);
     }
-    
+
     /**
-     * This needs to be overridden because there is no access to the list of regions 
-     * from the parent class.
+     * This needs to be overridden because there is no access to the list of regions from the parent class.
      */
     public IPlotterRegion region(int index) {
         if (index < 0 || index >= regions.size())
             throw new IllegalArgumentException("Invalid index for region: " + index);
         return (IPlotterRegion) regions.get(index);
     }
-    
+
     /* ------------------------------------------------------------------------------------ */
 
     /**
      * Overridden from DummyPlotter to use the JFree implementation of IPlotterRegion.
      */
     protected IPlotterRegion justCreateRegion(double x, double y, double width, double height) {
-                
+
         if (width <= 0)
             throw new IllegalArgumentException("The width parameter must be > 0.");
-        
+
         if (height <= 0)
             throw new IllegalArgumentException("The height parameter must be > 0.");
-        
+
         // Create a new region with full width, height, x position and y position parameters.
         PlotterRegion region = new PlotterRegion(this.style(), x, y, width, height);
-        
-        for (PlotterRegionListener listener : this.plotterRegionListeners) {            
-            region.state.addRegionListener(listener);
-        }                  
-        
-        // This makes sure the region by default has a style object that chains back to the plotter 
-        // as its parent.  It can be overridden by setting a custom style on the region.
-        region.setStyle(new DefaultPlotterStyle("region", (PlotterStyle)style()));
-        
-        // Add the region to the list of regions.       
+
+        for (PlotterRegionListener listener : this.plotterRegionListeners) {
+            region.getState().addRegionListener(listener);
+        }
+
+        // This makes sure the region by default has a style object that chains back to the plotter
+        // as its parent. It can be overridden by setting a custom style on the region.
+        region.setStyle(new DefaultPlotterStyle("region", (PlotterStyle) style()));
+
+        // Add the region to the list of regions.
         regions.add(region);
-        
+
         return region;
     }
 
@@ -150,14 +154,26 @@ public class Plotter extends DummyPlotter {
     void plotRegions() {
         if (!isSetup) {
             for (int i = 0; i < numberOfRegions(); i++) {
-                
+
                 // Get a region by index.
                 PlotterRegion region = (PlotterRegion) region(i);
-                
+
                 // Add the region's panel to the root panel.
                 region.addToParentPanel(rootPanel);
             }
             isSetup = true;
         }
-    }           
+    }
+
+    public void refresh() {
+        for (IPlotterRegion region : regions) {
+            region.refresh();
+        }
+    }
+
+    public BufferedImage getImage() {
+        BufferedImage image = new BufferedImage(rootPanel.getWidth(), rootPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        rootPanel.paint(image.getGraphics());
+        return image;
+    }
 }

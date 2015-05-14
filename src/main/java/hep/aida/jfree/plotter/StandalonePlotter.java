@@ -9,43 +9,42 @@ import javax.swing.JFrame;
  */
 public class StandalonePlotter extends Plotter {
 
-    JFrame frame;
-    
+    private JFrame frame;
+
     /**
      * Class constructor.
      */
     StandalonePlotter() {
         super();
     }
-        
+
     /**
      * Show the regions of this plotter in a standalone JFrame.
      */
     public void show() {
         super.show();
         if (this.frame == null)
-            createFrame();     
+            createFrame();
         if (!frame.isVisible())
             frame.setVisible(true);
     }
 
     /**
-     * This will hide the plotter's regions and set its frame to null.  
+     * This will hide the plotter's regions and set its frame to null.
      */
     public void hide() {
         if (frame != null) {
             frame.setVisible(false);
         }
     }
-          
+
     /**
-     * Create the <tt>JFrame</tt> for the plotter.
-     * This will only have an effect if the plotter is not embedded.
+     * Create the <tt>JFrame</tt> for the plotter. This will only have an effect if the plotter is not embedded.
      */
     private void createFrame() {
         frame = new JFrame();
-        frame.setContentPane(rootPanel);
+        frame.setContentPane(panel());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
-    }    
+    }
 }

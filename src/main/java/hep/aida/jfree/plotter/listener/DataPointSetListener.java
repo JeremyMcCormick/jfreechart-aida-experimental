@@ -5,34 +5,28 @@ import hep.aida.jfree.converter.DataPointSetConverter;
 import hep.aida.jfree.dataset.DataPointSetAdapter;
 
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.data.xy.XYDataset;
 
 /**
- * This is a listener for updating the plot graphics from a
- * backing <code>IDataPointSet</code>.
+ * This is a listener for updating the plot graphics from a backing <code>IDataPointSet</code>.
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
 public class DataPointSetListener extends PlotListener<IDataPointSet> {
-    
+
     DataPointSetAdapter adapter;
-    
+
     DataPointSetListener(IDataPointSet object, JFreeChart chart, XYDataset dataset) {
         super(object, chart, dataset);
-        adapter = (DataPointSetAdapter)dataset;
+        adapter = (DataPointSetAdapter) dataset;
     }
-    
+
     public void update() {
-    	
+
         // Configure the domain or x axis.
-        DataPointSetConverter.configureDomainAxis(this.chart.getXYPlot().getDomainAxis(), this.adapter, DataPointSetConverter.MAX_POINTS);
-        
-        // Configure the range or y axis.
-        ValueAxis yAxis = this.chart.getXYPlot().getRangeAxis();
-        double maxY = ((DataPointSetAdapter)this.dataset).getMaxY();        
-        if (maxY > yAxis.getAutoRangeMinimumSize()) {
-            yAxis.setAutoRangeMinimumSize(maxY);
-        }
+        DataPointSetConverter.configureDomainAxis(this.chart.getXYPlot().getDomainAxis(), this.adapter,
+                DataPointSetConverter.MAX_POINTS);
+
+        super.update();
     }
 }

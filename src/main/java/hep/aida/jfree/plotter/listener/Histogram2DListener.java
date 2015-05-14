@@ -41,6 +41,7 @@ public class Histogram2DListener extends PlotListener<IHistogram2D> {
             }
         }
         chart.setNotify(true);
+        chart.fireChartChanged();
         super.update();
     }
 

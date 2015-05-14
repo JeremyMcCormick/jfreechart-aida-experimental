@@ -8,6 +8,7 @@ import java.util.EventObject;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.event.ChartProgressEvent;
 import org.jfree.chart.event.ChartProgressListener;
+import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.xy.XYDataset;
 
 /**
@@ -65,8 +66,9 @@ public abstract class PlotListener<T> implements AIDAListener, ChartProgressList
      * method with specific implementations.
      */
     public synchronized void update() {
+        chart.getXYPlot().datasetChanged(new DatasetChangeEvent(this.dataset, this.dataset));
         // This triggers a redraw of the chart.
-        chart.fireChartChanged();
+        // chart.fireChartChanged();
     }
 
     /**

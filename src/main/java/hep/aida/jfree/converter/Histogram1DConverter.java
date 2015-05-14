@@ -21,60 +21,87 @@ import org.jfree.chart.renderer.xy.XYErrorRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
-import org.jfree.data.Range;
 import org.jfree.data.RangeType;
 import org.jfree.data.xy.XYDataset;
 
 /**
  * Convert an AIDA <code>IHistogram1D</code> to a <code>JFreeChart</code> object.
+ * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-public class Histogram1DConverter implements Converter<IHistogram1D> {
+public final class Histogram1DConverter implements Converter<IHistogram1D> {
 
-    static final double DEFAULT_X_AXIS_MARGIN = 0.05;
     static final double DEFAULT_Y_AXIS_MARGIN = 0.2;
-    
+
     public Class<IHistogram1D> convertsType() {
         return IHistogram1D.class;
     }
 
     public JFreeChart convert(JFreeChart chart, IHistogram1D histogram, IPlotterStyle style) {
-        
+
         // Create the backing datasets, which are actually adapters.
         XYDataset[] datasets = createDatasets(histogram);
 
         // Create the renderers.
         XYItemRenderer[] renderers = createHistogramRenderers(datasets);
-                        
+
         // Set the axis labels.
         String[] labels = ConverterUtil.getAxisLabels(histogram);
-        
+
         // Configure the X axis.
         NumberAxis xAxis = new NumberAxis(labels[0]);
-        xAxis.setAutoRange(true);
-        xAxis.setDefaultAutoRange(new Range(histogram.axis().lowerEdge(), histogram.axis().upperEdge()));
-        //xAxis.setUpperMargin(DEFAULT_X_AXIS_MARGIN);
-        
+        xAxis.setAutoRange(false);
+        xAxis.setLowerBound(histogram.axis().lowerEdge());
+        xAxis.setUpperBound(histogram.axis().upperEdge());
+
         // Configure the Y axis.
         NumberAxis yAxis = new NumberAxis(labels[1]);
         yAxis.setAutoRange(true);
+        yAxis.setRangeType(RangeType.POSITIVE);
         yAxis.setAutoRangeIncludesZero(true);
         yAxis.setUpperMargin(DEFAULT_Y_AXIS_MARGIN);
         // If there is data here already then size the y axis correctly.
         if (histogram.maxBinHeight() > 0.0) {
-            double xMinSize = histogram.maxBinHeight() + findMaxError(histogram);
-            yAxis.setAutoRangeMinimumSize(xMinSize);
+            yAxis.setAutoRangeMinimumSize(getYMinSize(histogram));
         }
-        yAxis.setRangeType(RangeType.POSITIVE);
 
         return createHistogramChart(histogram.title(), xAxis, yAxis, datasets, renderers);
-    }   
-    
+    }
+
+    private static double getYMinSize(IHistogram1D histogram) {
+        return histogram.maxBinHeight() + findMaxError(histogram);
+    }
+
+    public static void configureAxes(JFreeChart chart, IHistogram1D histogram) {
+
+        // Set the axis labels.
+        String[] labels = ConverterUtil.getAxisLabels(histogram);
+
+        // Configure the X axis (domain).
+        NumberAxis xAxis = new NumberAxis(labels[0]);
+        xAxis.setAutoRange(false);
+        xAxis.setLowerBound(histogram.axis().lowerEdge());
+        xAxis.setUpperBound(histogram.axis().upperEdge());
+        chart.getXYPlot().setDomainAxis(xAxis);
+
+        // Configure the Y axis (range).
+        NumberAxis yAxis = new NumberAxis(labels[1]);
+        yAxis.setAutoRange(true);
+        yAxis.setRangeType(RangeType.POSITIVE);
+        yAxis.setAutoRangeIncludesZero(true);
+        yAxis.setUpperMargin(DEFAULT_Y_AXIS_MARGIN);
+        // If there is data here already then size the y axis correctly.
+        if (histogram.maxBinHeight() > 0.0) {
+            yAxis.setAutoRangeMinimumSize(getYMinSize(histogram));
+        }
+        chart.getXYPlot().setRangeAxis(yAxis);
+    }
+
     static XYItemRenderer[] createHistogramRenderers(XYDataset[] datasets) {
-        
+
         // Create array for the renderers.
         XYItemRenderer[] renderers = new XYItemRenderer[datasets.length];
-        
+
         // Add bar renderer which draws bar chart.
         XYBarRenderer barRenderer = new XYBarRenderer();
         barRenderer.setDrawBarOutline(true);
@@ -85,33 +112,33 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         errorRenderer.setBaseShapesVisible(false);
         errorRenderer.setSeriesPaint(ERRORS, Color.black);
         renderers[ERRORS] = errorRenderer;
-        
+
         // Add step renderer which draws the histogram step contour.
         XYItemRenderer stepRenderer = new XYStepRenderer();
         renderers[STEPS] = stepRenderer;
-        
+
         // Add line and shape renderer for lines between points and markers.
         XYLineAndShapeRenderer pointRenderer = new XYLineAndShapeRenderer();
         renderers[POINTS] = pointRenderer;
-        
-        // Turn off the renderering of all series.  
+
+        // Turn off the renderering of all series.
         // These will be activated later in the style code.
-        for (int i=0; i<=3; i++) {
-            for (int j=0; j<=3; j++) {
+        for (int i = 0; i <= 3; i++) {
+            for (int j = 0; j <= 3; j++) {
                 renderers[i].setSeriesVisible(j, false);
             }
         }
-        
+
         return renderers;
     }
-    
-    static JFreeChart createHistogramChart(String title, NumberAxis xAxis, NumberAxis yAxis, 
-            XYDataset[] datasets, XYItemRenderer[] renderers) {
-        
+
+    static JFreeChart createHistogramChart(String title, NumberAxis xAxis, NumberAxis yAxis, XYDataset[] datasets,
+            XYItemRenderer[] renderers) {
+
         if (datasets.length != renderers.length) {
             throw new IllegalArgumentException("The datasets and renderers must be the same size.");
         }
-        
+
         // Create the plot without any data.
         XYPlot plot = new XYPlot(null, xAxis, yAxis, null);
 
@@ -125,25 +152,26 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 
         // Create the chart.
-        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, true);        
+        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 
         // Apply the default theme.
         ChartFactory.getChartTheme().apply(chart);
-        
+
         return chart;
     }
-    
-    static XYDataset[] createDatasets(IHistogram1D h1d) {        
-        XYDataset[] datasets = new XYDataset[4];                             
+
+    static XYDataset[] createDatasets(IHistogram1D h1d) {
+        XYDataset[] datasets = new XYDataset[4];
         Histogram1DAdapter adapter = new Histogram1DAdapter(h1d);
-        for (int i=0; i<=3; i++) {
+        for (int i = 0; i <= 3; i++) {
             datasets[i] = adapter;
         }
         return datasets;
-    }        
-    
+    }
+
     /**
      * Get the error value for the highest bin value.
+     * 
      * @param h1D The IHistogram1D.
      * @return The error value for the highest bin value.
      */
@@ -153,9 +181,9 @@ public class Histogram1DConverter implements Converter<IHistogram1D> {
         for (int i = 0; i < h1D.axis().bins(); i++) {
             if (h1D.binHeight(i) == maxBinHeight) {
                 if (h1D.binError(i) > maxError)
-                    maxError = h1D.binError(i); 
+                    maxError = h1D.binError(i);
             }
         }
         return maxError;
-    }    
+    }
 }

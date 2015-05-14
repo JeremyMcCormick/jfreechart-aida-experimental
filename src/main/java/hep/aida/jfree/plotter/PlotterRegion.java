@@ -37,25 +37,25 @@ import org.jfree.data.xy.XYDataset;
 public class PlotterRegion extends DummyPlotterRegion {
 
     // The position and dimensions.
-    double x, y, w, h;
+    private double x, y, w, h;
 
     // The style associated with the region, if any.
-    IPlotterStyle regionStyle;
+    private IPlotterStyle regionStyle;
 
     // The title of the region.
-    String title;
+    private String title;
 
     // The ChartPanel that represents this region.
-    ChartPanel chartPanel;
+    private ChartPanel chartPanel;
 
     // The JFreeChart object with the visualization of the plots.
-    JFreeChart baseChart;
+    private JFreeChart baseChart;
 
     // The converter for applying IPlotterStyle to the created JFreeCharts.
-    StyleConverter styleConverter;
+    private StyleConverter styleConverter;
 
     // This object contains the non-visual state of this region.
-    PlotterRegionState state = new PlotterRegionState();
+    private PlotterRegionState state = new PlotterRegionState();
 
     /**
      * Create a new plotter region.
@@ -87,7 +87,7 @@ public class PlotterRegion extends DummyPlotterRegion {
         this.regionStyle = style;
 
         // Style is only applied here to the region itself and not scene objects.
-        RegionUtil.applyRegionStyle(this.baseChart, this.regionStyle.regionBoxStyle());
+        RegionUtil.applyRegionStyle(this.baseChart, this.regionStyle);
     }
 
     /**
@@ -113,7 +113,7 @@ public class PlotterRegion extends DummyPlotterRegion {
      * 
      * @return The X position of this region in pixels.
      */
-    double x() {
+    public double x() {
         return x;
     }
 
@@ -370,12 +370,13 @@ public class PlotterRegion extends DummyPlotterRegion {
 
         // Find the appropriate converter for the object.
         Converter<T> converter = null;
-        if (type.equals(IBaseHistogram.class))
+        if (type.equals(IBaseHistogram.class)) {
             // Need to look at object's specific type for IBaseHistogram.
             converter = ConverterFactory.instance().getConverter(object);
-        else
+        } else {
             // We expect a specific class as the type argument.
             converter = ConverterFactory.instance().getConverter(type);
+        }
 
         // Was a converter found?
         if (converter == null)
@@ -461,5 +462,20 @@ public class PlotterRegion extends DummyPlotterRegion {
             // Increment the index for the next dataset and renderer pair.
             ++datasetIndex;
         }
+    }
+
+    public void refresh() {
+        if (this.chartPanel != null && this.chartPanel.getChart() != null) {
+            this.chartPanel.getChart().getXYPlot().configureRangeAxes();
+            this.chartPanel.getChart().fireChartChanged();
+        }
+    }
+
+    public JFreeChart getChart() {
+        return this.chartPanel.getChart();
+    }
+
+    public PlotterRegionState getState() {
+        return this.state;
     }
 }

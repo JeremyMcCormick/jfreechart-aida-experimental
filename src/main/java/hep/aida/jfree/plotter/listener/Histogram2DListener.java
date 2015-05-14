@@ -22,43 +22,45 @@ import org.jfree.data.xy.XYDataset;
  * @version $Id: $
  */
 public class Histogram2DListener extends PlotListener<IHistogram2D> {
-    
+
     Histogram2DListener(IHistogram2D histogram, JFreeChart chart, XYDataset dataset) {
-        super(histogram, chart, dataset); 
+        super(histogram, chart, dataset);
     }
 
     @Override
-    public void update() {    	
-        chart.setNotify(false);        
-        XYPlot xyplot = chart.getXYPlot();        
-        Histogram2DAdapter adapter = (Histogram2DAdapter)dataset;
+    public void update() {
+        chart.setNotify(false);
+        XYPlot xyplot = chart.getXYPlot();
+        Histogram2DAdapter adapter = (Histogram2DAdapter) dataset;
         Bounds zBounds = adapter.recomputeZBounds();
-        if (zBounds.isValid()) {        
+        if (zBounds.isValid()) {
             if (xyplot.getRendererForDataset(dataset) instanceof XYVariableBinWidthBlockRenderer) {
                 updateColorMap(zBounds);
             } else if (xyplot.getRendererForDataset(dataset) instanceof XYVariableBinWidthBoxRenderer) {
                 updateBoxPlot(zBounds);
             }
-        }    
+        }
         chart.setNotify(true);
-        chart.fireChartChanged();
+        super.update();
     }
 
     private void updateBoxPlot(Bounds zBounds) {
         // Update box plot bounds for the given renderer.
-        ((XYVariableBinWidthBoxRenderer)this.chart.getXYPlot().getRendererForDataset(this.dataset)).setMaximumValue(zBounds.getMaximum());
+        ((XYVariableBinWidthBoxRenderer) this.chart.getXYPlot().getRendererForDataset(this.dataset))
+                .setMaximumValue(zBounds.getMaximum());
     }
 
-    private void updateColorMap(Bounds zBounds) {       
-        // Set the new Z bounds on the PaintScale.        
-        PaintScale scale = ((XYVariableBinWidthBlockRenderer)this.chart.getXYPlot().getRendererForDataset(this.dataset)).getPaintScale();
+    private void updateColorMap(Bounds zBounds) {
+        // Set the new Z bounds on the PaintScale.
+        PaintScale scale = ((XYVariableBinWidthBlockRenderer) this.chart.getXYPlot()
+                .getRendererForDataset(this.dataset)).getPaintScale();
         if (scale instanceof AbstractPaintScale) {
             ((AbstractPaintScale) scale).setBounds(0., zBounds.getMaximum());
         }
-        
+
         // Rebuild the plot's legend.
-        PaintScaleLegend legend = (PaintScaleLegend)this.chart.getSubtitle(Histogram2DConverter.COLOR_SCALE_LEGEND);
-        try {            
+        PaintScaleLegend legend = (PaintScaleLegend) this.chart.getSubtitle(Histogram2DConverter.COLOR_SCALE_LEGEND);
+        try {
             legend.getAxis().setRange(new Range(scale.getLowerBound(), scale.getUpperBound()));
         } catch (IllegalArgumentException e) {
             // Sometimes the range is not positive so trap this error.

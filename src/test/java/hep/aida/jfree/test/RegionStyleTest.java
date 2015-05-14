@@ -6,7 +6,6 @@ import hep.aida.IHistogramFactory;
 import hep.aida.IPlotter;
 import hep.aida.IPlotterStyle;
 import hep.aida.jfree.AnalysisFactory;
-import hep.aida.jfree.plotter.PlotterFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,50 +23,54 @@ public class RegionStyleTest extends TestCase {
     public void testNotVisible() {
         IHistogram1D histogram = createHistogram();
         IPlotter plotter = createPlotter();
-        plotter.createRegion();
+        plotter.createRegions(2);
         plotter.region(0).plot(histogram);
-        IPlotterStyle style = ((PlotterFactory) IAnalysisFactory.create().createPlotterFactory())
-                .createDefaultHistogram1DStyle();
+        plotter.region(1).plot(histogram);
+        IPlotterStyle style = IAnalysisFactory.create().createPlotterFactory().createPlotterStyle();
         style.regionBoxStyle().borderStyle().setVisible(false);
         style.regionBoxStyle().backgroundStyle().setVisible(false);
         plotter.region(0).applyStyle(style);
+        plotter.region(1).applyStyle(style);
         writeToFile(plotter, new PlotFile(this.getClass(), "NotVisible"));
     }
 
     public void testApplyStyle() {
         IHistogram1D histogram = createHistogram();
         IPlotter plotter = createPlotter();
-        plotter.createRegion();
+        plotter.createRegions(2);
         plotter.region(0).plot(histogram);
-        IPlotterStyle style = ((PlotterFactory) IAnalysisFactory.create().createPlotterFactory())
-                .createDefaultHistogram1DStyle();
+        plotter.region(1).plot(histogram);
+        IPlotterStyle style = IAnalysisFactory.create().createPlotterFactory().createPlotterStyle();
         style.regionBoxStyle().borderStyle().setColor("green");
         style.regionBoxStyle().borderStyle().setThickness(10);
         style.regionBoxStyle().backgroundStyle().setColor("black");
         plotter.region(0).applyStyle(style);
+        plotter.region(1).applyStyle(style);
         writeToFile(plotter, new PlotFile(this.getClass(), "ApplyStyle"));
     }
 
     public void testDefaultStyle() {
         IHistogram1D histogram = createHistogram();
         IPlotter plotter = createPlotter();
-        plotter.createRegion();
+        plotter.createRegions(2);
         plotter.region(0).plot(histogram);
-        IPlotterStyle style = ((PlotterFactory) IAnalysisFactory.create().createPlotterFactory())
-                .createDefaultHistogram1DStyle();
+        plotter.region(1).plot(histogram);
+        IPlotterStyle style = IAnalysisFactory.create().createPlotterFactory().createPlotterStyle();
         plotter.region(0).applyStyle(style);
+        plotter.region(1).applyStyle(style);
         writeToFile(plotter, new PlotFile(this.getClass(), "DefaultStyle"));
     }
 
     public void testNoBorder() {
         IHistogram1D histogram = createHistogram();
         IPlotter plotter = createPlotter();
-        plotter.createRegion();
+        plotter.createRegions(2);
         plotter.region(0).plot(histogram);
-        IPlotterStyle style = ((PlotterFactory) IAnalysisFactory.create().createPlotterFactory())
-                .createDefaultHistogram1DStyle();
+        plotter.region(1).plot(histogram);
+        IPlotterStyle style = IAnalysisFactory.create().createPlotterFactory().createPlotterStyle();
         style.regionBoxStyle().borderStyle().setVisible(false);
         plotter.region(0).applyStyle(style);
+        plotter.region(1).applyStyle(style);
         writeToFile(plotter, new PlotFile(this.getClass(), "NoBorder"));
     }
 
@@ -94,7 +97,7 @@ public class RegionStyleTest extends TestCase {
         outputFile.getParentFile().mkdirs();
         try {
             plotter.writeToFile(outputFile.getPath());
-            System.out.println(this.getClass().getSimpleName() + " - saved plots to " + outputFile.getPath());
+            //System.out.println(this.getClass().getSimpleName() + " - saved plots to " + outputFile.getPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

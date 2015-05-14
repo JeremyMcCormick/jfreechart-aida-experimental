@@ -14,12 +14,4 @@ public class Cloud2DListener extends PlotListener<ICloud2D> {
     Cloud2DListener(ICloud2D cloud, JFreeChart chart, XYDataset dataset) {
         super(cloud, chart, dataset);
     }
-    
-    public void update() {
-    	this.chart.setNotify(false);        
-    	this.chart.getXYPlot().configureDomainAxes();
-    	this.chart.getXYPlot().configureRangeAxes();
-    	this.chart.setNotify(true);
-        super.update();
-    }
 }

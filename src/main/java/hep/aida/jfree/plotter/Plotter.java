@@ -26,7 +26,7 @@ public class Plotter extends DummyPlotter {
     private JPanel rootPanel;
     private boolean isSetup = false;
 
-    List<PlotterRegionListener> plotterRegionListeners = new ArrayList<PlotterRegionListener>();
+    private List<PlotterRegionListener> plotterRegionListeners = new ArrayList<PlotterRegionListener>();
 
     /**
      * Class constructor.
@@ -35,6 +35,9 @@ public class Plotter extends DummyPlotter {
         rootPanel = new JPanel();
         rootPanel.setLayout(new PercentLayout());
         rootPanel.setOpaque(false);
+
+        // Use the default plotter style.
+        this.setStyle(new DefaultPlotterStyle());
     }
 
     /**
@@ -151,7 +154,7 @@ public class Plotter extends DummyPlotter {
     /**
      * Plot all the regions into the root panel.
      */
-    void plotRegions() {
+    private void plotRegions() {
         if (!isSetup) {
             for (int i = 0; i < numberOfRegions(); i++) {
 

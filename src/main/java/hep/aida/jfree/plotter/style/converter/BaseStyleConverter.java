@@ -286,7 +286,7 @@ class BaseStyleConverter implements StyleConverter {
      */
     public void applyRegionStyle() {
         // Apply style using util method.
-        RegionUtil.applyRegionStyle(state.getChart(), state.getPlotterStyle().regionBoxStyle());
+        RegionUtil.applyRegionStyle(state.getChart(), state.getPlotterStyle());
     }
 
     public void applyStyle(ChartPanel panel) {

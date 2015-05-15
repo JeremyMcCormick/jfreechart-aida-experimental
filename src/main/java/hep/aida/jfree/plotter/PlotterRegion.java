@@ -242,7 +242,9 @@ public class PlotterRegion extends DummyPlotterRegion {
         baseChart = null;
 
         // Clear reference to chart in panel.
-        chartPanel.setChart(null);
+        if (chartPanel != null) {
+            chartPanel.setChart(null);
+        }
 
         // Clear the backing object state.
         state.clear();

@@ -5,6 +5,7 @@ import hep.aida.ref.plotter.DummyPlotter;
 import hep.aida.ref.plotter.PlotterStyle;
 import jas.util.layout.PercentLayout;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +23,6 @@ import javax.swing.JPanel;
  */
 public class Plotter extends DummyPlotter {
 
-    private List<PlotterRegion> regions = new ArrayList<PlotterRegion>();
     private JPanel rootPanel;
     private boolean isSetup = false;
 
@@ -50,24 +50,26 @@ public class Plotter extends DummyPlotter {
     }
 
     /**
-     * Show the regions of this plotter, first setting them up if necessary.
+     * Show the regions of this plotter in a graphics panel, first setting up the regions if necessary.
      */
     public void show() {
-        plotRegions();
+        rebuild();
+        rootPanel.setVisible(true);
     }
 
     /**
-     * This will set the Plotter's JPanel to invisible.
+     * This will set the Plotter's JPanel to invisible, but the region state is left intact.
      */
     public void hide() {
         rootPanel.setVisible(false);
     }
 
     /**
-     * Clear all the regions of this plotter.
+     * This will destroy all of the regions in the plotter.
      */
     public void destroyRegions() {
-        regions.clear();
+        super.destroyRegions();
+        rootPanel.removeAll();
         this.isSetup = false;
     }
 
@@ -103,25 +105,12 @@ public class Plotter extends DummyPlotter {
      * @param type The file type (such as "PNG").
      */
     public void writeToFile(String file, String type) throws IOException {
-        if (!isSetup) {
-            plotRegions();
-        }
+        rebuild();
         if (!file.endsWith(type))
             file = file + "." + type;
         System.out.println("Saving plots to " + file);
         super.writeToFile(file, type, null);
     }
-
-    /**
-     * This needs to be overridden because there is no access to the list of regions from the parent class.
-     */
-    public IPlotterRegion region(int index) {
-        if (index < 0 || index >= regions.size())
-            throw new IllegalArgumentException("Invalid index for region: " + index);
-        return (IPlotterRegion) regions.get(index);
-    }
-
-    /* ------------------------------------------------------------------------------------ */
 
     /**
      * Overridden from DummyPlotter to use the JFree implementation of IPlotterRegion.
@@ -143,10 +132,8 @@ public class Plotter extends DummyPlotter {
 
         // This makes sure the region by default has a style object that chains back to the plotter
         // as its parent. It can be overridden by setting a custom style on the region.
+        // FIXME: Not sure it should be done this way!
         region.setStyle(new DefaultPlotterStyle("region", (PlotterStyle) style()));
-
-        // Add the region to the list of regions.
-        regions.add(region);
 
         return region;
     }
@@ -154,8 +141,11 @@ public class Plotter extends DummyPlotter {
     /**
      * Plot all the regions into the root panel.
      */
-    private void plotRegions() {
+    private void rebuild() {
         if (!isSetup) {
+            
+            rootPanel.setPreferredSize(new Dimension(plotterWidth(), plotterHeight()));
+            
             for (int i = 0; i < numberOfRegions(); i++) {
 
                 // Get a region by index.
@@ -169,14 +159,15 @@ public class Plotter extends DummyPlotter {
     }
 
     public void refresh() {
-        for (IPlotterRegion region : regions) {
-            region.refresh();
+        for (int regionIndex = 0; regionIndex < this.numberOfRegions(); regionIndex++) {
+            this.region(regionIndex).refresh();
         }
     }
 
     public BufferedImage getImage() {
+        rebuild();
         BufferedImage image = new BufferedImage(rootPanel.getWidth(), rootPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
         rootPanel.paint(image.getGraphics());
         return image;
-    }
+    }    
 }

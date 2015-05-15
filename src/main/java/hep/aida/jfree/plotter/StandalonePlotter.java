@@ -23,16 +23,23 @@ public class StandalonePlotter extends Plotter {
      */
     public void show() {
         super.show();
-        if (this.frame == null)
+        if (this.frame == null) {
             createFrame();
-        if (!frame.isVisible())
+        }
+        if (this.title() != null) {
+            frame.setTitle(title());
+        }
+        if (!frame.isVisible()) {
+            frame.pack();
             frame.setVisible(true);
+        }
     }
 
     /**
-     * This will hide the plotter's regions and set its frame to null.
+     * This will hide the plotter frame.
      */
     public void hide() {
+        super.hide();
         if (frame != null) {
             frame.setVisible(false);
         }
@@ -45,6 +52,5 @@ public class StandalonePlotter extends Plotter {
         frame = new JFrame();
         frame.setContentPane(panel());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.pack();
     }
 }

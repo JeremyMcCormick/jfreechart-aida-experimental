@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-jaida-standard-distribution</artifactId>
-            <version>3.4.11</version> 
+            <version>3.4.12</version> 
             <type>pom</type>
         </dependency>
         <dependency>

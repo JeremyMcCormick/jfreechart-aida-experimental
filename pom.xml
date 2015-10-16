@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>jfreechart-aida-experimental</groupId>
     <artifactId>jfreechart-aida-experimental</artifactId>
-    <version>1.7-SNAPSHOT</version>
+    <version>1.8-SNAPSHOT</version>
     <name>JFreeChart AIDA Experimental</name>
     <description>Implementation of JFreeChart AIDA backend</description>
     <packaging>jar</packaging>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.freehep</groupId>
             <artifactId>freehep-jaida-standard-distribution</artifactId>
-            <version>3.4.11</version> 
+            <version>3.4.12</version> 
             <type>pom</type>
         </dependency>
         <dependency>

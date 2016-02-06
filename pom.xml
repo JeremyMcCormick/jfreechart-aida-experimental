@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>jfreechart-aida-experimental</groupId>
     <artifactId>jfreechart-aida-experimental</artifactId>
-    <version>1.8-SNAPSHOT</version>
+    <version>1.9-SNAPSHOT</version>
     <name>JFreeChart AIDA Experimental</name>
     <description>Implementation of JFreeChart AIDA backend</description>
     <packaging>jar</packaging>

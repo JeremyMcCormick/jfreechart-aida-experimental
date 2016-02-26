@@ -115,6 +115,29 @@ public class BasicMultiLineXYTextAnnotation extends XYTextAnnotation {
             textAnchorX = textAnchorY;
             textAnchorY = tempAnchor;
         }
+        
+        // Now include the TextAnchor. The default calculations are meant for TOP_LEFT
+        final TextAnchor textAnchor = getTextAnchor();
+
+        // first the horizontal alignment
+        if (textAnchor.equals(TextAnchor.TOP_RIGHT) || textAnchor.equals(TextAnchor.BASELINE_RIGHT) || textAnchor.equals(TextAnchor.BOTTOM_RIGHT) 
+                || textAnchor.equals(TextAnchor.HALF_ASCENT_RIGHT) || textAnchor.equals(TextAnchor.CENTER_RIGHT)) {
+
+            textAnchorX -= width;
+        } else if (textAnchor.equals(TextAnchor.TOP_CENTER) || textAnchor.equals(TextAnchor.BASELINE_CENTER) || textAnchor.equals(TextAnchor.BOTTOM_CENTER) 
+                || textAnchor.equals(TextAnchor.HALF_ASCENT_CENTER) || textAnchor.equals(TextAnchor.CENTER)) {
+        	textAnchorX -= width/2;
+        }
+
+        // and the vertical alignment
+        if (textAnchor.equals(TextAnchor.BOTTOM_RIGHT) || textAnchor.equals(TextAnchor.BOTTOM_CENTER) || textAnchor.equals(TextAnchor.BOTTOM_LEFT) 
+                || textAnchor.equals(TextAnchor.BASELINE_RIGHT) || textAnchor.equals(TextAnchor.BASELINE_CENTER) || textAnchor.equals(TextAnchor.BASELINE_LEFT)) {
+            textAnchorY -= height;
+        } else if (textAnchor.equals(TextAnchor.HALF_ASCENT_RIGHT) || textAnchor.equals(TextAnchor.HALF_ASCENT_CENTER) || textAnchor.equals(TextAnchor.HALF_ASCENT_LEFT)
+        		|| textAnchor.equals(TextAnchor.CENTER_RIGHT) || textAnchor.equals(TextAnchor.CENTER) || textAnchor.equals(TextAnchor.CENTER_LEFT)) {
+
+            textAnchorY -= height/2;
+        }
 
         float rectangleX = textAnchorX;
         float rectangleY = textAnchorY;

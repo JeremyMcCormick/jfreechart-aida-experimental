@@ -25,7 +25,6 @@ import org.jfree.ui.RectangleEdge;
  * Currently does NOT support any of the following:
  * 
  * -rotation
- * -horizontal chart
  * -multiple fonts
  * -TextAnchor settings
  * -tooltips
@@ -110,7 +109,13 @@ public class BasicMultiLineXYTextAnnotation extends XYTextAnnotation {
                 this.getX(), dataArea, domainEdge);
         float textAnchorY = (float) rangeAxis.valueToJava2D(
                 this.getY(), dataArea, rangeEdge);
-        
+
+        if (orientation == PlotOrientation.HORIZONTAL) {
+            float tempAnchor = textAnchorX;
+            textAnchorX = textAnchorY;
+            textAnchorY = tempAnchor;
+        }
+
         float rectangleX = textAnchorX;
         float rectangleY = textAnchorY;
         

@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 import javax.swing.border.Border;
 
 import org.jfree.chart.annotations.XYTextAnnotation;
+import org.jfree.ui.TextAnchor;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;

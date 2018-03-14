@@ -14,7 +14,7 @@ public class StandalonePlotter extends Plotter {
     /**
      * Class constructor.
      */
-    StandalonePlotter() {
+    public StandalonePlotter() {
         super();
     }
 

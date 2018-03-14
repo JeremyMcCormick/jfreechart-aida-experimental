@@ -80,7 +80,7 @@ public class PlotterFactory extends hep.aida.ref.plotter.PlotterFactory {
      * will not be created and used automatically.
      * @param embedded True to enable embedded behavior.
      */
-    protected void setIsEmbedded(boolean embedded) {
+    public void setIsEmbedded(boolean embedded) {
         this.isEmbedded = embedded;
     }
     

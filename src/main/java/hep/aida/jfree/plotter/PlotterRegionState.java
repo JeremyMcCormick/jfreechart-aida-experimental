@@ -2,6 +2,8 @@ package hep.aida.jfree.plotter;
 
 import hep.aida.jfree.plotter.listener.PlotListener;
 
+import hep.aida.IPlotterStyle;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.List;
  * 
  * @author Jeremy McCormick <jeremym@slac.stanford.edu>
  */
-class PlotterRegionState {
+public class PlotterRegionState {
 
     List<PlotListener<?>> plotListeners = new ArrayList<PlotListener<?>>();
     List<ObjectStyle> objectStyles = new ArrayList<ObjectStyle>();
@@ -41,7 +43,7 @@ class PlotterRegionState {
         return plotListeners;
     }
     
-    List<ObjectStyle> getObjectStyles() {
+    public List<ObjectStyle> getObjectStyles() {
         return objectStyles;
     }
     
@@ -56,6 +58,15 @@ class PlotterRegionState {
             objects.add(object);
         }        
         return Collections.unmodifiableList(objects);
+    }
+
+    public IPlotterStyle findPlotterStyle(Object object) {
+        for (ObjectStyle objectStyle: objectStyles) {
+            if (objectStyle.object() == object) {
+                return objectStyle.style();
+            }
+        }
+        return null;
     }
     
     void clear() {

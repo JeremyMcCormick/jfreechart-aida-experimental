@@ -1,5 +1,14 @@
 package hep.aida.jfree.plotter;
 
+import java.util.List;
+
+import javax.swing.JPanel;
+
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.xy.XYDataset;
+
 import hep.aida.IBaseHistogram;
 import hep.aida.IDataPointSet;
 import hep.aida.IFunction;
@@ -14,15 +23,6 @@ import hep.aida.jfree.plotter.style.util.LegendUtil;
 import hep.aida.jfree.plotter.style.util.RegionUtil;
 import hep.aida.ref.plotter.DummyPlotterRegion;
 import jas.util.layout.PercentLayout;
-
-import java.util.List;
-
-import javax.swing.JPanel;
-
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.xy.XYDataset;
 
 /**
  * This class implements the plotting of AIDA data objects using a JFreeChart backend. Most of the complex logic for
@@ -270,7 +270,17 @@ public class PlotterRegion extends DummyPlotterRegion {
     public String title() {
         return title;
     }
-
+    
+    /**
+     * Set the upper and lower limits for the Y axis.
+     * @param yLower The Y axis lower limit
+     * @param yUpper The Y axis upper limit
+     */
+    public void setYLimits(double yLower, double yUpper) {
+        getPlot().getRangeAxis().setAutoRange(false);
+        getPlot().getRangeAxis().setRange(yLower, yUpper);
+    }
+        
     /**
      * Get a list of objects that are plotted in this region.
      * 
@@ -482,5 +492,9 @@ public class PlotterRegion extends DummyPlotterRegion {
 
     public PlotterRegionState getState() {
         return this.state;
+    }
+    
+    XYPlot getPlot() {
+        return this.chartPanel.getChart().getXYPlot();
     }
 }

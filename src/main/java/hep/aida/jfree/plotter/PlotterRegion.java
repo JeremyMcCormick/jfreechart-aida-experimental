@@ -280,6 +280,34 @@ public class PlotterRegion extends DummyPlotterRegion {
         getPlot().getRangeAxis().setAutoRange(false);
         getPlot().getRangeAxis().setRange(yLower, yUpper);
     }
+    
+    /**
+     * Set the upper limit for the Y axis.
+     * @param limit The Y axis upper limit
+     */
+    public void setYLimits(double limit) {
+        getPlot().getRangeAxis().setAutoRange(false);
+        getPlot().getRangeAxis().setRange(0., limit);
+    }
+    
+    /**
+     * Set the upper and lower limits for the X axis.
+     * @param yLower The X axis lower limit
+     * @param yUpper The X axis upper limit
+     */
+    public void setXLimits(double xLower, double xUpper) {
+        getPlot().getDomainAxis().setAutoRange(false);
+        getPlot().getDomainAxis().setRange(xLower, xUpper);
+    }
+    
+    /**
+     * Set the upper limit for the X axis.
+     * @param limit The X axis upper limit
+     */
+    public void setXLimits(double limit) {
+        getPlot().getDomainAxis().setAutoRange(false);
+        getPlot().getDomainAxis().setRange(0., limit);
+    }
         
     /**
      * Get a list of objects that are plotted in this region.
